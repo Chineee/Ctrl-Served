@@ -1,4 +1,14 @@
 services:
+
+  nginx:
+    depends_on:
+      - client
+      - server
+    restart: always
+    build: ./Nginx
+    ports:
+      - "3050:80"
+
   client:
     restart: always
     build: ./Client
@@ -8,7 +18,21 @@ services:
     volumes:
       - /app/node_modules
       - ./Client:/app
-
+  server:
+    restart: always
+    build: ./Server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./Server:/app
+      - /app/node_modules
+  mongo:
+    restart: always
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./MongoDB:/data/db
 networks:
   default:
     name: tawproject
