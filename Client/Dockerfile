@@ -7,3 +7,6 @@ RUN npm run build
 EXPOSE 4200 49513
 
 CMD ["npm", "start"]
+
+
+

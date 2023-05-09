@@ -9,10 +9,6 @@ services:
       - /app/node_modules
       - ./Client:/app
 
-  mongo:
-
-  server:
-
 networks:
   default:
     name: tawproject
