@@ -1,12 +1,14 @@
-FROM node:latest
-WORKDIR /app
+FROM node:latest AS builder
+WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
 RUN npm run build
-EXPOSE 4200 49513
 
-CMD ["npm", "start"]
+FROM nginx
+EXPOSE 3000
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /usr/src/app/dist/client /usr/share/nginx/html
 
 
 

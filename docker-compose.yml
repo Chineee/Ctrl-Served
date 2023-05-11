@@ -1,5 +1,4 @@
 services:
-
   nginx:
     depends_on:
       - client
@@ -8,10 +7,11 @@ services:
     build: ./Nginx
     ports:
       - "3050:80"
-
   client:
     restart: always
-    build: ./Client
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./Client
     ports:
       - "4200:4200"
       - "49153:49513"
@@ -26,6 +26,7 @@ services:
     volumes:
       - ./Server:/app
       - /app/node_modules
+      - /app/build
   mongo:
     restart: always
     image: mongo:latest
