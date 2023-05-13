@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 
+//Create a new mongoose schema for tables, defining the fields tableNumber, seats and costumers as required numbers, with costumers <= seats and occupied as required boolean
 const TablesSchema = new mongoose.Schema({
     tableNumber: {type: Number, required: true},
     occupied: {type: Boolean, required: true},
@@ -11,5 +12,6 @@ const TablesSchema = new mongoose.Schema({
     }}
 })
 
+//Create a new mongoose model based on the schema and export it
 const Tables = mongoose.model("Tables", TablesSchema);
 export default Tables;
