@@ -1,8 +1,9 @@
 import {Router} from "express";
 import Joi from 'joi'
 import User from "../models/User";
-import bcrypt from "bcrypt"
-import passport from 'passport'
+import bcrypt from "bcrypt";
+import passport from "../passport-config"
+import jwt from "jsonwebtoken";
 
 export const UserSchemaValidation = Joi.object().keys({
     name: Joi.string().required(),
@@ -12,13 +13,44 @@ export const UserSchemaValidation = Joi.object().keys({
     role: Joi.string().valid('Cashier', 'Waiter', 'Cook', 'Bartender').required()
 });
 
+export const hasRole = (role: string) => {
+
+    return (req, res, next) => {
+        const userRole = req.user?.role;
+        if (userRole !== role) return res.status(401).send("You don't have the permission to perform this action")
+
+        next();
+    }
+}
+
+
+export const alreadyLogged = (req, res, next) => {
+    const token = req.header("auth-token")
+    try{
+        jwt.verify(token, process.env.SECRET_TOKEN);
+        return res.status(401).send("Already logged");
+    }catch(err){
+        next();
+    }
+}
+
+export const isLogged = (req, res, next) => {
+    const token = req.header("auth-token");
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
+        req.user = decoded;
+        next();
+    } catch(err) {
+        return res.status(401).send("You must be logged");
+    }
+}
 
 export default (): Router  => {
 
-
     const app = Router();
 
-    app.put('/user', async (req, res) => {
+    app.put('/user', isLogged, hasRole("Cashier"), async (req, res) => {
+        console.log("USER === " + req.user);
         const {error} = UserSchemaValidation.validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
@@ -44,22 +76,28 @@ export default (): Router  => {
         }
     });
 
-    app.get('/login', passport.authenticate('basic', {session:false}), async (req, res) => {
+    app.get('/login', alreadyLogged, passport.authenticate('basic', {session:false}), async (req, res) => {
         var tokendata = {
-            name: req.body.name,
-            surname: req.body.surname,
-            email: req.body.email,
-            role: req.body.role
+            name: req.user.name,
+            surname: req.user.surname,
+            email: req.user.email,
+            role: req.user.role
         };
 
-        console.log("Login granted. Generating token" );
-        // var token_signed = jwt.sign(tokendata, process.env.SECRET_TOKEN, { expiresIn: '1h' } );
+        const token_signed = jwt.sign(tokendata, process.env.SECRET_TOKEN, { expiresIn: '7h' } );
 
-        // Note: You can manually check the JWT content at https://jwt.io
 
-        return res.status(200).json({ error: false, errormessage: "", token: 1 });
+        //TODO localStorage.setItem('jwtToken', token_signed); save the token in the client-side local storage --> VA FATTO NEL FRONT END
+
+        return res.header('auth-token', token_signed).send(token_signed);
+
+        // return res.status(200).json({ error: false, errormessage: "", token: token_signed });
 
     });
 
     return app;
 }
+
+
+//decoded = jwt.verify(token_signed, process.env.SECRET_TOKEN)
+//decoded.exp < Date.now() / 1000
