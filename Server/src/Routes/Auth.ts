@@ -37,14 +37,21 @@ export const alreadyLogged = (req, res, next) => {
 }
 
 //Middleware function to check if the user is logged in
-export const isLogged = (req, res, next) => {
+export const isLogged = async (req, res, next) => {
     const token = req.header("auth-token");
     try {
+
+        type JWTUser = {
+            email: string;
+        }
+
         //Verify the token and set the user data in the request object
-        const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
-        req.user = decoded;
+        const decoded = jwt.verify(token, process.env.SECRET_TOKEN) as JWTUser;
+        const user = await User.findOne({email: decoded.email})
+        req.user = user;
         next();
     } catch(err) {
+        console.log(err);
         return res.status(401).send("You must be logged");
     }
 }
@@ -65,18 +72,16 @@ export default (): Router  => {
         const emailExists = await User.findOne({email: req.body.email});
         if (emailExists) return res.status(400).send("This email is already linked to a user");
 
-        //Hash the password using the function bcrypt
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(req.body.password, salt);
-
         //Create a new user instance
         const user = new User({
             name: req.body.name,
             surname: req.body.surname,
             email: req.body.email,
-            password: hashedPassword,
+            password: req.body.password,
             role: req.body.role,
         })
+
+        //6460ae562375aa1f59199e73
 
         //Save the new user in the database
         try {
@@ -98,7 +103,7 @@ export default (): Router  => {
         };
 
         //Sign the JWT token with a secret key and set it to expire in 7 hours
-        const token_signed = jwt.sign(tokendata, process.env.SECRET_TOKEN, { expiresIn: '7h' } );
+        const token_signed = jwt.sign(tokendata, process.env.SECRET_TOKEN, { expiresIn: '8h' } );
 
 
         //TODO localStorage.setItem('jwtToken', token_signed); save the token in the client-side local storage --> VA FATTO NEL FRONT END

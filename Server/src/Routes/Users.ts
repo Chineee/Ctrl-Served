@@ -28,7 +28,7 @@ export default (): Router => {
 
         //Return the user object in the response
         return res.status(200).send(user);
-    })
+    });
 
     //GET endpoint to retrieve all users
     app.get('/user', isLogged, hasRole("Cashier"), async (req, res) => {
@@ -39,7 +39,11 @@ export default (): Router => {
         }catch(err){
             res.status(500).send("Internal server error. Something went wrong.")
         }
-    })
+    });
+
+    app.post('/user/:id', isLogged, hasRole("Cashier"), async (req, res) => {
+
+    });
 
     return app;
 

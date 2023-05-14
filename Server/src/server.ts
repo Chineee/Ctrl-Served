@@ -5,7 +5,7 @@ import auth from './Routes/Auth';
 import passport from "./passport-config"
 import User from "./models/User"
 import session from "express-session";
-import {User as IUser} from "./models/Interface/IUser"
+import {IUser} from "./models/User"
 import user from "./Routes/Users"
 
 //Load environment variables from .env file

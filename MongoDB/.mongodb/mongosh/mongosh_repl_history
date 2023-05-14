@@ -1,7 +1,0 @@
-show dbs
-db.people.insert({name:"Test"})
-db.people.inser({name:"Test"})
-use test
-use admin
-show dbs
-show collections
