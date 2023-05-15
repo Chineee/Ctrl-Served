@@ -7,6 +7,7 @@ import User from "./models/User"
 import session from "express-session";
 import {IUser} from "./models/User"
 import user from "./Routes/Users"
+import order from "./Routes/Waiters/Orders"
 
 //Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
@@ -43,6 +44,7 @@ app.use(passport.session());
 app.use('/api', auth());
 //Mounting user routes
 app.use('/api', user());
+app.use('/api/order', order());
 
 //Starting the server
 app.listen(PORT, () => {

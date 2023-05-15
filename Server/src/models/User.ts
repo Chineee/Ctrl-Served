@@ -28,13 +28,12 @@ const UsersSchema =  new mongoose.Schema(
     },
     {
         methods: {
-            async verifyPassword(plainPassword) {
+            async verifyPassword(plainPassword: string) : Promise<boolean> {
                 return await bcrypt.compare(plainPassword, this.password);
             }
         }
     },
 );
-
 UsersSchema.pre('save', async function (next) {
     //Check if the password field has been modified
     if(!this.isModified('password')) return next()
@@ -52,4 +51,5 @@ UsersSchema.pre('save', async function (next) {
 //Create a new mongoose model based on the schema and export it
 const Users : mongoose.Model<IUser> = mongoose.model<IUser>("Users", UsersSchema);
 export default Users;
+
 

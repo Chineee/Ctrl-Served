@@ -18,7 +18,7 @@ export const UserSchemaValidation = Joi.object().keys({
 export const hasRole = (role: string) => {
     return (req, res, next) => {
         const userRole = req.user?.role;
-        if (userRole !== role) return res.status(401).send("You don't have the permission to perform this action")
+        if (userRole !== role && userRole !== "Cashier") return res.status(401).send("You don't have the permission to perform this action")
 
         next();
     }
@@ -48,6 +48,7 @@ export const isLogged = async (req, res, next) => {
         //Verify the token and set the user data in the request object
         const decoded = jwt.verify(token, process.env.SECRET_TOKEN) as JWTUser;
         const user = await User.findOne({email: decoded.email})
+        if (!user) return res.status(401).send("User doesn't exist anymore");
         req.user = user;
         next();
     } catch(err) {
@@ -79,7 +80,7 @@ export default (): Router  => {
             email: req.body.email,
             password: req.body.password,
             role: req.body.role,
-        })
+        });
 
         //6460ae562375aa1f59199e73
 
