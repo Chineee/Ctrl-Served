@@ -6,10 +6,11 @@ import Menu from "../../models/Menus";
 import orders from "../../models/Orders";
 import FoodQueue from "../../models/FoodQueue";
 import DrinkQueue from "../../models/DrinkQueue";
+import mongoose from "mongoose";
+import Menus from "../../models/Menus";
 
 export const OrderSchemaValidation = Joi.object().keys({
     tableNumber: Joi.number().required(),
-    waiterId: Joi.string().required(),
     dishDict: Joi.object().pattern(Joi.string(), Joi.number()).required(),
     type: Joi.string().required()
 })
@@ -21,56 +22,64 @@ export default (): Router => {
         const {error} = OrderSchemaValidation.validate(req.body);
         if (error) return res.status(400).send("Invalid input");
 
-        let price: number = 0;
-
         let dishDict = req.body.dishDict;
-        for (let key in dishDict) {
-            let dish = await Menu.findById(key);
-            price += dish.dishPrice*dishDict[key];
+        // for (let key in dishDict) {
+        //     let dish = await Menu.findById(key);
+        //     price += dish.dishPrice*dishDict[key];
+        // }
+
+        const allOrders = [];
+        //TODO FALLO NEL PRESAVE
+        const orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1 | 1;
+
+
+        for (const key in dishDict) {
+            const price = (await Menu.findById(key)).dishPrice;
+            for (let i = 0; i < dishDict[key]; i++) {
+                const order = new Order({
+                    tableNumber: req.body.tableNumber,
+                    waiterId: req.user._id,
+                    dish: key,
+                    price: price,
+                    ready: false,
+                    type: req.body.type,
+                    orderNumber: orderNumber
+                });
+                allOrders.push(order);
+            }
         }
 
-        const order = new Order({
-            tableNumber: req.body.tableNumber,
-            waiterId: req.user._id,
-            dishDict: req.body.foodDict,
-            price: price,
-            readyCount: 0,
-            type: req.body.type
-        })
         try {
-            await order.save();
-            return res.status(200).send("Order sent successfully")
+            await Order.insertMany(allOrders);
         } catch(err) {
-            return res.status(400).send(err);
+            return res.status(400).send("err");
         }
+
+
+        return res.status(200).send("Order sent successfully")
+
     });
 
     app.post("/:id", isLogged, hasRole("Waiter"), async (req, res) => {
         const order = await Order.findById(req.params.id);
-
         if(req.body.new_tableNumber !== null) order.tableNumber = req.body.new_tableNumber;
 
-        let dishesInQueue;
+        let dishInQueue;
 
-        if(order.type === 'Foods')  dishesInQueue = await FoodQueue.find({order: req.params.id});
-        else dishesInQueue = await DrinkQueue.find({order: req.params.id});
+        if(order.type === 'Foods')  dishInQueue = await FoodQueue.findOne({order: req.params.id});
+        else dishInQueue = await DrinkQueue.find({order: req.params.id});
 
-        if(req.body.new_dishDict !== null){
-            if(order.readyCount !== 0) return res.status(400).send("This order is already in the making you cannot modify it");
-
-            for(const dish of dishesInQueue){
-                if(dish.position === 1) return res.status(400).send("This order is already in the making you cannot modify it");
-            }
+        if(req.body.new_dish !== null){
+            if(dishInQueue.begin) return res.status(400).send("This order is already in the making you cannot modify it");
         }
 
-        if(req.body.new_dishDict !== null && req.user._id === order.waiterId){
-            order.dishDict = req.body.new_dishDict;
-            let price: number = 0;
-            let dishDict = order.dishDict;
-            for (let key in dishDict) {
-                let dish = await Menu.findById(key);
-                price += dish.dishPrice*dishDict[key];
-            }
+        const id1 : string = req.user._id.toString();
+        const id2 : string = order.waiterId.toString();
+
+
+        if(req.body.new_dish !== null && id1 === id2){
+            const price = (await Menu.findById(req.body.new_dish)).dishPrice
+            order.dish = req.body.new_dish;
             order.price = price;
         }
 
@@ -81,7 +90,131 @@ export default (): Router => {
         }
 
         return res.status(200).send("Order updated correctly");
-    })
+    });
+
+    // app.get('/addFood', async (req, res) => {
+    //     const dish = new Menu();
+    //
+    //     const menu = [
+    //         {
+    //             dishPrice: 8,
+    //             dishName:"Spaghetti",
+    //             dishProductionTime: 22,
+    //             dishType: "Food"
+    //         },
+    //         {
+    //             dishPrice: 45,
+    //             dishName: "Pizza",
+    //             dishProductionTime: 15,
+    //             dishType: "Food"
+    //         },
+    //         {
+    //           dishPrice: 5,
+    //           dishName: "Manzo funghi e bamboo",
+    //           dishProductionTime: 17,
+    //           dishType: "Food"
+    //         },
+    //         {
+    //           dishPrice: 100,
+    //           dishName: "Aragosta con sashimi",
+    //           dishProductionTime: 20,
+    //           dishType: "Food"
+    //         },
+    //         {
+    //             dishPrice: 13,
+    //             dishName:"Cosmopolitan",
+    //             dishProductionTime: 4,
+    //             dishType:"Drink"
+    //         },
+    //         {
+    //             dishPrice: 22,
+    //             dishName:"Sex on the beach",
+    //             dishProductionTime: 1,
+    //             dishType:"Drink"
+    //         },
+    //         {
+    //             dishPrice: 10,
+    //             dishName:"Gin tonic",
+    //             dishProductionTime: 3,
+    //             dishType:"Drink"
+    //         },
+    //         {
+    //             dishPrice: 14,
+    //             dishName:"Cuba Libre",
+    //             dishProductionTime: 6,
+    //             dishType:"Drink"
+    //         },
+    //         {
+    //             dishPrice: 2,
+    //             dishName: "Coca cola",
+    //             dishProductionTime: 1,
+    //             dishType:"Drink"
+    //         },
+    //         {
+    //             dishPrice: 4,
+    //             dishName:"Fuze the rosa e pesca",
+    //             dishProductionTime: 1,
+    //             dishType:"Drink"
+    //         },
+    //         {
+    //             dishPrice: 4,
+    //             dishName:"Fuze the limone e lime",
+    //             dishProductionTime: 1,
+    //             dishType:"Drink"
+    //         },
+    //     ]
+    //
+    //     for (let i = 0; i < menu.length; i++) {
+    //         const add = new Menu(menu[i]);
+    //         await add.save();
+    //     }
+    //
+    //     return res.send("k")
+    // })
 
     return app;
 }
+
+//QUESTO ANDAVA NELLA PUT DI ORDINE
+
+
+// const order = new Order({
+//     tableNumber: req.body.tableNumber,
+//     waiterId: req.user._id,
+//     dishDict: req.body.foodDict,
+//     price: price,
+//     readyCount: 0,
+//     type: req.body.type
+// });
+//
+// try {
+//     await order.save();
+// } catch(err) {
+//     return res.status(400).send(err);
+// }
+//
+// // Metti i cibi nella food queue
+// const queue = []
+// for(let key in dishDict) {
+//     let addQueue;
+//     if (order.type === 'Foods') {
+//         addQueue = new FoodQueue();
+//         addQueue.position = (await FoodQueue.find()).length + 1;
+//     }
+//     else {
+//         addQueue = new DrinkQueue();
+//         addQueue.position = (await DrinkQueue.find()).length + 1;
+//     }
+//
+//     addQueue.order = order._id;
+//     addQueue.dish = key;
+//     addQueue.productionTime = (await Menu.findById(key)).dishProductionTime;
+//     addQueue.begin = false;
+//     addQueue.end = false;
+//
+//     try {
+//         await addQueue.save();
+//     } catch (err) {
+//         return res.status(400).send("error");
+//     }
+// }
