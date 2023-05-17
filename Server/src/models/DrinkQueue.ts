@@ -6,6 +6,7 @@ const DrinkQueueSchema = new mongoose.Schema({
     productionTime: {type: Number, required: true, min: 0},
     begin: {type: Boolean, required: true},
     end: {type: Boolean, required: true},
+    position: {type: Number, required: true}
 });
 
 const DrinkQueue = mongoose.model("DrinkQueue", DrinkQueueSchema);

@@ -43,7 +43,7 @@ app.use(passport.session());
 //Mounting authentication routes
 app.use('/api', auth());
 //Mounting user routes
-app.use('/api', user());
+app.use('/api/user', user());
 app.use('/api/order', order());
 
 //Starting the server

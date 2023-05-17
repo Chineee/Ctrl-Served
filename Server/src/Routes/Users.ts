@@ -22,7 +22,7 @@ export default (): Router => {
     const app = Router();
 
     //GET endpoint to retrieve a user by id or email
-    app.get('/user/:id', isLogged, hasRole('Cashier'), async (req, res) => {
+    app.get('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
         let user = await getUser(req.params.id);
         if (user === null) res.status(400).send("Invalid user id or email");
 
@@ -31,7 +31,7 @@ export default (): Router => {
     });
 
     //GET endpoint to retrieve all users
-    app.get('/user', isLogged, hasRole("Cashier"), async (req, res) => {
+    app.get('/', isLogged, hasRole("Cashier"), async (req, res) => {
         try{
             //retrieve alla users from the database excluding their passwords from the response
             const users = await User.find({},'-password');
@@ -41,7 +41,7 @@ export default (): Router => {
         }
     });
 
-    app.post('/user/:id', isLogged, async (req, res) => {
+    app.post('/:id', isLogged, async (req, res) => {
         const user = await getUser(req.params.id);
 
         if (user === null) return res.status(400).send("User doesn't exist");
@@ -58,7 +58,7 @@ export default (): Router => {
         return res.status(200).send("User modified correctly");
     });
 
-    app.delete('/user/:id', isLogged, hasRole("Cashier"), async (req, res) => {
+    app.delete('/:id', isLogged, hasRole("Cashier"), async (req, res) => {
         const user = await getUser(req.params.id);
 
         if(user === null) return res.status(400).send("User doesn't exist");
