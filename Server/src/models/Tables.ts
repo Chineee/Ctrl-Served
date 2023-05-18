@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 //Create a new mongoose schema for tables, defining the fields tableNumber, seats and costumers as required numbers, with costumers <= seats and occupied as required boolean
 const TablesSchema = new mongoose.Schema({
+    waiterId: {type: String, required: true, ref: 'users'},
     tableNumber: {type: Number, required: true, unique:true},
     occupied: {type: Boolean, required: true},
     seats: {type: Number, required: true},

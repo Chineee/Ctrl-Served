@@ -8,6 +8,7 @@ import session from "express-session";
 import {IUser} from "./models/User"
 import user from "./Routes/Users"
 import order from "./Routes/Waiters/Orders"
+import table from "./Routes/Waiters/Tables"
 
 //Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
@@ -45,6 +46,7 @@ app.use('/api', auth());
 //Mounting user routes
 app.use('/api/user', user());
 app.use('/api/order', order());
+app.use('/api/table', table());
 
 //Starting the server
 app.listen(PORT, () => {

@@ -18,7 +18,7 @@ export const OrderSchemaValidation = Joi.object().keys({
 export default (): Router => {
     const app = Router();
 
-    app.put('/', isLogged, hasRole("Waiter"), async (req, res) => {
+    app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
         const {error} = OrderSchemaValidation.validate(req.body);
         if (error) return res.status(400).send("Invalid input");
 
@@ -60,7 +60,7 @@ export default (): Router => {
 
     });
 
-    app.post("/:id", isLogged, hasRole("Waiter"), async (req, res) => {
+    app.post("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const order = await Order.findById(req.params.id);
         if(req.body.new_tableNumber !== null) order.tableNumber = req.body.new_tableNumber;
 

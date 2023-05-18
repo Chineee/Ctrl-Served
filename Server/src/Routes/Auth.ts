@@ -11,14 +11,14 @@ export const UserSchemaValidation = Joi.object().keys({
     email: Joi.string().required().email(),
     surname: Joi.string().required(),
     password: Joi.string().required(),
-    role: Joi.string().valid('Cashier', 'Waiter', 'Cook', 'Bartender').required()
+    role: Joi.string().valid('Cashier', 'Waiter', 'Cook', 'Bartender', 'Admin').required()
 });
 
 //Middleware function to check if the user has a specific role
 export const hasRole = (role: string) => {
     return (req, res, next) => {
         const userRole = req.user?.role;
-        if (userRole !== role && userRole !== "Cashier") return res.status(401).send("You don't have the permission to perform this action")
+        if (userRole !== role && userRole !== 'Admin') return res.status(401).send("You don't have the permission to perform this action")
 
         next();
     }
@@ -63,7 +63,7 @@ export default (): Router  => {
     const app = Router();
 
     //PUT endpoint to add a new user
-    app.put('/user', isLogged, hasRole("Cashier"), async (req, res) => {
+    app.put('/user', isLogged, hasRole('Admin'), async (req, res) => {
         console.log("USER === " + req.user);
         //validate the input data using the defined schema
         const {error} = UserSchemaValidation.validate(req.body);

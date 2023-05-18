@@ -11,7 +11,7 @@ export interface IUser {
     //This property holds the email of the user as a string
     email: string;
     //This property holds the role of the user as a string, which is limited to one of the four options presented
-    role: 'Cashier' | 'Waiter' | 'Cook'| 'Bartender';
+    role: 'Cashier' | 'Waiter' | 'Cook'| 'Bartender' | 'Admin';
     //This property holds the password of the user password as a string
     password: string;
     verifyPassword: (plainPassword: string) => Promise<boolean>;
@@ -24,7 +24,7 @@ const UsersSchema =  new mongoose.Schema(
         surname: {type: String, required: true},
         email: {type: String, required: true},
         password: {type: String, required: true},
-        role: {type: String, enum: ['Cashier', 'Waiter', 'Cook', 'Bartender'], required: true }
+        role: {type: String, enum: ['Cashier', 'Waiter', 'Cook', 'Bartender', 'Admin'], required: true }
     },
     {
         methods: {

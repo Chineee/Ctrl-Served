@@ -22,7 +22,7 @@ export default (): Router => {
     const app = Router();
 
     //GET endpoint to retrieve a user by id or email
-    app.get('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
+    app.get('/:id', isLogged, hasRole('Admin'), async (req, res) => {
         let user = await getUser(req.params.id);
         if (user === null) res.status(400).send("Invalid user id or email");
 
@@ -31,7 +31,7 @@ export default (): Router => {
     });
 
     //GET endpoint to retrieve all users
-    app.get('/', isLogged, hasRole("Cashier"), async (req, res) => {
+    app.get('/', isLogged, hasRole('Admin'), async (req, res) => {
         try{
             //retrieve alla users from the database excluding their passwords from the response
             const users = await User.find({},'-password');
@@ -45,12 +45,12 @@ export default (): Router => {
         const user = await getUser(req.params.id);
 
         if (user === null) return res.status(400).send("User doesn't exist");
-        else if (user.email !== req.user.email && req.user.role !== 'Cashier') return res.status(400).send("You do not have permission");
+        else if (user.email !== req.user.email && req.user.role !== 'Admin') return res.status(400).send("You do not have permission");
 
         if (req.body.new_name !== undefined) user.name = req.body.new_name;
         if (req.body.new_surname !== undefined) user.surname = req.body.new_surname;
         if (req.body.new_password !== undefined) user.password = req.body.new_password;
-        if (req.body.new_role !== undefined && req.user.role === 'Cashier') user.role = req.body.new_role;
+        if (req.body.new_role !== undefined && req.user.role === 'Admin') user.role = req.body.new_role;
         if (req.body.new_email !== undefined) user.email = req.body.new_email;
 
         await user.save();
@@ -58,11 +58,15 @@ export default (): Router => {
         return res.status(200).send("User modified correctly");
     });
 
-    app.delete('/:id', isLogged, hasRole("Cashier"), async (req, res) => {
+    app.delete('/:id', isLogged, hasRole('Admin'), async (req, res) => {
         const user = await getUser(req.params.id);
 
         if(user === null) return res.status(400).send("User doesn't exist");
-        await user.deleteOne();
+        try{
+            await user.deleteOne();
+        } catch (err) {
+            return res.status(400).send("Somethign went wrong")
+        }
         return res.status(200).send("User deleted successfully");
     });
 
