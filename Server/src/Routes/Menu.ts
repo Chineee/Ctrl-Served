@@ -3,7 +3,7 @@ import {hasRole, isLogged} from "./Auth";
 import Joi from "joi";
 import Menu from "../models/Menus";
 
-export const MenuSchemaValidation({
+export const MenuSchemaValidation = Joi.object().keys({
     dishName: Joi.string().required(),
     dishPrice: Joi.number().required(),
     dishProductionTime: Joi.number().required(),
