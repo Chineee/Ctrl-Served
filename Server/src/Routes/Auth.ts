@@ -1,11 +1,10 @@
 import {Router} from "express";
 import Joi from 'joi'
 import User from "../models/User";
-import bcrypt from "bcrypt";
 import passport from "../passport-config"
 import jwt from "jsonwebtoken";
 
-//Define a schema for user input validation
+// Define a schema for user input validation using Joi
 export const UserSchemaValidation = Joi.object().keys({
     name: Joi.string().required(),
     email: Joi.string().required().email(),
@@ -14,7 +13,7 @@ export const UserSchemaValidation = Joi.object().keys({
     role: Joi.string().valid('Cashier', 'Waiter', 'Cook', 'Bartender', 'Admin').required()
 });
 
-//Middleware function to check if the user has a specific role
+// Middleware function to check if the user has a specific role
 export const hasRole = (...role: string[]) => {
     return (req, res, next) => {
         const userRole = req.user?.role;
@@ -25,11 +24,11 @@ export const hasRole = (...role: string[]) => {
     }
 }
 
-//Middleware function to check if the user is already logged
+// Middleware function to check if the user is already logged in
 export const alreadyLogged = (req, res, next) => {
     const token = req.header("auth-token")
     try{
-        //Verify the token and return error if the token is valid
+        // Verify the token and return error if the token is valid
         jwt.verify(token, process.env.SECRET_TOKEN);
         return res.status(401).send("Already logged");
     }catch(err){
@@ -37,16 +36,15 @@ export const alreadyLogged = (req, res, next) => {
     }
 }
 
-//Middleware function to check if the user is logged in
+// Middleware function to check if the user is logged in
 export const isLogged = async (req, res, next) => {
     const token = req.header("auth-token");
     try {
-
         type JWTUser = {
             email: string;
         }
 
-        //Verify the token and set the user data in the request object
+        // Verify the token and set the user data in the request object
         const decoded = jwt.verify(token, process.env.SECRET_TOKEN) as JWTUser;
         const user = await User.findOne({email: decoded.email})
         if (!user) return res.status(401).send("User doesn't exist anymore");
@@ -58,23 +56,23 @@ export const isLogged = async (req, res, next) => {
     }
 }
 
-//Export the router
+// Export the router
 export default (): Router  => {
-
     const app = Router();
 
-    //PUT endpoint to add a new user
+    // PUT endpoint to add a new user
     app.put('/user', isLogged, hasRole('Admin'), async (req, res) => {
         console.log("USER === " + req.user);
-        //validate the input data using the defined schema
+
+        // Validate the input data using the defined schema
         const {error} = UserSchemaValidation.validate(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
-        //Check if the email already exists in the database
+        // Check if the email already exists in the database
         const emailExists = await User.findOne({email: req.body.email});
         if (emailExists) return res.status(400).send("This email is already linked to a user");
 
-        //Create a new user instance
+        // Create a new user instance
         const user = new User({
             name: req.body.name,
             surname: req.body.surname,
@@ -83,9 +81,7 @@ export default (): Router  => {
             role: req.body.role,
         });
 
-        //6460ae562375aa1f59199e73
-
-        //Save the new user in the database
+        // Save the new user in the database
         try {
             await user.save();
             res.send("User correctly added to the database");
@@ -94,9 +90,9 @@ export default (): Router  => {
         }
     });
 
-    //GET endpoint to login a user
+    // GET endpoint to login a user
     app.get('/login', alreadyLogged, passport.authenticate('basic', {session:false}), async (req, res) => {
-        //Create a tokne containing the user data
+        //Create a token containing the user data
         var tokendata = {
             name: req.user.name,
             surname: req.user.surname,
@@ -104,17 +100,16 @@ export default (): Router  => {
             role: req.user.role
         };
 
-        //Sign the JWT token with a secret key and set it to expire in 7 hours
+        // Sign the JWT token with a secret key and set it to expire in 8 hours
         const token_signed = jwt.sign(tokendata, process.env.SECRET_TOKEN, { expiresIn: '8h' } );
 
 
         //TODO localStorage.setItem('jwtToken', token_signed); save the token in the client-side local storage --> VA FATTO NEL FRONT END
 
-        //set the token as a response header
+        // Set the token as a response header
         return res.header('auth-token', token_signed).send(token_signed);
 
         // return res.status(200).json({ error: false, errormessage: "", token: token_signed });
-
     });
 
     return app;

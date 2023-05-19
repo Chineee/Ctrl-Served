@@ -6,7 +6,7 @@ import {BasicStrategy} from "passport-http";
 passport.use(new BasicStrategy(async (email, password, done) => {
     //Find the user with the given email
     const currentUser = await User.findOne({email: email});
-    //If no user is found or the user's password is incorrect return an error
+    //If no user is found or the user's password is incorrect, return an error
     if(!currentUser || !await currentUser.verifyPassword(password)){
         return done({errorMessage: "Incorrect email or password"}, false);
     }
@@ -29,7 +29,6 @@ passport.deserializeUser(async function(id, done) {
         done(err);
     }
 });
-
 
 //Export the passport module
 export default passport;

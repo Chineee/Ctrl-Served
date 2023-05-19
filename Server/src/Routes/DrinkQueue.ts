@@ -2,15 +2,19 @@ import {Router} from "express";
 import {hasRole, isLogged} from "./Auth";
 import Joi from "joi";
 import DrinkQueue from "../models/DrinkQueue";
+import Orders from "../models/Orders";
 
+// Define a schema for food queue input validation using Joi
 export const DrinkQueueSchemaValidation = Joi.object().keys({
     dish: Joi.string().required(),
     order: Joi.string().required(),
 })
 
+// Export the router
 export default (): Router => {
     const app = Router();
 
+    // GET endpoint to retrieve drink in queue based on the query parameters passed
     app.get('/', isLogged, hasRole("Bartender", "Cashier"), async (req, res)=> {
         try{
             const drinks = await DrinkQueue.find(req.query)
@@ -20,6 +24,7 @@ export default (): Router => {
         }
     });
 
+    // GET endpoint to retrieve drink in queue by its ID
     app.get('/:id', isLogged, hasRole("Bartender", "Cashier"), async (req, res)=> {
         try{
             const drink = await DrinkQueue.findById(req.params.id);
@@ -29,33 +34,52 @@ export default (): Router => {
         }
     });
 
+    // POST endpoint to modify an existing drink in queue
     app.post("/:id", isLogged, hasRole('Bartender'), async (req, res) => {
         const drink = await DrinkQueue.findById(req.params.id);
+        if (drink === null) return res.status(400).send("Drink in queue doesn't exist")
 
-        if(req.body.new_begin !== null) drink.begin = req.body.new_begin;
-        if(req.body.new_end !== null) drink.end = req.body.new_end;
+        if (drink.begin && drink.end) return res.status(200).send("Already finished");
 
-        try{
-            drink.save();
-        } catch (err) {
-            return res.status(400).send("Something went wrong");
+        if (!drink.begin) {
+            drink.begin = true;
+            drink.makerId = req.user._id.toString();
+        }
+        else {
+            drink.end = true;
+            const order = await Orders.findById(drink.order);
+            order.ready = true;
+            await order.save();
+            //TODO controlla se tutti i drink di un ordine sono finiti
+            const completeOrder = await Orders.find({orderNumber: drink.orderNumber, ready: false})
+            console.log(completeOrder);
+            if (completeOrder.length === 0) {
+                //todo notify waiter tutto finito
+                console.log("TUTTO FINITOOOOOOOOOOOOOO")
+            }
         }
 
-        return res.status(200).send("Drink modified successfully");
+        // Save the changes to the drink in the queue in the database
+        try{
+            await drink.save();
+            return res.status(200).send("Drink modified successfully");
+        } catch (err) {
+            return res.status(400).send(err);
+        }
     });
 
-    //since they will be deleted when the receipt is calculated the role should be cashier right?
-    app.delete("/:id", isLogged, hasRole('Cashier'), async (req, res) => {
+    // DELETE endpoint to delete food in the queue by its ID
+    app.delete("/:id", isLogged, hasRole('Bartender'), async (req, res) => {
         const drink = await DrinkQueue.findById(req.params.id);
+        if (drink === null) return res.status(400).send("Drink in queue doesn't exist")
 
         try{
             await drink.deleteOne();
+            return res.status(200).send("Drink deleted successfully");
         } catch (err) {
-            return res.status(400).send("Something went wrong");
+            return res.status(400).send(err);
         }
-
-        return res.status(200).send("Drink deleted successfully");
-    })
+    });
 
     return app;
 }

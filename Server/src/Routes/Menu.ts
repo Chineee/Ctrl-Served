@@ -3,53 +3,62 @@ import {hasRole, isLogged} from "./Auth";
 import Joi from "joi";
 import Menu from "../models/Menus";
 
+// Define a schema for menu input validation using Joi
 export const MenuSchemaValidation = Joi.object().keys({
-    dishName: Joi.string().required(),
-    dishPrice: Joi.number().required(),
-    dishProductionTime: Joi.number().required(),
-    dishType: Joi.string().required().valid('Foods', 'Drinks')
+    name: Joi.string().required(),
+    price: Joi.number().required(),
+    productionTime: Joi.number().required(),
+    type: Joi.string().required().valid('Food', 'Drink')
 })
 
+// Export the router
 export default (): Router => {
     const app = Router();
 
+    // PUT endpoint to add a new menu dish or drink
     app.put('/', isLogged, hasRole('Admin'), async (req, res) => {
+        // Validate the input data using the defined schema
         const {error} = MenuSchemaValidation.validate(req.body);
-        if (error) return res.status(400).send("Invalid input");
+        if (error) return res.status(400).send(error);
 
+        // Create a new menu dish instance
         const menuDish = new Menu({
-            dishName: req.body.dishName,
-            dishPrice: req.body.dishPrice,
-            dishProductionTime: req.body.dishProductionTime,
-            dishType: req.body.dishType
+            name: req.body.name,
+            price: req.body.price,
+            productionTime: req.body.productionTime,
+            type: req.body.type
         })
 
+        // Save the new menu dish in the database
         try{
             await menuDish.save();
+            return res.status(200).send("Menu dish added successfully");
         } catch (err) {
             return res.status(400).send(err);
         }
-
-        return res.status(200).send("Menu dish added successfully");
     });
 
+    // POST endpoint to modify an existing menu dish
     app.post("/:id", isLogged, hasRole('Admin'), async (req, res) => {
         const menuDish = await Menu.findById(req.params.id);
+        if (menuDish === null) return res.status(400).send("Menu dish doesn't exist");
 
-        if(req.body.new_dishName !== null) menuDish.dishName = req.body.new_dishName;
-        if(req.body.new_dishPrice !== null && req.body.new_dishPrice > 0) menuDish.dishPrice = req.body.new_dishPrice;
-        if(req.body.new_dishProductionTime !== null && req.body.new_dishProductionTime >= 0) menuDish.dishProductionTime = req.body.new_dishProductionTime;
-        if(req.body.new_dishType !== null) menuDish.dishType = req.body.new_dishType;
+        // Update the fields of the menu dish if provided in the request body
+        if(req.body.new_name !== null) menuDish.name = req.body.new_name;
+        if(req.body.new_price !== null && req.body.new_price > 0) menuDish.price = req.body.new_price;
+        if(req.body.new_productionTime !== null && req.body.new_productionTime >= 0) menuDish.productionTime = req.body.new_productionTime;
+        if(req.body.new_type !== null) menuDish.type = req.body.new_type;
 
+        // Save the changes to the menu dish in the database
         try{
-            menuDish.save();
+            await menuDish.save();
+            return res.status(200).send("Menu dish modified successfully");
         } catch (err) {
             return res.status(400).send(err);
         }
-
-        return res.status(200).send("Menu dish modified successfully");
     });
 
+    // GET endpoint to retrieve a menu dish by its ID
     app.get("/:id", isLogged, async (req,res) => {
         try {
             const dish = await Menu.findById(req.params.id);
@@ -59,7 +68,8 @@ export default (): Router => {
         }
         
     });
-    
+
+    // GET endpoint to retrieve menu dishes based on the query parameters passed
     app.get('/', isLogged, async (req, res) => {
         try{
             const dishes = await Menu.find(req.query);
@@ -69,16 +79,17 @@ export default (): Router => {
         }
     });
 
+    // DELETE endpoint to delete a menu dish by its ID
     app.delete("/:id", isLogged, hasRole('Admin'), async (req,res) => {
         const menuDish = await Menu.findById(req.params.id);
+        if(menuDish === null) return res.status(400).send("Menu dish doesn't exist");
 
         try{
             await menuDish.deleteOne();
+            return res.status(200).send("Menu dish deleted successfully");
         } catch (err) {
-            return res.status(400).send("Something went wrong");
+            return res.status(400).send(err);
         }
-
-        return res.status(200).send("Menu dish deleted successfully");
     });
 
     return app;
