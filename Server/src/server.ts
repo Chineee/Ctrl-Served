@@ -9,6 +9,9 @@ import {IUser} from "./models/User"
 import user from "./Routes/Users"
 import order from "./Routes/Waiters/Orders"
 import table from "./Routes/Waiters/Tables"
+import menu from "./Routes/Menu"
+import foodQueue from "./Routes/FoodQueue"
+import drinkQueue from "./Routes/DrinkQueue"
 
 //Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
@@ -47,6 +50,9 @@ app.use('/api', auth());
 app.use('/api/user', user());
 app.use('/api/order', order());
 app.use('/api/table', table());
+app.use('/api/menu', menu());
+app.use('/api/foodQueue', foodQueue());
+app.use('/api/drinkQueue', drinkQueue());
 
 //Starting the server
 app.listen(PORT, () => {

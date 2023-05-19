@@ -15,10 +15,11 @@ export const UserSchemaValidation = Joi.object().keys({
 });
 
 //Middleware function to check if the user has a specific role
-export const hasRole = (role: string) => {
+export const hasRole = (...role: string[]) => {
     return (req, res, next) => {
         const userRole = req.user?.role;
-        if (userRole !== role && userRole !== 'Admin') return res.status(401).send("You don't have the permission to perform this action")
+
+        if (!role.includes(userRole) && userRole !== 'Admin') return res.status(401).send("You don't have the permission to perform this action")
 
         next();
     }

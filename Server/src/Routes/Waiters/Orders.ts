@@ -18,39 +18,55 @@ export const OrderSchemaValidation = Joi.object().keys({
 export default (): Router => {
     const app = Router();
 
+    app.get('/', isLogged, hasRole("Waiter"), async (req, res) => {
+        const orders = await Order.find(req.query);
+        return res.status(200).send(orders);
+    });
+
+
     app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
         const {error} = OrderSchemaValidation.validate(req.body);
         if (error) return res.status(400).send("Invalid input");
 
         let dishDict = req.body.dishDict;
-        // for (let key in dishDict) {
-        //     let dish = await Menu.findById(key);
-        //     price += dish.dishPrice*dishDict[key];
-        // }
 
         const allOrders = [];
-        //TODO FALLO NEL PRESAVE
-        const orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1 | 1;
+        const queue = [];
 
+        //TODO usa una variabile globale per evitare due ordini con lo stesso numero
+        const orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1 || 1;
 
         for (const key in dishDict) {
-            const price = (await Menu.findById(key)).dishPrice;
+            const dish = await Menu.findById(key);
             for (let i = 0; i < dishDict[key]; i++) {
                 const order = new Order({
                     tableNumber: req.body.tableNumber,
                     waiterId: req.user._id,
                     dish: key,
-                    price: price,
+                    price: dish.dishPrice,
                     ready: false,
                     type: req.body.type,
                     orderNumber: orderNumber
                 });
+
+                const added = new FoodQueue({
+                    order: order._id,
+                    dish: key,
+                    productionTime: dish.dishProductionTime,
+                    begin: false,
+                    end: false,
+                    orderNumber: orderNumber
+                })
                 allOrders.push(order);
+                queue.push(added)
             }
         }
 
         try {
             await Order.insertMany(allOrders);
+            if (req.body.type === 'Foods') await FoodQueue.insertMany(queue);
+            else await DrinkQueue.insertMany(queue);
+            //TODO notify cook
         } catch(err) {
             return res.status(400).send("err");
         }

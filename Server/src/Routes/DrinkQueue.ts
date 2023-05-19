@@ -11,16 +11,22 @@ export const DrinkQueueSchemaValidation = Joi.object().keys({
 export default (): Router => {
     const app = Router();
 
-    //dovrebbero essere qui come paths oppure lo gestiamo da ordini?
-    app.put('/', isLogged, hasRole('Waiter'), async (req, res)=> {
-        const {error} = DrinkQueueSchemaValidation.validate(req.body);
+    app.get('/', isLogged, hasRole("Bartender", "Cashier"), async (req, res)=> {
+        try{
+            const drinks = await DrinkQueue.find(req.query)
+            return res.status(200).send(drinks);
+        } catch (err) {
+            return res.status(400).send(err);
+        }
+    });
 
-        if (error) return res.status(400).send("Invalid input");
-
-        const drink = new DrinkQueue({
-            order: req.body.order,
-
-        })
+    app.get('/:id', isLogged, hasRole("Bartender", "Cashier"), async (req, res)=> {
+        try{
+            const drink = await DrinkQueue.findById(req.params.id);
+            return res.status(200).send(drink);
+        } catch (err) {
+            return res.status(400).send(err);
+        }
     });
 
     app.post("/:id", isLogged, hasRole('Bartender'), async (req, res) => {

@@ -27,7 +27,7 @@ export default (): Router => {
         try{
             await menuDish.save();
         } catch (err) {
-            return res.status(400).send("Something went wrong");
+            return res.status(400).send(err);
         }
 
         return res.status(200).send("Menu dish added successfully");
@@ -44,13 +44,30 @@ export default (): Router => {
         try{
             menuDish.save();
         } catch (err) {
-            return res.status(400).send("Something went wrong");
+            return res.status(400).send(err);
         }
 
         return res.status(200).send("Menu dish modified successfully");
     });
 
-    //TODO: implement get
+    app.get("/:id", isLogged, async (req,res) => {
+        try {
+            const dish = await Menu.findById(req.params.id);
+            return res.status(200).send(dish)
+        } catch (err) {
+            return res.status(400).send(err);
+        }
+        
+    });
+    
+    app.get('/', isLogged, async (req, res) => {
+        try{
+            const dishes = await Menu.find(req.query);
+            return res.status(200).send(dishes);
+        } catch (err) {
+            return res.status(400).send(err);
+        }
+    });
 
     app.delete("/:id", isLogged, hasRole('Admin'), async (req,res) => {
         const menuDish = await Menu.findById(req.params.id);

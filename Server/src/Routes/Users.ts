@@ -34,7 +34,7 @@ export default (): Router => {
     app.get('/', isLogged, hasRole('Admin'), async (req, res) => {
         try{
             //retrieve alla users from the database excluding their passwords from the response
-            const users = await User.find({},'-password');
+            const users = await User.find(req.query, '-password');
             return res.send(users);
         }catch(err){
             return res.status(500).send("Internal server error. Something went wrong.")
