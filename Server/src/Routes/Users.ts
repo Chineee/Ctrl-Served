@@ -27,7 +27,7 @@ export default (): Router => {
             const user = await getUser(req.params.id);
             return res.status(200).send(user);
         } catch (err) {
-            res.status(400).send(err);
+            return res.status(400).send(err);
         }
     });
 

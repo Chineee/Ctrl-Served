@@ -3,6 +3,7 @@ import Joi from 'joi'
 import User from "../models/User";
 import passport from "../passport-config"
 import jwt from "jsonwebtoken";
+import Users from "../models/User";
 
 // Define a schema for user input validation using Joi
 export const UserSchemaValidation = Joi.object().keys({
@@ -62,7 +63,6 @@ export default (): Router  => {
 
     // PUT endpoint to add a new user
     app.put('/user', isLogged, hasRole('Admin'), async (req, res) => {
-        console.log("USER === " + req.user);
 
         // Validate the input data using the defined schema
         const {error} = UserSchemaValidation.validate(req.body);
@@ -92,6 +92,7 @@ export default (): Router  => {
 
     // GET endpoint to login a user
     app.get('/login', alreadyLogged, passport.authenticate('basic', {session:false}), async (req, res) => {
+        console.log("entro")
         //Create a token containing the user data
         var tokendata = {
             name: req.user.name,

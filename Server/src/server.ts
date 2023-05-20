@@ -9,58 +9,61 @@ import user from "./Routes/Users"
 import order from "./Routes/Waiters/Orders"
 import table from "./Routes/Waiters/Tables"
 import menu from "./Routes/Menu"
-import foodQueue from "./Routes/FoodQueue"
-import drinkQueue from "./Routes/DrinkQueue"
+import foodQueue from "./Routes/Makers/FoodQueue"
+import drinkQueue from "./Routes/Makers/DrinkQueue"
+import receipt from "./Routes/Cashier/Receipt"
 
-//Load environment variables from .env file
+// Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
 
-//Create express app
+// Create express app
 const app = express()
 
-//Assign PORT to an environment variable or use 5000 as default
+// Assign PORT to an environment variable or use 5000 as default
 const PORT = process.env.PORT || 5000;
 
-mongoose.set("strictQuery", false); //Disabling strict query mode in Mongoose
-mongoose.connect(process.env.MONGO_URL);    //Connecting to the MongoDB database
+mongoose.set("strictQuery", false); // Disabling strict query mode in Mongoose
+mongoose.connect(process.env.MONGO_URL); // Connecting to the MongoDB database
 
-//Defining global interface for Express User
+// Defining global interface for Express User
 declare global {
     namespace Express {
         export interface User extends IUser{}
     }
 }
 
-//Parse the request body as JSON
+// Parse the request body as JSON
 app.use(express.json());
 
-//Configuring express session by setting the secret for the session, preventing the saving of uninitialized and unchanged sessions
+// Configuring express session by setting the secret for the session, preventing the saving of uninitialized and unchanged sessions
 app.use(session({
     secret:'chiave',
     saveUninitialized: false,
     resave: false,
 }));
 
-//Initialize passport and enabling passport session
+// Initialize passport and enabling passport session
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Mounting authentication routes
+// Mounting authentication routes
 app.use('/api', auth());
-//Mounting user routes
+// Mounting user routes
 app.use('/api/user', user());
-//Mounting order routes for waiters
+// Mounting order routes for waiters
 app.use('/api/order', order());
-//Mounting table routes for waiters
+// Mounting table routes for waiters
 app.use('/api/table', table());
-//Mounting menu routes
+// Mounting menu routes
 app.use('/api/menu', menu());
-//Mounting food queue routes for cooks
+// Mounting food queue routes for cooks
 app.use('/api/foodQueue', foodQueue());
-//Mounting drink queue routes for bartenders
+// Mounting drink queue routes for bartenders
 app.use('/api/drinkQueue', drinkQueue());
+// Mounting receipt routes
+app.use('/api/receipt', receipt());
 
-//Starting the server and listening on the specific port
+// Starting the server and listening on the specific port
 app.listen(PORT, () => {
     console.log("Server listening in http://localhost:"+PORT);
 })

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
 // Create a new mongoose schema for tables
 const TablesSchema = new mongoose.Schema({
@@ -12,7 +12,7 @@ const TablesSchema = new mongoose.Schema({
             return this.customers <= this.seats;
         }
     }}
-})
+});
 
 // Create a new mongoose model based on the schema and export it
 const Tables = mongoose.model("Tables", TablesSchema);

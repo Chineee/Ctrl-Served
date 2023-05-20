@@ -20,6 +20,7 @@ export default (): Router => {
     //GET endpoint to retrieve all orders based on the query parameters passed
     app.get('/', isLogged, hasRole("Waiter"), async (req, res) => {
         try {
+            //example get by tablenumber
             const orders = await Order.find(req.query);
             return res.status(200).send(orders);
         } catch (err) {
@@ -38,6 +39,7 @@ export default (): Router => {
     });
 
     //PUT endpoint to create a new order
+    //TODO controllare che il tavolo sia occupato oppure sti grandissimi cazzi(?)
     app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
         // Validate the input data using the defined schema
         const {error} = OrderSchemaValidation.validate(req.body);
@@ -59,16 +61,16 @@ export default (): Router => {
                     tableNumber: req.body.tableNumber,
                     waiterId: req.user._id,
                     dish: key,
-                    price: dish.dishPrice,
-                    ready: false,
+                    price: dish.price,
                     type: req.body.type,
-                    orderNumber: orderNumber
+                    orderNumber: orderNumber,
+                    ready: false
                 });
 
                 const added = new FoodQueue({
                     order: order._id,
                     dish: key,
-                    productionTime: dish.dishProductionTime,
+                    productionTime: dish.productionTime,
                     begin: false,
                     end: false,
                     orderNumber: orderNumber
@@ -113,7 +115,7 @@ export default (): Router => {
 
 
         if(req.body.new_dish !== null && id1 === id2){
-            const price = (await Menu.findById(req.body.new_dish)).dishPrice
+            const price = (await Menu.findById(req.body.new_dish)).price
             order.dish = req.body.new_dish;
             order.price = price;
         }

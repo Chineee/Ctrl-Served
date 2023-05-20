@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 import {IMenu} from "./Menus";
 
 export interface IDrinkQueue {
@@ -9,7 +9,7 @@ export interface IDrinkQueue {
     end: boolean, // If the drink's preparation has ended as a boolean
     orderNumber: number, // Order number as a number
     makerId: string, // ID of the bartender who made the drink
-}
+};
 
 // Create a new mongoose model based on the schema and export it
 const DrinkQueueSchema = new mongoose.Schema({

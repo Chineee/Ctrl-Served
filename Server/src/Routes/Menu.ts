@@ -27,7 +27,7 @@ export default (): Router => {
             price: req.body.price,
             productionTime: req.body.productionTime,
             type: req.body.type
-        })
+        });
 
         // Save the new menu dish in the database
         try{

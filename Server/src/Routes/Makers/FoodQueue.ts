@@ -1,8 +1,10 @@
 import {Router} from "express";
-import {hasRole, isLogged} from "./Auth";
+import {hasRole, isLogged} from "../Auth";
 import Joi from "joi";
-import FoodQueue from "../models/FoodQueue";
-import Orders from "../models/Orders";
+import FoodQueue from "../../models/FoodQueue";
+import Orders from "../../models/Orders";
+import User from "../../models/User";
+import Users from "../../models/User";
 
 // Define a schema for food queue input validation using Joi
 export const FoodQueueSchemaValidation = Joi.object().keys({
@@ -51,9 +53,9 @@ export default (): Router => {
             const order = await Orders.findById(food.order);
             order.ready = true;
             await order.save();
-            //TODO controlla se tutti i piatti di un ordine sono finiti
             const completeOrder = await Orders.find({orderNumber: food.orderNumber, ready: false})
-            console.log(completeOrder);
+            //todo pensa a qualcosa di più bello
+            // const completeOrder = await FoodQueue.find({orderNumber: food.orderNumber, end:false});
             if (completeOrder.length === 0) {
                 //todo notify waiter tutto finito
                 console.log("TUTTO FINITOOOOOOOOOOOOOO")
@@ -62,7 +64,8 @@ export default (): Router => {
 
         // Save the changes to the food in the queue in the database
         try{
-            await food.save()
+            await food.save();
+            await Users.findOneAndUpdate({email: req.user.email}, {$inc: {counter: 1}});
             return res.status(200).send("Food modified correctly");
         } catch (err) {
             return res.status(400).send(err);

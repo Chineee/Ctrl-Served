@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-import bcrypt from "bcrypt"
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 export interface IUser {
     readonly _id: mongoose.Schema.Types.ObjectId; // ID of the user as a string
@@ -8,8 +8,9 @@ export interface IUser {
     email: string; // Email of the user as a string
     role: 'Cashier' | 'Waiter' | 'Cook'| 'Bartender' | 'Admin'; // Role of the user as a string, limited to specific options
     password: string; // Password of the user as a string
+    counter: number,
     verifyPassword: (plainPassword: string) => Promise<boolean>; // Method to verify the user's password
-}
+};
 
 // Create a new mongoose schema for users
 const UsersSchema =  new mongoose.Schema(
@@ -18,6 +19,8 @@ const UsersSchema =  new mongoose.Schema(
         surname: {type: String, required: true},
         email: {type: String, required: true},
         password: {type: String, required: true},
+        //todo gestire count
+        counter: {type: Number},
         role: {type: String, enum: ['Cashier', 'Waiter', 'Cook', 'Bartender', 'Admin'], required: true }
     },
     {
