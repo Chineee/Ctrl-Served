@@ -70,7 +70,7 @@ export default () : Router => {
     });
 
     app.get('/', isLogged, hasRole("Cashier"), async (req, res) => {
-        const receipts = await Receipts.find(req.query);
+        const receipts = await Receipts.find(req.query).populate("dishes");
         return res.status(200).send(receipts);
     });
 
