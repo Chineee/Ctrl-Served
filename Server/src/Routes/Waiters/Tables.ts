@@ -2,6 +2,7 @@ import {Router} from "express";
 import {hasRole, isLogged} from "../Auth";
 import Joi from "joi";
 import Tables from "../../models/Tables";
+import Orders from "../../models/Orders";
 
 // Define a schema for table input validation using Joi
 export const TableSchemaValidation = Joi.object().keys({
@@ -13,8 +14,8 @@ export const TableSchemaValidation = Joi.object().keys({
 export default (): Router => {
     const app = Router();
 
-    // PUT endpoint to add a new table
-    app.put('/', isLogged, hasRole('Admin'), async (req, res) =>{
+    // POST endpoint to add a new table
+    app.post('/', isLogged, hasRole('Admin'), async (req, res) =>{
         // Validate the input data using the defined schema
         const {error} = TableSchemaValidation.validate(req.body);
         if (error) return res.status(400).send("Invalid input");
@@ -37,8 +38,8 @@ export default (): Router => {
         }
     });
 
-    // POST endpoint to modify an existing table
-    app.post("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
+    // PUT endpoint to modify an existing table
+    app.put("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const table = await Tables.findOne({tableNumber: req.params.id});
         if (table === null) return res.status(400).send("Table doesn't exist");
 
@@ -67,14 +68,21 @@ export default (): Router => {
     });
 
     // GET endpoint to retrieve tables based on the query parameters passed
-    app.get("/", isLogged, hasRole('Waiter'), async (req, res) => {
+    app.get("/", isLogged, hasRole('Waiter', "Cashier"), async (req, res) => {
         try{
-            const tables = await Tables.find(req.query);
+            //AV QUERY: occupied free or not free
+            const query = {occupied: req.query.occupied}
+            const tables = await Tables.find(query).populate("waiterId", "-password -__v");
             return res.status(200).send(tables);
         } catch (err) {
             return res.status(400).send(err);
         }
     });
+
+    app.get('/:id/orders', isLogged, hasRole("Cashier"), async (req, res) => {
+        const orders = await Orders.find({tableNumber: req.params.id, orderNumber: {$gt: -1}}).populate("dish").populate("waiterId", "-password -__v")
+        return res.status(200).send(orders);
+    })
 
     // GET endpoint to retrieve a table by its ID
     app.get("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
@@ -95,11 +103,10 @@ export default (): Router => {
 
         try{
             await table.deleteOne();
+            return res.status(200).send("Table deleted successfully");
         } catch (err) {
-            return res.status(400).send("Something went wrong");
+            return res.status(400).send(err);
         }
-
-        return res.status(200).send("Table deleted successfully");
     });
 
     return app;

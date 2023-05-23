@@ -2,6 +2,7 @@ import {Router} from "express";
 import User from "../models/User";
 import {isLogged, hasRole} from "./Auth";
 import {Types} from "mongoose";
+import waiters from "./Waiters/Waiter"
 
 // Function to retrieve a user by ID or email
 export async function getUser(id) {
@@ -9,10 +10,10 @@ export async function getUser(id) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Check if the ID is a valid MongoDB object ID and if it is, find the user by ID
-    if (Types.ObjectId.isValid(id)) return User.findById(id);
+    if (Types.ObjectId.isValid(id)) return User.findById(id, "-password");
 
     // Check if the ID is a valid email and if it is, find the user by the email
-    else if (emailRegex.test(id)) return User.findOne({email: id});
+    else if (emailRegex.test(id)) return User.findOne({email: id}, "-password");
 
     return null;
 }
@@ -21,8 +22,15 @@ export async function getUser(id) {
 export default (): Router => {
     const app = Router();
 
+    //TODO /users/waiter/(:id)/tables ---> tutti i tavoli gestiti da un cameriere in questo momento
+    //TODO /users/waiter/orders --> tutti gli ordini che stanno gestendo ora (maybe filtrarli per ready=false?)
+    //TODO /users/cook/foods ---> tutti i piatti fatti da un cuoco ora/che ha iniziato a fare
+    //todo /users/bartenders/drinks --> tuttti i drinks fatti dal bartender ora/che ha iniziato a fare
+    //TODO IDEA PER GLI ORDINI: QUANDO FINISCONO INVECE DI ELIMINARLI SETTARE ORDER NUMBER A -1
+
+
     // GET endpoint to retrieve a user by ID or email
-    app.get('/:id', isLogged, hasRole('Admin'), async (req, res) => {
+    app.get('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
         try {
             const user = await getUser(req.params.id);
             return res.status(200).send(user);
@@ -32,7 +40,8 @@ export default (): Router => {
     });
 
     // GET endpoint to retrieve users based on the query parameters passed
-    app.get('/', isLogged, hasRole('Admin'), async (req, res) => {
+    //todo is better to do /api/users/role or /api/users?role=...??
+    app.get('/', isLogged, hasRole('Cashier'), async (req, res) => {
         try{
             // Retrieve users from the database excluding their passwords
             const users = await User.find(req.query, '-password');
@@ -42,8 +51,8 @@ export default (): Router => {
         }
     });
 
-    // POST endpoint to modify user's data
-    app.post('/:id', isLogged, async (req, res) => {
+    // PUT endpoint to modify user's data
+    app.put('/:id', isLogged, async (req, res) => {
         const user = await getUser(req.params.id);
         if (user === null) return res.status(400).send("User doesn't exist");
         else if (user.email !== req.user.email && req.user.role !== 'Admin') return res.status(400).send("You do not have permission");
@@ -76,6 +85,8 @@ export default (): Router => {
             return res.status(400).send(err)
         }
     });
+
+    app.use('/waiters', waiters());
 
     return app;
 }

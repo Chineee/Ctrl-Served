@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {hasRole, isLogged} from "../Auth";
 import Joi from "joi";
-import FoodQueue from "../../models/FoodQueue";
+import {FoodQueue} from "../../models/Queue";
 import Orders from "../../models/Orders";
 import User from "../../models/User";
 import Users from "../../models/User";
@@ -37,8 +37,8 @@ export default (): Router => {
         }
     });
 
-    // POST endpoint to modify an existing food in queue
-    app.post("/:id", isLogged, hasRole('Cook'), async (req, res) => {
+    // put endpoint to modify an existing food in queue
+    app.put("/:id", isLogged, hasRole('Cook'), async (req, res) => {
         const food = await FoodQueue.findById(req.params.id);
         if(food === null) return res.status(400).send("Food in queue doesn't exist");
 

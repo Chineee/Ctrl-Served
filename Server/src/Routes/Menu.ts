@@ -15,8 +15,8 @@ export const MenuSchemaValidation = Joi.object().keys({
 export default (): Router => {
     const app = Router();
 
-    // PUT endpoint to add a new menu dish or drink
-    app.put('/', isLogged, hasRole('Admin'), async (req, res) => {
+    // POST endpoint to add a new menu dish or drink
+    app.post('/', isLogged, hasRole('Admin'), async (req, res) => {
         // Validate the input data using the defined schema
         const {error} = MenuSchemaValidation.validate(req.body);
         if (error) return res.status(400).send(error);
@@ -38,8 +38,8 @@ export default (): Router => {
         }
     });
 
-    // POST endpoint to modify an existing menu dish
-    app.post("/:id", isLogged, hasRole('Admin'), async (req, res) => {
+    // PUT endpoint to modify an existing menu dish
+    app.put("/:id", isLogged, hasRole('Admin'), async (req, res) => {
         const menuDish = await Menu.findById(req.params.id);
         if (menuDish === null) return res.status(400).send("Menu dish doesn't exist");
 

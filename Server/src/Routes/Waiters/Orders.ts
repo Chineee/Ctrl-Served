@@ -3,8 +3,8 @@ import {hasRole, isLogged} from "../Auth";
 import Order from "../../models/Orders"
 import Joi from "joi";
 import Menu from "../../models/Menus";
-import FoodQueue from "../../models/FoodQueue";
-import DrinkQueue from "../../models/DrinkQueue";
+import {FoodQueue, DrinkQueue} from "../../models/Queue";
+import client from "../../redis-config"
 
 //Define a schema for order input validation using Joi
 export const OrderSchemaValidation = Joi.object().keys({
@@ -21,6 +21,7 @@ export default (): Router => {
     app.get('/', isLogged, hasRole("Waiter"), async (req, res) => {
         try {
             //example get by tablenumber
+            //todo add {orderNumber: {$gt: -1}} to avoid order done, maybe add a filter ?deleted=true to remove this GT
             const orders = await Order.find(req.query);
             return res.status(200).send(orders);
         } catch (err) {
@@ -28,7 +29,7 @@ export default (): Router => {
         }
     });
 
-    //GET endpoint to retrieve all orders based on the query parameters passed
+    //GET endpoint to retrieve one order based on the parameters passed
     app.get('/:id', isLogged, hasRole("Waiter"), async (req, res) => {
         try {
             const order = await Order.findById(req.params.id);
@@ -38,9 +39,9 @@ export default (): Router => {
         }
     });
 
-    //PUT endpoint to create a new order
+    // POST endpoint to create a new order
     //TODO controllare che il tavolo sia occupato oppure sti grandissimi cazzi(?)
-    app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
+    app.post('/', isLogged, hasRole('Waiter'), async (req, res) => {
         // Validate the input data using the defined schema
         const {error} = OrderSchemaValidation.validate(req.body);
         if (error) return res.status(400).send("Invalid input");
@@ -51,7 +52,11 @@ export default (): Router => {
 
         //TODO usa una variabile globale per evitare due ordini con lo stesso numero
         // Generate a unique order number
-        const orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1 || 1;
+        // const orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1 || 1;
+        
+        //todo se il redis crasha, il counter si resetta(??????)
+        
+        const orderNumber = await client.incr("orderNumber");
 
         // Iterate through the dish dictionary and create order and queue objects
         for (const key in dishDict) {
@@ -67,16 +72,18 @@ export default (): Router => {
                     ready: false
                 });
 
-                const added = new FoodQueue({
+                //todo fix this error, should it be new foodqueue for food and new drinkqueue for drinks?
+                const added = {
                     order: order._id,
                     dish: key,
                     productionTime: dish.productionTime,
                     begin: false,
                     end: false,
                     orderNumber: orderNumber
-                })
+                }
+                if (req.body.type === "Foods") queue.push(new FoodQueue(added));
+                else queue.push(new DrinkQueue(added));
                 allOrders.push(order);
-                queue.push(added)
             }
         }
 
@@ -94,8 +101,8 @@ export default (): Router => {
         }
     });
 
-    //POST endpoint to update an existing order
-    app.post("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
+    // PUT endpoint to update an existing order
+    app.put("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const order = await Order.findById(req.params.id);
         if (order === null) return res.status(400).send("Order doesn't exist");
 
@@ -129,129 +136,29 @@ export default (): Router => {
         }
     });
 
+    app.delete('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
+        const order = await Order.findById(req.params.id);
+        if(order === null) return res.status(400).send("Order doesn't exist");
+
+        try{
+            await order.deleteOne();
+            return res.status(400).send("Order successfully deleted")
+        } catch (err) {
+            return res.status(400).send(err);
+        }
+    });
+
+    app.delete('/', isLogged, hasRole("Cashier"), async (req, res) => {
+        //WARNING USE IT WITH REQ.QUERY TO DELETE ORDER NUMBER SPECIFICO
+        try {
+            await Order.deleteMany(req.query);
+            return res.status(200).send("Orders deletes")
+        } catch (err) {
+            return res.status(400).send(err);
+        }
+    });
+
+
+
     return app;
 }
-
-// app.get('/addFood', async (req, res) => {
-//     const dish = new Menu();
-//
-//     const menu = [
-//         {
-//             dishPrice: 8,
-//             dishName:"Spaghetti",
-//             dishProductionTime: 22,
-//             dishType: "Food"
-//         },
-//         {
-//             dishPrice: 45,
-//             dishName: "Pizza",
-//             dishProductionTime: 15,
-//             dishType: "Food"
-//         },
-//         {
-//           dishPrice: 5,
-//           dishName: "Manzo funghi e bamboo",
-//           dishProductionTime: 17,
-//           dishType: "Food"
-//         },
-//         {
-//           dishPrice: 100,
-//           dishName: "Aragosta con sashimi",
-//           dishProductionTime: 20,
-//           dishType: "Food"
-//         },
-//         {
-//             dishPrice: 13,
-//             dishName:"Cosmopolitan",
-//             dishProductionTime: 4,
-//             dishType:"Drink"
-//         },
-//         {
-//             dishPrice: 22,
-//             dishName:"Sex on the beach",
-//             dishProductionTime: 1,
-//             dishType:"Drink"
-//         },
-//         {
-//             dishPrice: 10,
-//             dishName:"Gin tonic",
-//             dishProductionTime: 3,
-//             dishType:"Drink"
-//         },
-//         {
-//             dishPrice: 14,
-//             dishName:"Cuba Libre",
-//             dishProductionTime: 6,
-//             dishType:"Drink"
-//         },
-//         {
-//             dishPrice: 2,
-//             dishName: "Coca cola",
-//             dishProductionTime: 1,
-//             dishType:"Drink"
-//         },
-//         {
-//             dishPrice: 4,
-//             dishName:"Fuze the rosa e pesca",
-//             dishProductionTime: 1,
-//             dishType:"Drink"
-//         },
-//         {
-//             dishPrice: 4,
-//             dishName:"Fuze the limone e lime",
-//             dishProductionTime: 1,
-//             dishType:"Drink"
-//         },
-//     ]
-//
-//     for (let i = 0; i < menu.length; i++) {
-//         const add = new Menu(menu[i]);
-//         await add.save();
-//     }
-//
-//     return res.send("k")
-// })
-
-//QUESTO ANDAVA NELLA PUT DI ORDINE
-
-
-// const order = new Order({
-//     tableNumber: req.body.tableNumber,
-//     waiterId: req.user._id,
-//     dishDict: req.body.foodDict,
-//     price: price,
-//     readyCount: 0,
-//     type: req.body.type
-// });
-//
-// try {
-//     await order.save();
-// } catch(err) {
-//     return res.status(400).send(err);
-// }
-//
-// // Metti i cibi nella food queue
-// const queue = []
-// for(let key in dishDict) {
-//     let addQueue;
-//     if (order.type === 'Foods') {
-//         addQueue = new FoodQueue();
-//         addQueue.position = (await FoodQueue.find()).length + 1;
-//     }
-//     else {
-//         addQueue = new DrinkQueue();
-//         addQueue.position = (await DrinkQueue.find()).length + 1;
-//     }
-//
-//     addQueue.order = order._id;
-//     addQueue.dish = key;
-//     addQueue.productionTime = (await Menu.findById(key)).dishProductionTime;
-//     addQueue.begin = false;
-//     addQueue.end = false;
-//
-//     try {
-//         await addQueue.save();
-//     } catch (err) {
-//         return res.status(400).send("error");
-//     }
-// }

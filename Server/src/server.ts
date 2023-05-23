@@ -12,7 +12,6 @@ import menu from "./Routes/Menu"
 import foodQueue from "./Routes/Makers/FoodQueue"
 import drinkQueue from "./Routes/Makers/DrinkQueue"
 import receipt from "./Routes/Cashier/Receipt"
-
 // Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
 
@@ -46,22 +45,24 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+//todo usa la redis cash per fare il refreshToken + accessToken
+
 // Mounting authentication routes
-app.use('/api', auth());
+app.use('/api/v1', auth());
 // Mounting user routes
-app.use('/api/user', user());
+app.use('/api/v1/users', user());
 // Mounting order routes for waiters
-app.use('/api/order', order());
+app.use('/api/v1/orders', order());
 // Mounting table routes for waiters
-app.use('/api/table', table());
+app.use('/api/v1/tables', table());
 // Mounting menu routes
-app.use('/api/menu', menu());
+app.use('/api/v1/menu', menu());
 // Mounting food queue routes for cooks
-app.use('/api/foodQueue', foodQueue());
+app.use('/api/v1/foodQueue', foodQueue());
 // Mounting drink queue routes for bartenders
-app.use('/api/drinkQueue', drinkQueue());
+app.use('/api/v1/drinkQueue', drinkQueue());
 // Mounting receipt routes
-app.use('/api/receipt', receipt());
+app.use('/api/v1/receipts', receipt());
 
 // Starting the server and listening on the specific port
 app.listen(PORT, () => {

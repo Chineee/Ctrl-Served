@@ -15,7 +15,7 @@ export default () : Router => {
     const app = Router();
 
     // PUT endpoint to add a new receipt
-    app.put('/', isLogged, hasRole("Cashier"), async (req, res) => {
+    app.post('/', isLogged, hasRole("Cashier"), async (req, res) => {
         // Validate the input data using the defined schema
         const {error} = ReceiptSchemaValidation.validate(req.body);
         if (error) return res.status(400).send(error);

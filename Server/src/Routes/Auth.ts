@@ -61,8 +61,8 @@ export const isLogged = async (req, res, next) => {
 export default (): Router  => {
     const app = Router();
 
-    // PUT endpoint to add a new user
-    app.put('/user', isLogged, hasRole('Admin'), async (req, res) => {
+    // POST endpoint to add a new user
+    app.post('/user', isLogged, hasRole('Admin'), async (req, res) => {
 
         // Validate the input data using the defined schema
         const {error} = UserSchemaValidation.validate(req.body);
@@ -90,28 +90,47 @@ export default (): Router  => {
         }
     });
 
+    app.get('/token', async (req, res) => {
+        const token = req.header("refresh-token");
+        let accessToken;
+        try {
+            const decoded = jwt.verify(token, process.env.SECRET_REFRESH_TOKEN);
+
+        } catch(err) {
+            return res.status(400).send(err);
+        }
+        return res.status(200).send(accessToken);
+    });
+
     // GET endpoint to login a user
     app.get('/login', alreadyLogged, passport.authenticate('basic', {session:false}), async (req, res) => {
-        console.log("entro")
         //Create a token containing the user data
-        var tokendata = {
+        const tokenData = {
             name: req.user.name,
             surname: req.user.surname,
             email: req.user.email,
-            role: req.user.role
+            role: req.user.role,
+            refreshToken: false
         };
 
+        const refreshTokenData = structuredClone(tokenData);
+        refreshTokenData.refreshToken = false;
+
+        //todo sposta expires in da 8h a 10min e chiedi al prof se va bene farlo così per controllare se è un refresh token
         // Sign the JWT token with a secret key and set it to expire in 8 hours
-        const token_signed = jwt.sign(tokendata, process.env.SECRET_TOKEN, { expiresIn: '8h' } );
+        const accessToken = jwt.sign(tokenData, process.env.SECRET_TOKEN, { expiresIn: '8h' } );
+        const refreshToken = jwt.sign(refreshTokenData, process.env.SECRET_REFRESH_TOKEN, {expiresIn: '7h'})
 
 
         //TODO localStorage.setItem('jwtToken', token_signed); save the token in the client-side local storage --> VA FATTO NEL FRONT END
 
         // Set the token as a response header
-        return res.header('auth-token', token_signed).send(token_signed);
+        return res.status(200).send({access_token: accessToken, refresh_token: refreshToken});
 
         // return res.status(200).json({ error: false, errormessage: "", token: token_signed });
     });
+
+
 
     return app;
 }

@@ -46,7 +46,7 @@ async function insertAll() {
             "surname" :"cameriere",
             "email": "cameriere@gmail.com",
             "password": await getPassword("cameriere"),
-            "role":"Bartender"
+            "role":"Waiter"
         }),
 
     ]);
@@ -202,4 +202,4 @@ async function insertAll() {
     ])
 }
 
-insertAll();
+insertAll().then(() => console.log("All items added"))
