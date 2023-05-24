@@ -8,9 +8,9 @@ passport.use(new BasicStrategy(async (email, password, done) => {
     const currentUser = await User.findOne({email: email});
     //If no user is found or the user's password is incorrect, return an error
     if(!currentUser || !await currentUser.verifyPassword(password)){
-        return done({errorMessage: "Incorrect email or password"}, false);
+        done(false);
     }
-    done(null, currentUser);
+    else done(null, currentUser);
 }));
 
 //Serialize the user object into the session

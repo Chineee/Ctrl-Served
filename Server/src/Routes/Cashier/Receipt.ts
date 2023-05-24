@@ -59,7 +59,7 @@ export default () : Router => {
 
         try {
             await receipt.save();
-            await Orders.deleteMany({tableNumber: req.body.tableNumber});
+            // await Orders.deleteMany({tableNumber: req.body.tableNumber});
             //TODO SALVA CHE IL CAMERIERE HA SALVATO TOT ORDINI
             await Tables.findOneAndUpdate({tableNumber: req.body.tableNumber}, {occupied:false, customers:0, waiterId: null})
             //todo notify waiter che il dispositivo ha changato tavolo free

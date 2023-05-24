@@ -71,7 +71,7 @@ export default (): Router => {
     app.get("/", isLogged, hasRole('Waiter', "Cashier"), async (req, res) => {
         try{
             //AV QUERY: occupied free or not free
-            const query = {occupied: req.query.occupied}
+            const query = req.query.occupied ? {occupied: req.query.occupied} : {};
             const tables = await Tables.find(query).populate("waiterId", "-password -__v");
             return res.status(200).send(tables);
         } catch (err) {

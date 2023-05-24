@@ -53,6 +53,7 @@ export const isLogged = async (req, res, next) => {
         next();
     } catch(err) {
         console.log(err);
+        console.log(token);
         return res.status(401).send("You must be logged");
     }
 }
@@ -62,7 +63,7 @@ export default (): Router  => {
     const app = Router();
 
     // POST endpoint to add a new user
-    app.post('/user', isLogged, hasRole('Admin'), async (req, res) => {
+    app.post('/users', isLogged, hasRole('Admin'), async (req, res) => {
 
         // Validate the input data using the defined schema
         const {error} = UserSchemaValidation.validate(req.body);
@@ -84,9 +85,9 @@ export default (): Router  => {
         // Save the new user in the database
         try {
             await user.save();
-            res.send("User correctly added to the database");
+            return res.status(200).send({status: 200, error: false, message: "User correctly added to the database"});
         } catch(err) {
-            res.status(400).send(err);
+            return res.status(400).send(err);
         }
     });
 

@@ -18,6 +18,8 @@ services:
     volumes:
       - /app/node_modules
       - ./Client:/app
+    depends_on:
+      - server
   server:
     restart: always
     build: ./Server
@@ -27,6 +29,9 @@ services:
       - ./Server:/app
       - /app/node_modules
       - /app/build
+    depends_on:
+      - mongo
+      - redis
   mongo:
     restart: always
     image: mongo:latest

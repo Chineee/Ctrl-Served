@@ -1,6 +1,6 @@
 body {
   display: flex;
-  flex-direction:column; 
+  flex-direction:column;
   justify-content:center;
   margin-bottom: auto;
   margin-top: auto;
@@ -16,6 +16,7 @@ body {
 
 h1 {
   text-align: center;
+  color: #f3a231;
 }
 
 .form-group {

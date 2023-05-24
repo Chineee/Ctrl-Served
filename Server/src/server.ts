@@ -12,6 +12,9 @@ import menu from "./Routes/Menu"
 import foodQueue from "./Routes/Makers/FoodQueue"
 import drinkQueue from "./Routes/Makers/DrinkQueue"
 import receipt from "./Routes/Cashier/Receipt"
+import cors from "cors";
+import {Server} from "socket.io"
+import * as http from "http"
 // Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
 
@@ -32,6 +35,9 @@ declare global {
 }
 
 // Parse the request body as JSON
+app.use(cors({
+    origin: 'http://localhost:4200'
+}))
 app.use(express.json());
 
 // Configuring express session by setting the secret for the session, preventing the saving of uninitialized and unchanged sessions
@@ -65,6 +71,18 @@ app.use('/api/v1/drinkQueue', drinkQueue());
 app.use('/api/v1/receipts', receipt());
 
 // Starting the server and listening on the specific port
-app.listen(PORT, () => {
+
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: 'http://localhost:4200'
+    }
+});
+
+io.on('connection', (client) => {
+    console.log('Socket.io connected (Pippo)')
+})
+
+server.listen(PORT, () => {
     console.log("Server listening in http://localhost:"+PORT);
 })

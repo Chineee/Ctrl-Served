@@ -10,7 +10,7 @@ let client;
         }
     });
 
-    client.on("connect", () => console.log("Ok"))
+    client.on("connect", () => console.log("Redis connected"))
     client.on("error", (err) => console.log(err))
     await client.connect();
 })();

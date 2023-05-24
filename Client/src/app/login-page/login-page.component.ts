@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {UserHttpService} from "../user-http.service";
+import {UserHttpService} from "../Services/user-http.service";
 import {HttpHeaders} from "@angular/common/http";
 
 @Component({
@@ -10,9 +10,15 @@ import {HttpHeaders} from "@angular/common/http";
 })
 export class LoginPageComponent implements OnInit {
 
-  constructor(private us: UserHttpService, private router: Router) {}
+  public errorMessage = undefined;
+  constructor(private us: UserHttpService, private router: Router, private elementRef : ElementRef) {
+  }
 
   ngOnInit(): void {
+    this.goToPageRole();
+  }
+
+  goToPageRole() {
     if (this.us.getToken() !== '') {
       const role = this.us.getRole();
       switch(role) {
@@ -35,15 +41,22 @@ export class LoginPageComponent implements OnInit {
     }
   }
 
-  login(email: string, password: string, rememberMe: boolean) {
-    this.us.login(email, password, rememberMe).subscribe( (data) => {
-      this.router.navigate(['/test']);
-    }, (err) => {
-      console.log(err);
-    })
 
+  login(email: string, password: string, rememberMe: boolean) {
+    this.us.login(email, password, rememberMe).subscribe({
+      next: (data) => {
+        //this.goToPageRole();
+        this.router.navigate(['/test']);
+      },
+      error: (err) => {
+        this.errorMessage = err.message;
+      }
+    })
   }
 
+  hasRole(...role : string[]) : boolean {
+    return this.us.hasRole(...role)
+  }
   register(name : string, surname : string, email : string, password : string, role : string) {
 
   }

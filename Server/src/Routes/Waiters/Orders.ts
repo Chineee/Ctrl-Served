@@ -54,8 +54,14 @@ export default (): Router => {
         // Generate a unique order number
         // const orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1 || 1;
         
-        //todo se il redis crasha, il counter si resetta(??????)
-        
+        //todo se la redis cache crasha che succede? Il counter si resetta?
+
+        /*let orderNumber;
+        if (!(await client.exist("orderNumber"))) {
+            orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1
+            await client.set("orderNumber", orderNumber);
+        }
+        else*/
         const orderNumber = await client.incr("orderNumber");
 
         // Iterate through the dish dictionary and create order and queue objects

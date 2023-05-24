@@ -5,9 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import {HttpClientModule} from "@angular/common/http";
-import {UserHttpService} from "./user-http.service";
+import {UserHttpService} from "./Services/user-http.service";
 import { TestComponent } from './test/test.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
+import { WaiterPageComponent } from './waiter-page/waiter-page.component';
+import {WaiterHttpService} from "./Services/waiters-http.service";
+import { TableComponentComponent } from './table-component/table-component.component';
+import {TablesHttpService} from "./Services/tables-http.service";
+import {SocketioService} from "./Services/socketio.service";
 
 @NgModule({
   declarations: [
@@ -15,6 +20,8 @@ import { RegisterPageComponent } from './register-page/register-page.component';
     LoginPageComponent,
     TestComponent,
     RegisterPageComponent,
+    WaiterPageComponent,
+    TableComponentComponent,
   ],
   imports: [
     BrowserModule,
@@ -22,7 +29,10 @@ import { RegisterPageComponent } from './register-page/register-page.component';
     HttpClientModule
   ],
   providers: [
-    {provide: UserHttpService, useClass: UserHttpService}
+    {provide: UserHttpService, useClass: UserHttpService},
+    {provide: WaiterHttpService, useClass: WaiterHttpService},
+    {provide: TablesHttpService, useClass: TablesHttpService},
+    {provide: SocketioService, useClass: SocketioService}
   ],
   bootstrap: [AppComponent]
 })

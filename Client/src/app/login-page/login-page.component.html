@@ -1,6 +1,6 @@
 <div class="container">
-  <h1>User Login</h1>
-  <form>
+  <h1>CTRL SERVED</h1>
+
     <div class="form-group">
       <label for="username">Username:</label>
       <input type="text" #usernametxt id="username" name="username" required>
@@ -9,12 +9,19 @@
       <label for="password">Password:</label>
       <input type="password" #passwordtxt id="password" name="password" required>
     </div>
+
     <div class="form-check">
       <label><input type="checkbox" #rememberMe class="form-check-input" id="rememberMe" name="rememberMe"/><span>Remember me</span></label>
     </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      Login error: {{errorMessage}}
+    </div>
+
     <div class="form-group">
       <button type="submit" (click) = "login(usernametxt.value, passwordtxt.value, rememberMe.checked);">Login</button>
     </div>
-  </form>
+
+  <div *ngIf="hasRole('Admin')"> <p> Do you want to create a new user? <a routerLink="/register"> Click here! </a> </p> </div>
 </div>
 
