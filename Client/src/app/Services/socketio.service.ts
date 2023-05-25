@@ -19,7 +19,6 @@ export class SocketioService {
       this.socket.on('broadcast', (m:any) => {
         console.log('Socket.io message received: ' + JSON.stringify(m) );
         observer.next( m );
-
       });
 
       this.socket.on('error', (err:any) => {

@@ -2,5 +2,6 @@ export interface Table {
   tableNumber: number,
   seats: number,
   customers: number,
-  occupied: boolean
+  occupied: boolean,
+  waiterId: string
 }

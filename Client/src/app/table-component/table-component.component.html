@@ -1,1 +1,25 @@
-<p>table-component works!</p>
+<div class="container">
+  <button *ngIf = "this.us.hasRole('Cashier')" (click)="filterTable(TableStatus.OCCUPIED)"> {{ filterTables === TableStatus.OCCUPIED ? 'Show All Tables' : 'Show Occupied Tables'}} </button>
+  <button (click)="filterTable(TableStatus.FREE)"> {{filterTables === TableStatus.FREE ? 'Show All Tables' : "Show Free Tables"}}</button>
+  <button (click)="filterTable(TableStatus.MINE)"> {{ filterTables === TableStatus.MINE ? 'Show All Tables' : 'Show My Tables'}}</button>
+  <div *ngFor="let table of showTables()" class="card">
+      <div class="card-body" (click)="showPopup(table.tableNumber,table.seats)">
+        <h5>Table {{table.tableNumber}}</h5>
+        <p>Number of Seats: {{table.seats}}</p>
+        <p>Number of Customers: {{table.customers}}</p>
+        <p>Occupied: {{table.occupied}}</p>
+      </div>
+  </div>
+  <div *ngIf="popup.showed" class="popup-overlay">
+    <div class="popup-content">
+      <button class="close-button" (click)="closePopup()">X</button>
+      <h3>Table {{popup.tableNumber}}</h3>
+      <h5>Select the number of customers:</h5>
+      <select [(ngModel)]="customers">
+        <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1"> {{i+1}} </option>
+      </select>
+      <button (click)="changeStatus(popup.tableNumber, customers); closePopup()"> Confirm </button>
+    </div>
+  </div>
+</div>
+

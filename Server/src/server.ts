@@ -81,8 +81,13 @@ const io = new Server(server, {
 
 io.on('connection', (client) => {
     console.log('Socket.io connected (Pippo)')
-})
+});
 
 server.listen(PORT, () => {
     console.log("Server listening in http://localhost:"+PORT);
+});
+
+app.get('/', (req, res) => {
+    io.emit("broadcast", "SIUUUUUUUUUUUUUUUUUUUUUUUUM")
+    return res.status(200).send("Ok")
 })

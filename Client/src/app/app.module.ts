@@ -13,6 +13,7 @@ import {WaiterHttpService} from "./Services/waiters-http.service";
 import { TableComponentComponent } from './table-component/table-component.component';
 import {TablesHttpService} from "./Services/tables-http.service";
 import {SocketioService} from "./Services/socketio.service";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import {SocketioService} from "./Services/socketio.service";
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [
     {provide: UserHttpService, useClass: UserHttpService},

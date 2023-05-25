@@ -9,7 +9,7 @@ interface TokenData {
   name:string,
   email: string,
   role: string,
-  id: string
+  _id: string
 }
 
 interface LoginResponse {
@@ -68,6 +68,9 @@ export class UserHttpService {
     return this.http.post(this.url + '/users', body, options);
   }
 
+  getId() {
+    return (jwtdecode(this.token) as TokenData)._id;
+  }
   getToken() {
     return this.token;
   }

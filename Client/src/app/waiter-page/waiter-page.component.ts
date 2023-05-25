@@ -22,7 +22,6 @@ export class WaiterPageComponent implements OnInit{
     if (!this.checkRole()) {
       this.router.navigate(['/test'])
     }else {
-      console.log("test")
       this.getTables();
         this.so.connect().subscribe( (m) => {
           this.getTables();
@@ -31,25 +30,32 @@ export class WaiterPageComponent implements OnInit{
   }
 
   checkRole() {
+    console.log(this.us.getRole())
     return this.us.hasRole("Waiter");
   }
+  showOccupiedTables() {
 
+  }
   getTables() {
-    console.log("ENTROOOOOOOOOOOOOOOO nel buco")
     this.ts.getTables().subscribe({
       next: (data) => {
+        console.log(data)
         this.tables = data
       },
-      error: () => console.log("errore")/*this.logout()*/
+      error: (err) => {
+        this.logout()
+      }
     })
 
+  }
+
+  test(obj:any) {
+    console.log(obj)
   }
 
   logout() {
     this.us.logout();
     this.router.navigate(['/login'])
   }
-
-
 
 }
