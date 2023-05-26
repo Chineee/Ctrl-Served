@@ -25,6 +25,11 @@ export class SocketioService {
         console.log('Socket.io error: ' + err );
         observer.error( err );
       });
+      
+      this.socket.on('table_modified', (m:any) => {
+        console.log("SOCKEETTINO");
+        observer.next(m);
+      })
 
       // When the consumer unsubscribes, clean up data ready for next subscription.
       return {

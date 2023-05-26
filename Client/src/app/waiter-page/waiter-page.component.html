@@ -1,3 +1,9 @@
-<p>waiter-page works!</p>
 <button (click)="logout()">Logout</button>
-<app-table-component (post) = test($event) [tables]="tables"></app-table-component>
+<button (click)="changePage()">{{page === Page.TABLES ? 'Show Orders' : "Show Tables"}}</button>
+<span *ngIf="page === Page.TABLES">
+  <app-table-component (post) = modifyTable($event) [tables]="tables"></app-table-component>
+</span>
+<span *ngIf="page === Page.ORDERS">
+  <app-order-list [tables]="filterWaiterTable()" [orderDishes]="orders"></app-order-list>
+</span>
+

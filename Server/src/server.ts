@@ -13,8 +13,9 @@ import foodQueue from "./Routes/Makers/FoodQueue"
 import drinkQueue from "./Routes/Makers/DrinkQueue"
 import receipt from "./Routes/Cashier/Receipt"
 import cors from "cors";
-import {Server} from "socket.io"
-import * as http from "http"
+import * as http from "http";
+import {setUpSocketio} from "./socketio-config";
+import getIoInstance from "./socketio-config"
 // Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
 
@@ -73,21 +74,15 @@ app.use('/api/v1/receipts', receipt());
 // Starting the server and listening on the specific port
 
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:4200'
-    }
-});
 
-io.on('connection', (client) => {
-    console.log('Socket.io connected (Pippo)')
-});
+setUpSocketio(server);
 
 server.listen(PORT, () => {
     console.log("Server listening in http://localhost:"+PORT);
 });
 
 app.get('/', (req, res) => {
+    const io = getIoInstance();
     io.emit("broadcast", "SIUUUUUUUUUUUUUUUUUUUUUUUUM")
     return res.status(200).send("Ok")
 })

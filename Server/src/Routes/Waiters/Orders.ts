@@ -22,7 +22,7 @@ export default (): Router => {
         try {
             //example get by tablenumber
             //todo add {orderNumber: {$gt: -1}} to avoid order done, maybe add a filter ?deleted=true to remove this GT
-            const orders = await Order.find(req.query);
+            const orders = await Order.find(req.query).populate("dish");
             return res.status(200).send(orders);
         } catch (err) {
             return res.status(400).send(err);

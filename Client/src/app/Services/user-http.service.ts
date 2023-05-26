@@ -71,6 +71,10 @@ export class UserHttpService {
   getId() {
     return (jwtdecode(this.token) as TokenData)._id;
   }
+
+  getEmail() {
+    return (jwtdecode(this.token) as TokenData).email;
+  }
   getToken() {
     return this.token;
   }

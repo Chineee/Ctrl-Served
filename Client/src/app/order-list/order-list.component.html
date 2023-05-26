@@ -1,0 +1,35 @@
+<div class="container">
+  <div *ngFor="let order of showOrdersNumber()" class="card">
+      <div class="card-body">
+        <button (click)="modifyOrder()">Modify order</button>
+        <h5>Table {{order.tableNumber}} </h5>
+        <p>Order:</p>
+        <ul>
+          <li *ngFor="let orderDishes of orderGroup">
+            <span *ngFor="let dish of orderDishes.dishes | keyvalue">
+              {{dish.key}} - Quantity: {{dish.value}}
+            </span>
+          </li>
+        </ul>
+      </div>
+  </div>
+</div>
+
+<div *ngIf="popup.showed" class="popup-overlay">
+  <div class="popup-content">
+    <button class="close-button" (click)="closePopup()">X</button>
+    <h3>Table {{popup.tableNumber}}</h3>
+    <div *ngFor="let selection of popup.selections; let i = index;">
+      <div class="selection-row">
+        <select [(ngModel)]="selection.dish">
+          <option *ngFor="let dish of dishOptions" [value]="dish">{{ dish }}</option>
+        </select>
+        <label for="quantity">Quantity</label>
+        <input type="number" id="quantity" [(ngModel)]="selection.quantity">
+        <button (click)="deleteSelection(i)">Delete</button>
+      </div>
+    </div>
+    <button (click)="addSelection()">+</button>
+    <button (click)="closePopup()"> Confirm </button>
+  </div>
+</div>

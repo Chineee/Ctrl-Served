@@ -14,6 +14,10 @@ import { TableComponentComponent } from './table-component/table-component.compo
 import {TablesHttpService} from "./Services/tables-http.service";
 import {SocketioService} from "./Services/socketio.service";
 import {FormsModule} from "@angular/forms";
+import { MenuListComponent } from './menu-list/menu-list.component';
+import { OrderListComponent } from './order-list/order-list.component';
+import {OrdersHttpService} from "./Services/orders-http.service";
+import {MenusHttpService} from "./Services/menus-http.service";
 
 @NgModule({
   declarations: [
@@ -23,6 +27,8 @@ import {FormsModule} from "@angular/forms";
     RegisterPageComponent,
     WaiterPageComponent,
     TableComponentComponent,
+    MenuListComponent,
+    OrderListComponent,
   ],
   imports: [
     BrowserModule,
@@ -34,7 +40,9 @@ import {FormsModule} from "@angular/forms";
     {provide: UserHttpService, useClass: UserHttpService},
     {provide: WaiterHttpService, useClass: WaiterHttpService},
     {provide: TablesHttpService, useClass: TablesHttpService},
-    {provide: SocketioService, useClass: SocketioService}
+    {provide: SocketioService, useClass: SocketioService},
+    {provide: OrdersHttpService, useClass: OrdersHttpService},
+    {provide: MenusHttpService, useClass: MenusHttpService}
   ],
   bootstrap: [AppComponent]
 })

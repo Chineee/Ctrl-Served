@@ -6,6 +6,13 @@ import {Router} from "@angular/router";
 import {Table} from "../models/Table";
 import {TablesHttpService} from "../Services/tables-http.service";
 import {SocketioService} from "../Services/socketio.service";
+import {Order} from "../models/Order";
+import {OrdersHttpService} from "../Services/orders-http.service";
+
+export enum Page {
+  TABLES,
+  ORDERS
+}
 
 @Component({
   selector: 'app-waiter-page',
@@ -15,24 +22,35 @@ import {SocketioService} from "../Services/socketio.service";
 export class WaiterPageComponent implements OnInit{
 
   public tables : Table[] = []
-  constructor(private ts : TablesHttpService, private us : UserHttpService, private router: Router, private so : SocketioService) {
+  public orders: Order[] = [];
+  public page : Page = Page.TABLES;
+  protected Page = Page;
+  constructor(private ts : TablesHttpService, private us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService) {
   }
 
   ngOnInit() {
-    if (!this.checkRole()) {
+    if (!this.us.hasRole("Waiter")) {
       this.router.navigate(['/test'])
     }else {
-      this.getTables();
+      if (this.page === Page.TABLES) this.getTables();
+      else this.getOrders();
         this.so.connect().subscribe( (m) => {
-          this.getTables();
+          if (this.page === Page.TABLES) this.getTables();
+          else this.getOrders();
         })
     }
   }
 
-  checkRole() {
-    console.log(this.us.getRole())
-    return this.us.hasRole("Waiter");
+  getOrders() {
+    this.os.getWaiterOrders().subscribe({
+      next: (data) => {
+        console.log(data);
+        this.orders = data;
+      },
+      error: (err) => console.log(err)
+    })
   }
+
   showOccupiedTables() {
 
   }
@@ -49,8 +67,12 @@ export class WaiterPageComponent implements OnInit{
 
   }
 
-  test(obj:any) {
-    console.log(obj)
+  modifyTable(obj:any) {
+    // console.log(obj);
+    this.ts.modifyTable(obj.tableNumber, obj.occupied, obj.customers).subscribe({
+      next: () => this.getTables(),
+      error: (error)  => console.log(JSON.stringify(error))
+    })
   }
 
   logout() {
@@ -58,4 +80,12 @@ export class WaiterPageComponent implements OnInit{
     this.router.navigate(['/login'])
   }
 
+  changePage() {
+    if (this.page === Page.ORDERS) this.page = Page.TABLES;
+    else this.page = Page.ORDERS;
+  }
+
+  filterWaiterTable() {
+    return this.tables.filter((table) => table.waiterId.email === this.us.getEmail());
+  }
 }
