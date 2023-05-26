@@ -4,7 +4,6 @@ import Tables from "./models/Tables";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
-mongoose.connect("mongodb://localhost:27018/tawproject");
 
 async function getPassword(password) {
     const salt = await bcrypt.genSalt(10); // Generate a salt for the password hashing
@@ -12,6 +11,7 @@ async function getPassword(password) {
 }
 
 async function insertAll() {
+    await mongoose.connect("mongodb://host.docker.internal:27018/tawproject");
     await User.insertMany([
         new User({
             "name": "admin",
@@ -202,4 +202,7 @@ async function insertAll() {
     ])
 }
 
-insertAll().then(() => console.log("All items added"))
+insertAll().then(() => {
+    console.log("All items added");
+    process.exit();
+})

@@ -40,8 +40,9 @@
   "version": "1.0.0",
   "main": "main.ts",
   "scripts": {
-    "start": "nodemon --legacy-watch build/server.js",
-    "build": "tsc --build"
+    "start": "ts-node ./src/dbFill.ts && nodemon --legacy-watch build/server.js",
+    "build": "tsc --build",
+    "dbfill": "ts-node ./src/dbFill.ts"
   },
   "keywords": [],
   "author": "",
