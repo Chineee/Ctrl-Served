@@ -5,17 +5,10 @@ import { Observable, throwError } from 'rxjs';
 import {UserHttpService} from "./user-http.service";
 import {Table} from "../models/Table";
 
-// interface TokenData {
-//   name:string,
-//   email: string,
-//   role: string,
-//   id: string
-// }
-
 
 @Injectable()
 export class TablesHttpService{
-  private url = 'http://host.docker.internal:5000/api/v1/tables';
+  private url = 'http://localhost:5000/api/v1/tables';
   constructor(private http: HttpClient, private user : UserHttpService) {
   }
 
@@ -31,7 +24,7 @@ export class TablesHttpService{
 
     return this.http.get<Table[]>(this.url, options);
   }
-  
+
   modifyTable(tableNumber: string, occupied: boolean, customers: number) : Observable<any> {
 
     const options = {
@@ -41,12 +34,12 @@ export class TablesHttpService{
         'auth-token': this.user.getToken()
       })
     }
-    
+
     const body = {
       new_occupied: occupied,
       new_customers: customers
     }
-    
+
     return this.http.put(this.url + "/" + tableNumber.toString(), body, options);
   }
 }

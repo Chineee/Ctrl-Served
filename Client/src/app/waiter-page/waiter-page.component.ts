@@ -32,8 +32,8 @@ export class WaiterPageComponent implements OnInit{
     if (!this.us.hasRole("Waiter")) {
       this.router.navigate(['/test'])
     }else {
-      if (this.page === Page.TABLES) this.getTables();
-      else this.getOrders();
+      this.getTables();
+      this.getOrders();
         this.so.connect().subscribe( (m) => {
           if (this.page === Page.TABLES) this.getTables();
           else this.getOrders();
@@ -44,7 +44,6 @@ export class WaiterPageComponent implements OnInit{
   getOrders() {
     this.os.getWaiterOrders().subscribe({
       next: (data) => {
-        console.log(data);
         this.orders = data;
       },
       error: (err) => console.log(err)
@@ -86,6 +85,6 @@ export class WaiterPageComponent implements OnInit{
   }
 
   filterWaiterTable() {
-    return this.tables.filter((table) => table.waiterId.email === this.us.getEmail());
+    return this.tables.filter((table) => table.waiterId?.email === this.us.getEmail());
   }
 }

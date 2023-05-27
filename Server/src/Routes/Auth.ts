@@ -107,6 +107,7 @@ export default (): Router  => {
     app.get('/login', alreadyLogged, passport.authenticate('basic', {session:false}), async (req, res) => {
         //Create a token containing the user data
         const tokenData = {
+            _id: req.user._id,
             name: req.user.name,
             surname: req.user.surname,
             email: req.user.email,

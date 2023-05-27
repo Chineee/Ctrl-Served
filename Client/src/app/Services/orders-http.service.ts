@@ -16,18 +16,27 @@ import {Order} from "../models/Order";
 
 @Injectable()
 export class OrdersHttpService{
-  private url = 'http://host.docker.internal:5000/api/v1/tables';
+  private url = 'http://host.docker.internal:5000/api/v1';
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
-  
+
   getOrders() {
     return this.http.get<Order[]>(this.url);
   }
-  
+
   getWaiterOrders() {
-    const email = this.us.getEmail();
-    
-    return this.http.get<Order[]>(this.url);
+    const options = {
+      headers: new HttpHeaders({
+          'cache-control': 'no-cache',
+          'Content-Type':  'application/json',
+          "auth-token": this.us.getToken()
+        }
+      )
+    }
+
+    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", options).pipe(tap(
+      (data) => console.log("riuscito", data)
+    ));
   }
 
 }

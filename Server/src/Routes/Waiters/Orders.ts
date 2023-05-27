@@ -5,6 +5,7 @@ import Joi from "joi";
 import Menu from "../../models/Menus";
 import {FoodQueue, DrinkQueue} from "../../models/Queue";
 import client from "../../redis-config"
+import getIoInstance from "../../socketio-config";
 
 //Define a schema for order input validation using Joi
 export const OrderSchemaValidation = Joi.object().keys({
@@ -67,29 +68,33 @@ export default (): Router => {
         // Iterate through the dish dictionary and create order and queue objects
         for (const key in dishDict) {
             const dish = await Menu.findById(key);
-            for (let i = 0; i < dishDict[key]; i++) {
-                const order = new Order({
-                    tableNumber: req.body.tableNumber,
-                    waiterId: req.user._id,
-                    dish: key,
-                    price: dish.price,
-                    type: req.body.type,
-                    orderNumber: orderNumber,
-                    ready: false
-                });
+            try {
+                for (let i = 0; i < dishDict[key]; i++) {
+                    const order = new Order({
+                        tableNumber: req.body.tableNumber,
+                        waiterId: req.user._id,
+                        dish: key,
+                        price: dish.price,
+                        type: req.body.type,
+                        orderNumber: orderNumber,
+                        ready: false
+                    });
 
-                //todo fix this error, should it be new foodqueue for food and new drinkqueue for drinks?
-                const added = {
-                    order: order._id,
-                    dish: key,
-                    productionTime: dish.productionTime,
-                    begin: false,
-                    end: false,
-                    orderNumber: orderNumber
+                    //todo fix this error, should it be new foodqueue for food and new drinkqueue for drinks?
+                    const added = {
+                        order: order._id,
+                        dish: key,
+                        productionTime: dish.productionTime,
+                        begin: false,
+                        end: false,
+                        orderNumber: orderNumber
+                    }
+                    if (req.body.type === "Foods") queue.push(new FoodQueue(added));
+                    else queue.push(new DrinkQueue(added));
+                    allOrders.push(order);
                 }
-                if (req.body.type === "Foods") queue.push(new FoodQueue(added));
-                else queue.push(new DrinkQueue(added));
-                allOrders.push(order);
+            } catch(err) {
+                return res.status(400).send(err);
             }
         }
 
@@ -99,7 +104,9 @@ export default (): Router => {
             await Order.insertMany(allOrders);
             if (req.body.type === 'Foods') await FoodQueue.insertMany(queue);
             else await DrinkQueue.insertMany(queue);
-
+            
+            getIoInstance().emit("Order_sent");
+            
             return res.status(200).send("Order sent successfully")
             //TODO notify cook
         } catch(err) {

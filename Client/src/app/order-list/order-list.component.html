@@ -1,21 +1,27 @@
+<button (click)="addOrderPopup()">Add new order</button>
+
 <div class="container">
-  <div *ngFor="let order of showOrdersNumber()" class="card">
-      <div class="card-body">
-        <button (click)="modifyOrder()">Modify order</button>
-        <h5>Table {{order.tableNumber}} </h5>
-        <p>Order:</p>
-        <ul>
-          <li *ngFor="let orderDishes of orderGroup">
-            <span *ngFor="let dish of orderDishes.dishes | keyvalue">
-              {{dish.key}} - Quantity: {{dish.value}}
-            </span>
-          </li>
-        </ul>
+  <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
+      <div class="card-body" (click)="showOrderPopup(order.key)">
+        <button (click)="modifyOrder($event)">Modify order</button>
+        <button *ngIf="isReady(order.key)">Ready</button>
+        <h5>Table {{order.value}} </h5>
+        <p>Order number: {{order.key}} </p>
       </div>
   </div>
 </div>
 
-<div *ngIf="popup.showed" class="popup-overlay">
+<div *ngIf="popup.showed && popup.type === 'INFO'" class="popup-overlay">
+  <div class="popup-content">
+    <button class="close-button" (click)="closePopup()">X</button>
+    <h4>Order {{popup.orderNumber}}:</h4>
+      <div *ngFor="let dish of popup.dishesQuantity | keyvalue">
+        {{dish.key}} - Quantity: {{dish.value}}
+      </div>
+  </div>
+</div>
+
+<div *ngIf="popup.showed && popup.type === 'ADD'" class="popup-overlay">
   <div class="popup-content">
     <button class="close-button" (click)="closePopup()">X</button>
     <h3>Table {{popup.tableNumber}}</h3>

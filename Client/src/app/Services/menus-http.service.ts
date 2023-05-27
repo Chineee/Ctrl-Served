@@ -12,8 +12,13 @@ export class MenusHttpService{
   }
 
   getMenus() : Observable<any>{
+    const options = {
+      headers: new HttpHeaders({
+        'auth-token':this.us.getToken()
+      })
+    }
     //todo options
-    return this.http.get(this.url);
+    return this.http.get(this.url, options);
   }
 
 

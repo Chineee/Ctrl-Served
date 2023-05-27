@@ -29,6 +29,10 @@ export class SocketioService {
       this.socket.on('table_modified', (m:any) => {
         console.log("SOCKEETTINO");
         observer.next(m);
+      });
+      
+      this.socket.on('Order_sent', (m: any) => {
+        observer.next(m);
       })
 
       // When the consumer unsubscribes, clean up data ready for next subscription.

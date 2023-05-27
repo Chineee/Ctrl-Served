@@ -20,7 +20,7 @@ interface LoginResponse {
 @Injectable()
 export class UserHttpService {
 
-  public url : string = 'http://host.docker.internal:5000/api/v1';
+  public url : string = 'http://localhost:5000/api/v1';
   protected token : string = '';
 
   constructor(protected http: HttpClient ) {
@@ -69,7 +69,10 @@ export class UserHttpService {
   }
 
   getId() {
-    return (jwtdecode(this.token) as TokenData)._id;
+    const a = (jwtdecode(this.token) as TokenData);
+    console.log("USER ORA === ");
+    console.log(a);
+    return a._id;
   }
 
   getEmail() {
