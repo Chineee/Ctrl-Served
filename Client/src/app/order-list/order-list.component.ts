@@ -24,7 +24,8 @@ export class OrderListComponent implements OnInit{
   protected orderGroup: any; //all order grouped by their order number associated to their table
   protected dishesQuantity : any = {};
   protected readyOrder : any = {}
-
+  protected selectionDish : string = "";
+  protected selectionQuantity : number = 0;
 
 
   constructor(private os : OrdersHttpService, private us : UserHttpService, private router: Router, private so : SocketioService,
@@ -92,7 +93,7 @@ export class OrderListComponent implements OnInit{
   }
 
   addOrderPopup(){
-    this.popup = {showed: true, type:"ADD"}
+    this.popup = {showed: true, type:"ADD", selections: []}
   }
 
   showOrderPopup(key : any){

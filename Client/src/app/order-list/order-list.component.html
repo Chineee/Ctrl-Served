@@ -25,16 +25,18 @@
   <div class="popup-content">
     <button class="close-button" (click)="closePopup()">X</button>
     <h3>Table {{popup.tableNumber}}</h3>
-    <div *ngFor="let selection of popup.selections; let i = index;">
-      <div class="selection-row">
-        <select [(ngModel)]="selection.dish">
-          <option *ngFor="let dish of dishOptions" [value]="dish">{{ dish }}</option>
-        </select>
-        <label for="quantity">Quantity</label>
-        <input type="number" id="quantity" [(ngModel)]="selection.quantity">
-        <button (click)="deleteSelection(i)">Delete</button>
-      </div>
-    </div>
+          <div *ngFor="let selection of popup.selections; let i = index;">
+        <div class="selection-row">
+          <select [(ngModel)]="selectionDish">
+            <option *ngFor="let dish of dishOptions" [value]="dish">{{dish.name}}</option>
+          </select>
+          <label for="quantity">Quantity</label>
+          <input type="number" id="quantity" [(ngModel)]="selectionQuantity">
+      <div *ngFor="let selection of popup.selections; let i = index;">
+
+          <button (click)="deleteSelection(i)">Delete</button>
+        </div>
+          </div>
     <button (click)="addSelection()">+</button>
     <button (click)="closePopup()"> Confirm </button>
   </div>
