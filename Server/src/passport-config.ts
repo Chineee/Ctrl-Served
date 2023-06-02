@@ -1,6 +1,7 @@
 import passport from "passport";
 import User from "./models/User"
 import {BasicStrategy} from "passport-http";
+import client from "./redis-config";
 
 //Define a new BasicStrategy from passport-http module
 passport.use(new BasicStrategy(async (email, password, done) => {
@@ -8,9 +9,12 @@ passport.use(new BasicStrategy(async (email, password, done) => {
     const currentUser = await User.findOne({email: email});
     //If no user is found or the user's password is incorrect, return an error
     if(!currentUser || !await currentUser.verifyPassword(password)){
-        done(false);
+        done({message:'email o password errati'}, false);
     }
-    else done(null, currentUser);
+    else {
+        await client.set(currentUser.email, "true")
+        done(null, currentUser);
+    }
 }));
 
 //Serialize the user object into the session

@@ -15,6 +15,8 @@ export class SocketioService {
 
     return new Observable( (observer) => {
 
+      //todo settare le connessioni con il socket in base al ruolo che si ha
+
 
       this.socket.on('broadcast', (m:any) => {
         console.log('Socket.io message received: ' + JSON.stringify(m) );
@@ -25,12 +27,11 @@ export class SocketioService {
         console.log('Socket.io error: ' + err );
         observer.error( err );
       });
-      
+
       this.socket.on('table_modified', (m:any) => {
-        console.log("SOCKEETTINO");
         observer.next(m);
       });
-      
+
       this.socket.on('Order_sent', (m: any) => {
         observer.next(m);
       })
@@ -43,6 +44,26 @@ export class SocketioService {
       };
 
     });
+
+  }
+
+  setAdminSocker() {
+
+  }
+
+  setCashierSocker() {
+
+  }
+
+  setWaiterSocket() {
+
+  }
+
+  setCookSocket() {
+
+  }
+
+  setBartenderSocket() {
 
   }
 

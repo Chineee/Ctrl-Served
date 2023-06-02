@@ -3,6 +3,7 @@ import User from "../models/User";
 import {isLogged, hasRole} from "./Auth";
 import {Types} from "mongoose";
 import waiters from "./Waiters/Waiter"
+import client from "../redis-config";
 
 // Function to retrieve a user by ID or email
 export async function getUser(id) {
@@ -64,9 +65,11 @@ export default (): Router => {
         if (req.body.new_role !== undefined && req.user.role === 'Admin') user.role = req.body.new_role;
         if (req.body.new_email !== undefined) user.email = req.body.new_email;
 
+
         // Save the changes to the user in the database
         try{
             await user.save();
+            if (req.body.new_email !== undefined) await client.set(user.email, "false");
             return res.status(200).send("User modified correctly");
         } catch (err) {
             return res.status(400).send(err);
@@ -80,6 +83,7 @@ export default (): Router => {
 
         try{
             await user.deleteOne();
+            await client.set(user.email, "false");
             return res.status(200).send("User deleted successfully");
         } catch (err) {
             return res.status(400).send(err)

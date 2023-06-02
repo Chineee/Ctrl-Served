@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import {IMenu} from "./Menus";
+import {IUser} from "./User";
 
 export interface IQueue {
     readonly _id: mongoose.Schema.Types.ObjectId, // ID of the drink as a string
@@ -8,7 +9,7 @@ export interface IQueue {
     begin: boolean, // If the drink's preparation has started as a boolean
     end: boolean, // If the drink's preparation has ended as a boolean
     orderNumber: number, // Order number as a number
-    makerId: string, // ID of the bartender who made the drink
+    makerId: string | null | IUser, // ID of the bartender who made the drink
 };
 
 // Create a new mongoose schema for the food queue elements
@@ -18,7 +19,7 @@ const QueueSchema = new mongoose.Schema({
     begin: {type: Boolean, required: true},
     end: {type: Boolean, required: true},
     orderNumber: {type: Number, required: true},
-    makerId: {type: String}
+    makerId: {type: mongoose.Schema.Types.Mixed}
 });
 
 // Create a new mongoose model based on the schema and export it

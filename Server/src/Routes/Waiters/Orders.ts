@@ -45,7 +45,7 @@ export default (): Router => {
     app.post('/', isLogged, hasRole('Waiter'), async (req, res) => {
         // Validate the input data using the defined schema
         const {error} = OrderSchemaValidation.validate(req.body);
-        if (error) return res.status(400).send("Invalid input");
+        if (error) return res.status(400).send({status:400, error:true, errorMessage: "invalid input"});
 
         let dishDict = req.body.dishDict;
         const allOrders = [];
@@ -64,7 +64,6 @@ export default (): Router => {
         }
         else*/
         const orderNumber = await client.incr("orderNumber");
-
         // Iterate through the dish dictionary and create order and queue objects
         for (const key in dishDict) {
             const dish = await Menu.findById(key);
@@ -87,7 +86,8 @@ export default (): Router => {
                         productionTime: dish.productionTime,
                         begin: false,
                         end: false,
-                        orderNumber: orderNumber
+                        orderNumber: orderNumber,
+                        makerId: null
                     }
                     if (req.body.type === "Foods") queue.push(new FoodQueue(added));
                     else queue.push(new DrinkQueue(added));
@@ -104,10 +104,11 @@ export default (): Router => {
             await Order.insertMany(allOrders);
             if (req.body.type === 'Foods') await FoodQueue.insertMany(queue);
             else await DrinkQueue.insertMany(queue);
-            
+
+
             getIoInstance().emit("Order_sent");
             
-            return res.status(200).send("Order sent successfully")
+            return res.status(200).send({status:200, error: false, message: "Order sent successfully"})
             //TODO notify cook
         } catch(err) {
             return res.status(400).send(err);
@@ -117,7 +118,7 @@ export default (): Router => {
     // PUT endpoint to update an existing order
     app.put("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const order = await Order.findById(req.params.id);
-        if (order === null) return res.status(400).send("Order doesn't exist");
+        if (order === null) return res.status(400).send({status: 400, error: true, errorMessage: "Order doesn't exist"});
 
         if(req.body.new_tableNumber !== null) order.tableNumber = req.body.new_tableNumber;
 
@@ -127,7 +128,7 @@ export default (): Router => {
         else dishInQueue = await DrinkQueue.find({order: req.params.id});
 
         if(req.body.new_dish !== null){
-            if(dishInQueue.begin) return res.status(400).send("This order is already in the making you cannot modify it");
+            if(dishInQueue.begin) return res.status(400).send({status:400, error: true, errorMessage: "This order is already in the making you cannot modify it"});
         }
 
         const id1 : string = req.user._id.toString();
@@ -143,7 +144,7 @@ export default (): Router => {
         // Save the changes to the order in the database
         try{
             await order.save();
-            return res.status(200).send("Order updated correctly");
+            return res.status(200).send({error: false, status:200, message:"Order updated correctly"});
         }catch (err) {
             return res.status(400).send(err);
         }
@@ -151,11 +152,11 @@ export default (): Router => {
 
     app.delete('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
         const order = await Order.findById(req.params.id);
-        if(order === null) return res.status(400).send("Order doesn't exist");
+        if(order === null) return res.status(400).send({status: 400, error: true, errorMessage: "Order doesn't exist"});
 
         try{
             await order.deleteOne();
-            return res.status(400).send("Order successfully deleted")
+            return res.status(400).send({status:400, error: true, errorMessage: "Order successfully deleted"})
         } catch (err) {
             return res.status(400).send(err);
         }
@@ -165,13 +166,11 @@ export default (): Router => {
         //WARNING USE IT WITH REQ.QUERY TO DELETE ORDER NUMBER SPECIFICO
         try {
             await Order.deleteMany(req.query);
-            return res.status(200).send("Orders deletes")
+            return res.status(200).send({status:200, error: false, message: "Orders deletes"})
         } catch (err) {
             return res.status(400).send(err);
         }
     });
-
-
 
     return app;
 }

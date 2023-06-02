@@ -1,13 +1,21 @@
-<button (click)="addOrderPopup()">Add new order</button>
+<button *ngIf = "this.us.hasRole('Waiter')" (click)="addOrderPopup()">Add new order</button>
 
 <div class="container">
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
-      <div class="card-body" (click)="showOrderPopup(order.key)">
-        <button (click)="modifyOrder($event)">Modify order</button>
-        <button *ngIf="isReady(order.key)">Ready</button>
-        <h5>Table {{order.value}} </h5>
-        <p>Order number: {{order.key}} </p>
-      </div>
+    <div *ngIf="isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)">
+      <button (click)="modifyOrder($event)">Modify order</button>
+      <button *ngIf="isReady(order.key)">Ready</button>
+      <h5>Table {{order.value}} </h5>
+      <p>Order number: {{order.key}} </p>
+    </div>
+  </div>
+  <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
+    <div *ngIf="!isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)">
+      <button (click)="modifyOrder($event)">Modify order</button>
+      <button *ngIf="isReady(order.key)">Ready</button>
+      <h5>Table {{order.value}} </h5>
+      <p>Order number: {{order.key}} </p>
+    </div>
   </div>
 </div>
 
@@ -15,29 +23,72 @@
   <div class="popup-content">
     <button class="close-button" (click)="closePopup()">X</button>
     <h4>Order {{popup.orderNumber}}:</h4>
-      <div *ngFor="let dish of popup.dishesQuantity | keyvalue">
-        {{dish.key}} - Quantity: {{dish.value}}
-      </div>
+    <div *ngFor="let dish of popup.dishesQuantity | keyvalue">
+      {{dish.key}} - Quantity: {{dish.value}}
+    </div>
   </div>
 </div>
 
-<div *ngIf="popup.showed && popup.type === 'ADD'" class="popup-overlay">
+<!--<div *ngIf="popup.showed && popup.type === 'ADD'" class="popup-overlay">-->
+<!--  <div class="popup-content">-->
+<!--    <button class="close-button" (click)="closePopup()">X</button>-->
+<!--    <h3>Table {{popup.tableNumber}}</h3>-->
+<!--    <div *ngFor="let selection of popup.selections; let i = index;">-->
+<!--      <div class="selection-row">-->
+<!--        <select [(ngModel)]="selectionDish">-->
+<!--          <option *ngFor="let dish of dishOptions" [value]="dish._id">{{dish.name}}</option>-->
+<!--        </select>-->
+<!--        <label for="quantity">Quantity</label>-->
+<!--        <input type="number" id="quantity" [(ngModel)]="selectionQuantity"/>-->
+<!--        <div *ngFor="let selection of popup.selections; let i = index;">-->
+
+<!--          <button (click)="deleteSelection(i)">Delete</button>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <button (click)="addSelection()">+</button>-->
+<!--      <button (click)="closePopup()"> Confirm</button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<div *ngIf="popup.showed && popup.type === 'ADD' && this.us.hasRole('Waiter')" class="popup-overlay">
   <div class="popup-content">
     <button class="close-button" (click)="closePopup()">X</button>
-    <h3>Table {{popup.tableNumber}}</h3>
-          <div *ngFor="let selection of popup.selections; let i = index;">
-        <div class="selection-row">
-          <select [(ngModel)]="selectionDish">
-            <option *ngFor="let dish of dishOptions" [value]="dish">{{dish.name}}</option>
-          </select>
-          <label for="quantity">Quantity</label>
-          <input type="number" id="quantity" [(ngModel)]="selectionQuantity">
-      <div *ngFor="let selection of popup.selections; let i = index;">
-
-          <button (click)="deleteSelection(i)">Delete</button>
+    <div id="lista" style="max-height: 500px; overflow-y: scroll; max-width: 100%; overflow-x:hidden;">
+      <div class="d-flex flex-row mb-3">
+        <div class="p-2">
+          <h3>
+            Table {{popup.tableNumber ? popup.tableNumber < 10 ? "0" + popup.tableNumber : popup.tableNumber : "00"}}
+          </h3>
         </div>
-          </div>
-    <button (click)="addSelection()">+</button>
-    <button (click)="closePopup()"> Confirm </button>
+        <div class="p-2">
+          <select [(ngModel)]="popup.tableNumber" class="form-select">
+            <option *ngFor="let table of tables" [value]="table.tableNumber">{{table.tableNumber}}</option>
+          </select>
+        </div>
+      </div>
+      <div *ngFor="let _ of [].constructor(selectionSize); let i = index;">
+      <div class="row">
+        <div class="col-5">
+          <label for="{{i}}">Dish Name</label>
+          <select [(ngModel)]="selectionDish[i]" class="form-select" id="{{i}}">
+            <option *ngFor="let dish of dishOptions" [value]="[dish._id, dish.type]">{{dish.name}}</option>
+          </select>
+        </div>
+        <div class="col-5">
+          <label for="quantity">Quantity</label>
+          <input type="number" id="quantity" [(ngModel)]="selectionQuantity[i]" class="form-control" min="1"/>
+        </div>
+        <div class="col-2">
+          <br>
+          <button type="button" (click)="deleteSelection(i)" class="btn btn-danger">X</button>
+        </div>
+      </div>
+    </div>
+    </div>
+    <hr>
+    <button (click)="addSelection()" class="btn btn-primary">+</button>
+    &nbsp;
+    <button (click)="confirmPopup()" class="btn btn-success"> Confirm</button>
   </div>
 </div>

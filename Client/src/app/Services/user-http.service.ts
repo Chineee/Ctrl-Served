@@ -23,7 +23,7 @@ export class UserHttpService {
   public url : string = 'http://localhost:5000/api/v1';
   protected token : string = '';
 
-  constructor(protected http: HttpClient ) {
+  constructor(private http: HttpClient ) {
     const token = localStorage.getItem('auth-token');
     if (token) this.token = token as string;
   }
@@ -68,31 +68,33 @@ export class UserHttpService {
     return this.http.post(this.url + '/users', body, options);
   }
 
-  getId() {
-    const a = (jwtdecode(this.token) as TokenData);
-    console.log("USER ORA === ");
-    console.log(a);
-    return a._id;
+  getId() : string | null{
+    if (this.token) return (jwtdecode(this.token) as TokenData)._id;
+    return null;
   }
 
-  getEmail() {
-    return (jwtdecode(this.token) as TokenData).email;
+  getEmail() : string | null{
+    if (this.token) return (jwtdecode(this.token) as TokenData).email;
+    return null;
   }
-  getToken() {
+  getToken() : string {
     return this.token;
   }
 
-  hasRole(...role: string[]) {
-    const user = jwtdecode(this.token) as TokenData;
-    return role.includes(user.role) || user.role === 'Admin';
+  hasRole(...role: string[]) : boolean{
+    if (this.token) {
+      const user = jwtdecode(this.token) as TokenData;
+      return role.includes(user.role) || user.role === 'Admin';
+    }
+    return false;
 
   }
 
-  getRole() {
-    return (jwtdecode(this.token) as TokenData).role;
+  getRole() : string | null {
+    if (this.token) return (jwtdecode(this.token) as TokenData).role;
+    return null;
   }
-
-  logout() {
+  logout() : void{
     localStorage.setItem('auth-token', '');
     this.token = '';
   }

@@ -10,17 +10,20 @@ import {HttpHeaders} from "@angular/common/http";
 })
 export class LoginPageComponent implements OnInit {
 
-  public errorMessage = undefined;
-  constructor(private us: UserHttpService, private router: Router, private elementRef : ElementRef) {
+  protected errorMessage : any = undefined;
+  protected error : boolean = false;
+  constructor(protected us: UserHttpService, private router: Router, private elementRef : ElementRef) {
   }
 
   ngOnInit(): void {
     this.goToPageRole();
   }
 
+
   goToPageRole() {
     if (this.us.getToken() !== '') {
       const role = this.us.getRole();
+      this.router.navigate(['/waiters'])
       // switch(role) {
       //   case "Admin":
       //     this.router.navigate(['Admin'])
@@ -47,7 +50,7 @@ export class LoginPageComponent implements OnInit {
     this.us.login(email, password, rememberMe).subscribe({
       next: (data) => {
         //this.goToPageRole();
-        this.router.navigate(['/test']);
+        this.router.navigate(['/waiters']);
       },
       error: (err) => {
         this.errorMessage = err.message;
@@ -61,5 +64,4 @@ export class LoginPageComponent implements OnInit {
   register(name : string, surname : string, email : string, password : string, role : string) {
 
   }
-
 }

@@ -1,5 +1,5 @@
 <div class="container">
-  <h1>CTRL SERVED</h1>
+  <h1>CTRL SERVED  </h1>
 
     <div class="form-group">
       <label for="username">Username:</label>
@@ -15,13 +15,13 @@
     </div>
 
     <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-      Login error: {{errorMessage}}
+      {{errorMessage}}
     </div>
 
     <div class="form-group">
       <button type="submit" (click) = "login(usernametxt.value, passwordtxt.value, rememberMe.checked);">Login</button>
     </div>
 
-  <div *ngIf="hasRole('Admin')"> <p> Do you want to create a new user? <a routerLink="/register"> Click here! </a> </p> </div>
+  <div *ngIf="this.hasRole('Admin')"> <p> Do you want to create a new user? <a routerLink="/register"> Click here! </a> </p> </div>
 </div>
 

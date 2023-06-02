@@ -5,6 +5,8 @@ import { Observable, throwError } from 'rxjs';
 import {UserHttpService} from "./user-http.service";
 import {Table} from "../models/Table";
 import {Order} from "../models/Order";
+import {Queue} from "../models/Queue";
+
 
 // interface TokenData {
 //   name:string,
@@ -15,16 +17,12 @@ import {Order} from "../models/Order";
 
 
 @Injectable()
-export class OrdersHttpService{
+export class QueueHttpService{
   private url = 'http://host.docker.internal:5000/api/v1';
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
 
-  getOrders() {
-    return this.http.get<Order[]>(this.url);
-  }
-
-  createOrder(obj: any) {
+  getQueue() {
     const options = {
       headers: new HttpHeaders({
         'cache-control':'no-cache',
@@ -33,23 +31,7 @@ export class OrdersHttpService{
       })
     }
 
-    return this.http.post(this.url+"/orders", obj, options);
+    return this.http.get<Queue[]>(this.url+"/foodqueue", options);
   }
-
-  getWaiterOrders() {
-    const options = {
-      headers: new HttpHeaders({
-          'cache-control': 'no-cache',
-          'Content-Type':  'application/json',
-          "auth-token": this.us.getToken()
-        }
-      )
-    }
-
-    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", options).pipe(tap(
-      (data) => console.log("riuscito", data)
-    ));
-  }
-
 }
 

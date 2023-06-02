@@ -26,6 +26,7 @@ const UsersSchema =  new mongoose.Schema(
     {
         methods: { // Method to verify the user's password
             async verifyPassword(plainPassword: string) : Promise<boolean> {
+                if (!this.password) return false;
                 return await bcrypt.compare(plainPassword, this.password);
             }
         }

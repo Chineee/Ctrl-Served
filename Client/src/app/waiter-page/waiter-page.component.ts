@@ -11,7 +11,8 @@ import {OrdersHttpService} from "../Services/orders-http.service";
 
 export enum Page {
   TABLES,
-  ORDERS
+  ORDERS,
+  CREATE_ORDER
 }
 
 @Component({
@@ -35,12 +36,20 @@ export class WaiterPageComponent implements OnInit{
       this.getTables();
       this.getOrders();
         this.so.connect().subscribe( (m) => {
-          if (this.page === Page.TABLES) this.getTables();
+          if (m === 'table') this.getTables();
           else this.getOrders();
         })
     }
   }
 
+
+  // sortOrder(orders: Order[]) : Order[] {
+  //   return orders.sort( (o1 : Order,o2: Order) => {
+  //     if (o1.ready === o2.ready) return 0;
+  //     if (o1.ready) return -1;
+  //     return 1;
+  //   })
+  // }
   getOrders() {
     this.os.getWaiterOrders().subscribe({
       next: (data) => {
@@ -56,10 +65,11 @@ export class WaiterPageComponent implements OnInit{
   getTables() {
     this.ts.getTables().subscribe({
       next: (data) => {
-        console.log(data)
         this.tables = data
       },
       error: (err) => {
+        console.log("ERRORE QUA ")
+        console.log(err);
         this.logout()
       }
     })

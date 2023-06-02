@@ -6,4 +6,7 @@
 <span *ngIf="page === Page.ORDERS">
   <app-order-list [tables]="filterWaiterTable()" [orderDishes]="orders"></app-order-list>
 </span>
+<span *ngIf="page === Page.CREATE_ORDER">
+  <app-create-order></app-create-order>
+</span>
 

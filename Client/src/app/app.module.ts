@@ -18,6 +18,9 @@ import { MenuListComponent } from './menu-list/menu-list.component';
 import { OrderListComponent } from './order-list/order-list.component';
 import {OrdersHttpService} from "./Services/orders-http.service";
 import {MenusHttpService} from "./Services/menus-http.service";
+import { CreateOrderComponent } from './create-order/create-order.component';
+import { CookPageComponent } from './cook-page/cook-page.component';
+import {QueueHttpService} from "./Services/queue-http.service";
 
 @NgModule({
   declarations: [
@@ -29,6 +32,8 @@ import {MenusHttpService} from "./Services/menus-http.service";
     TableComponentComponent,
     MenuListComponent,
     OrderListComponent,
+    CreateOrderComponent,
+    CookPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -42,7 +47,8 @@ import {MenusHttpService} from "./Services/menus-http.service";
     {provide: TablesHttpService, useClass: TablesHttpService},
     {provide: SocketioService, useClass: SocketioService},
     {provide: OrdersHttpService, useClass: OrdersHttpService},
-    {provide: MenusHttpService, useClass: MenusHttpService}
+    {provide: MenusHttpService, useClass: MenusHttpService},
+    {provide: QueueHttpService, useClass: QueueHttpService}
   ],
   bootstrap: [AppComponent]
 })

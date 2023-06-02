@@ -19,7 +19,7 @@ export default (): Router => {
     // GET endpoint to retrieve food in queue based on the query parameters passed
     app.get('/', isLogged, hasRole("Cook", "Cashier"), async (req, res)=> {
         try{
-            const foods = await FoodQueue.find(req.query);
+            const foods = await FoodQueue.find(req.query).populate("dish");
             return res.status(200).send(foods);
         } catch (err) {
             return res.status(400).send(err);

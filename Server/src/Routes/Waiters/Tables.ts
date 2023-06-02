@@ -61,7 +61,7 @@ export default (): Router => {
         // Save the changes to the table in the database
         try{
             await table.save();
-            getIoInstance().emit("table_modified");
+            getIoInstance().emit("table_modified", "table");
             return res.status(200).send({error: false, status:200, message:"Table info modified correctly"});
         } catch (err) {
             return res.status(400).send(err);

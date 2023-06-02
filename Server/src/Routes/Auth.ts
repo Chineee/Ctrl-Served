@@ -1,9 +1,11 @@
 import {Router} from "express";
 import Joi from 'joi'
-import User from "../models/User";
+import User, {IUser} from "../models/User";
 import passport from "../passport-config"
 import jwt from "jsonwebtoken";
 import Users from "../models/User";
+import client from "../redis-config"
+import {type} from "os";
 
 // Define a schema for user input validation using Joi
 export const UserSchemaValidation = Joi.object().keys({
@@ -41,20 +43,34 @@ export const alreadyLogged = (req, res, next) => {
 export const isLogged = async (req, res, next) => {
     const token = req.header("auth-token");
     try {
-        type JWTUser = {
-            email: string;
-        }
+        //todo invece di usare la redis cache, possibile soluzione è quella di usare un refresh token, ogni 10min access token lo aggiorna e controlla se esiste
 
         // Verify the token and set the user data in the request object
-        const decoded = jwt.verify(token, process.env.SECRET_TOKEN) as JWTUser;
-        const user = await User.findOne({email: decoded.email})
-        if (!user) return res.status(401).send("User doesn't exist anymore");
-        req.user = user;
+        const decoded : IUser = jwt.verify(token, process.env.SECRET_TOKEN) as IUser;
+        //I check in redis cache if user exists
+        const userExists : string = await client.get(decoded.email);
+
+        if (userExists === null) {
+            //if i cant find value cache is empty, so I must do a query (this might happens only once)
+            //if user exists I set redis cache to true, else false
+            const user = await User.findOne({email: decoded.email})
+            // if (user) await client.set(decoded.email, "true");
+            // else await client.set(decoded.email, "false");
+            await client.set(decoded.email, user ? "true" : "false");
+        }
+        //if i found key in redis cache, I see his value, if true user wasn't deleted, else it was (if admin delete user, cache will be set to false)
+        //unfortunately, redis returns string, so we cant treat it as a boolean
+        else if (userExists === 'false') {
+            return res.status(401).send({message: "User doesn't exist anymore", error:true, status:401});
+        }
+
+        //be aware that inside JWT Token, password isn't stored
+        //we create a new user so we can use function
+        //this may not be used, we could directly set req.user = decoded since decoded is "as" IUser
+        req.user = new User(decoded);
         next();
     } catch(err) {
-        console.log(err);
-        console.log(token);
-        return res.status(401).send("You must be logged");
+        return res.status(401).send({status:401, error: true, message:"You must be logged"});
     }
 }
 
@@ -62,6 +78,11 @@ export const isLogged = async (req, res, next) => {
 export default (): Router  => {
     const app = Router();
 
+    //test route, inside it we do stuff to test other stuff
+    app.get('/testone', isLogged, async (req, res) => {
+        // const a = await req.user.verifyPassword("ciao");
+        return res.status(200).send("SIUM")
+    })
     // POST endpoint to add a new user
     app.post('/users', isLogged, hasRole('Admin'), async (req, res) => {
 
@@ -80,11 +101,13 @@ export default (): Router  => {
             email: req.body.email,
             password: req.body.password,
             role: req.body.role,
+            counter: 0
         });
 
         // Save the new user in the database
         try {
             await user.save();
+            await client.set(req.body.email, "true");
             return res.status(200).send({status: 200, error: false, message: "User correctly added to the database"});
         } catch(err) {
             return res.status(400).send(err);
@@ -95,12 +118,11 @@ export default (): Router  => {
         const token = req.header("refresh-token");
         let accessToken;
         try {
-            const decoded = jwt.verify(token, process.env.SECRET_REFRESH_TOKEN);
-
+            jwt.verify(token, process.env.SECRET_REFRESH_TOKEN);
+            return res.status(200).send(accessToken);
         } catch(err) {
             return res.status(400).send(err);
         }
-        return res.status(200).send(accessToken);
     });
 
     // GET endpoint to login a user
@@ -112,6 +134,7 @@ export default (): Router  => {
             surname: req.user.surname,
             email: req.user.email,
             role: req.user.role,
+            counter: req.user.counter,
             refreshToken: false
         };
 
