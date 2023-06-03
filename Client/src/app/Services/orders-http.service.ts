@@ -16,7 +16,7 @@ import {Order} from "../models/Order";
 
 @Injectable()
 export class OrdersHttpService{
-  private url = 'http://host.docker.internal:5000/api/v1';
+  private url = 'http://localhost:5000/api/v1';
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
 

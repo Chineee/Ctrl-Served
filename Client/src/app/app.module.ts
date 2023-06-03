@@ -19,8 +19,9 @@ import { OrderListComponent } from './order-list/order-list.component';
 import {OrdersHttpService} from "./Services/orders-http.service";
 import {MenusHttpService} from "./Services/menus-http.service";
 import { CreateOrderComponent } from './create-order/create-order.component';
-import { CookPageComponent } from './cook-page/cook-page.component';
+import {MakerPageComponent} from './makers-page/makers-page.component';
 import {QueueHttpService} from "./Services/queue-http.service";
+import { QueueComponent } from './queue/queue.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {QueueHttpService} from "./Services/queue-http.service";
     MenuListComponent,
     OrderListComponent,
     CreateOrderComponent,
-    CookPageComponent,
+    MakerPageComponent,
+    QueueComponent,
   ],
   imports: [
     BrowserModule,

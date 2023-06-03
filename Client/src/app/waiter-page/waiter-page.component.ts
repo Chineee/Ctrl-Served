@@ -8,6 +8,7 @@ import {TablesHttpService} from "../Services/tables-http.service";
 import {SocketioService} from "../Services/socketio.service";
 import {Order} from "../models/Order";
 import {OrdersHttpService} from "../Services/orders-http.service";
+import {MenusHttpService} from "../Services/menus-http.service";
 
 export enum Page {
   TABLES,
@@ -18,7 +19,7 @@ export enum Page {
 @Component({
   selector: 'app-waiter-page',
   templateUrl: './waiter-page.component.html',
-  styleUrls: ['./waiter-page.component.css']
+  styleUrls: ['./waiter-page.component.css'],
 })
 export class WaiterPageComponent implements OnInit{
 
@@ -68,8 +69,6 @@ export class WaiterPageComponent implements OnInit{
         this.tables = data
       },
       error: (err) => {
-        console.log("ERRORE QUA ")
-        console.log(err);
         this.logout()
       }
     })

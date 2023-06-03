@@ -4,6 +4,7 @@ import Joi from "joi";
 import {DrinkQueue} from "../../models/Queue";
 import Orders from "../../models/Orders";
 import Users from "../../models/User";
+import getIoInstance from "../../socketio-config";
 
 // Define a schema for food queue input validation using Joi
 export const DrinkQueueSchemaValidation = Joi.object().keys({
@@ -18,7 +19,7 @@ export default (): Router => {
     // GET endpoint to retrieve drink in queue based on the query parameters passed
     app.get('/', isLogged, hasRole("Bartender", "Cashier"), async (req, res)=> {
         try{
-            const drinks = await DrinkQueue.find(req.query)
+            const drinks = await DrinkQueue.find(req.query).populate("dish")
             return res.status(200).send(drinks);
         } catch (err) {
             return res.status(400).send(err);
@@ -38,9 +39,9 @@ export default (): Router => {
     // put endpoint to modify an existing drink in queue
     app.put("/:id", isLogged, hasRole('Bartender'), async (req, res) => {
         const drink = await DrinkQueue.findById(req.params.id);
-        if (drink === null) return res.status(400).send("Drink in queue doesn't exist")
+        if (drink === null) return res.status(400).send({errorMessage: "Drink in queue doesn't exist", status:400, error:true})
 
-        if (drink.begin && drink.end) return res.status(200).send("Already finished");
+        if (drink.begin && drink.end) return res.status(400).send({errorMessage:"Already finished", status:400, error:true});
 
         if (!drink.begin) {
             drink.begin = true;
@@ -62,8 +63,9 @@ export default (): Router => {
         // Save the changes to the drink in the queue in the database
         try{
             await drink.save();
-            await Users.findOneAndUpdate({email: req.user.email}, {$inc: {counter: 1}});
-            return res.status(200).send("Drink modified successfully");
+            if (drink.end) await Users.findOneAndUpdate({email: req.user.email}, {$inc: {counter: 1}});
+            getIoInstance().emit('drink_queue_change')
+            return res.status(200).send({message:"Drink modified successfully", error:false, status:200});
         } catch (err) {
             return res.status(400).send(err);
         }
@@ -72,11 +74,11 @@ export default (): Router => {
     // DELETE endpoint to delete food in the queue by its ID
     app.delete("/:id", isLogged, hasRole('Bartender'), async (req, res) => {
         const drink = await DrinkQueue.findById(req.params.id);
-        if (drink === null) return res.status(400).send("Drink in queue doesn't exist")
+        if (drink === null) return res.status(400).send({status:400, error: true, errorMessage: "Drink in queue doesn't exist"});
 
         try{
             await drink.deleteOne();
-            return res.status(200).send("Drink deleted successfully");
+            return res.status(200).send({status: 200, error:false, message:"Drink deleted successfully"});
         } catch (err) {
             return res.status(400).send(err);
         }

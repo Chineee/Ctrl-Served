@@ -29,7 +29,7 @@ enum Error {
 @Component({
   selector: 'app-order-list',
   templateUrl: './order-list.component.html',
-  styleUrls: ['./order-list.component.css']
+  styleUrls: ['./order-list.component.css'],
 })
 export class OrderListComponent implements OnInit{
   @Input() tables : Table[] = [];
@@ -70,7 +70,7 @@ export class OrderListComponent implements OnInit{
         }
       }
     }
-    
+
     this.orderGroup = orders;
     // this.readyOrder = ready;
 

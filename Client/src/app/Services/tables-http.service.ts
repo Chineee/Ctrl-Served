@@ -4,11 +4,13 @@ import { tap, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import {UserHttpService} from "./user-http.service";
 import {Table} from "../models/Table";
+import {URL} from "../Variables";
 
 
 @Injectable()
 export class TablesHttpService{
-  private url = 'http://localhost:5000/api/v1/tables';
+  // private url = 'http://localhost:5000/api/v1/tables';
+  private url : string = URL+"/tables";
   constructor(private http: HttpClient, private user : UserHttpService) {
   }
 

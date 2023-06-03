@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CookPageComponent } from './cook-page.component';
+import { MakerPageComponent } from './makers-page.component';
 
 describe('CookPageComponent', () => {
-  let component: CookPageComponent;
-  let fixture: ComponentFixture<CookPageComponent>;
+  let component: MakerPageComponent;
+  let fixture: ComponentFixture<MakerPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CookPageComponent ]
+      declarations: [ MakerPageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CookPageComponent);
+    fixture = TestBed.createComponent(MakerPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

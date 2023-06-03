@@ -36,6 +36,18 @@ export class SocketioService {
         observer.next(m);
       })
 
+      this.socket.on('food_queue', (m: any) => {
+        observer.next(m);
+      })
+
+      this.socket.on('order_finished', (m:any) => {
+        observer.next(m);
+      })
+      
+      this.socket.on('drink_queue_change', (m:any) => {
+        observer.next(m);
+      })
+
       // When the consumer unsubscribes, clean up data ready for next subscription.
       return {
         unsubscribe: () => {

@@ -87,7 +87,7 @@ export default (): Router => {
                         begin: false,
                         end: false,
                         orderNumber: orderNumber,
-                        makerId: null
+                        makerId: null,
                     }
                     if (req.body.type === "Foods") queue.push(new FoodQueue(added));
                     else queue.push(new DrinkQueue(added));

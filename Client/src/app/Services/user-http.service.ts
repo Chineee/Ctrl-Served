@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular
 import { tap, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import jwtdecode from "jwt-decode";
+import {URL} from "../Variables"
 
 
 interface TokenData {
@@ -20,7 +21,9 @@ interface LoginResponse {
 @Injectable()
 export class UserHttpService {
 
-  public url : string = 'http://localhost:5000/api/v1';
+  // public url : string = 'http://localhost:5000/api/v1';
+  // public url : string = 'http://192.168.51.91:5000/api/v1'
+  public url : string = URL;
   protected token : string = '';
 
   constructor(private http: HttpClient ) {

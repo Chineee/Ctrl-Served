@@ -150,6 +150,7 @@ export default (): Router  => {
         //TODO localStorage.setItem('jwtToken', token_signed); save the token in the client-side local storage --> VA FATTO NEL FRONT END
 
         // Set the token as a response header
+
         return res.status(200).send({access_token: accessToken, refresh_token: refreshToken});
 
         // return res.status(200).json({ error: false, errormessage: "", token: token_signed });
