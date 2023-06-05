@@ -49,11 +49,11 @@ export class ReceiptsListComponent implements OnInit {
 
     const lastDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() + 6));
     firstDayOfWeek.setHours(23, 59, 59, 999);
-    console.log(lastDayOfWeek)
     const weeklyReceipts = this.receipts.filter((receipt) => {
-      const date = new Date(receipt.date)
+      const date = new Date(receipt.date).getTime();
       // console.log(new Date(receipt.date));
-      return date >= firstDayOfWeek && date <= lastDayOfWeek;
+
+      return date >= new Date(firstDayOfWeek.toLocaleDateString()).getTime() && date <= new Date(lastDayOfWeek.toLocaleDateString()).getTime();
     });
 
     let profit: number = 0;
