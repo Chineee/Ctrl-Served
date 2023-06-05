@@ -70,6 +70,7 @@ export const isLogged = async (req, res, next) => {
         req.user = new User(decoded);
         next();
     } catch(err) {
+        console.log(err);
         return res.status(401).send({status:401, error: true, message:"You must be logged"});
     }
 }

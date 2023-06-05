@@ -4,14 +4,8 @@ import { tap, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import jwtdecode from "jwt-decode";
 import {URL} from "../Variables"
+import User from "../models/User";
 
-
-interface TokenData {
-  name:string,
-  email: string,
-  role: string,
-  _id: string
-}
 
 interface LoginResponse {
   access_token: string,
@@ -72,12 +66,12 @@ export class UserHttpService {
   }
 
   getId() : string | null{
-    if (this.token) return (jwtdecode(this.token) as TokenData)._id;
+    if (this.token) return (jwtdecode(this.token) as User)._id;
     return null;
   }
 
   getEmail() : string | null{
-    if (this.token) return (jwtdecode(this.token) as TokenData).email;
+    if (this.token) return (jwtdecode(this.token) as User).email;
     return null;
   }
   getToken() : string {
@@ -86,7 +80,7 @@ export class UserHttpService {
 
   hasRole(...role: string[]) : boolean{
     if (this.token) {
-      const user = jwtdecode(this.token) as TokenData;
+      const user = jwtdecode(this.token) as User;
       return role.includes(user.role) || user.role === 'Admin';
     }
     return false;
@@ -94,7 +88,7 @@ export class UserHttpService {
   }
 
   getRole() : string | null {
-    if (this.token) return (jwtdecode(this.token) as TokenData).role;
+    if (this.token) return (jwtdecode(this.token) as User).role;
     return null;
   }
   logout() : void{

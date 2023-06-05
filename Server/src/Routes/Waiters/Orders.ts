@@ -19,7 +19,7 @@ export default (): Router => {
     const app = Router();
 
     //GET endpoint to retrieve all orders based on the query parameters passed
-    app.get('/', isLogged, hasRole("Waiter"), async (req, res) => {
+    app.get('/', isLogged, hasRole("Waiter", "Cashier"), async (req, res) => {
         try {
             //example get by tablenumber
             //todo add {orderNumber: {$gt: -1}} to avoid order done, maybe add a filter ?deleted=true to remove this GT

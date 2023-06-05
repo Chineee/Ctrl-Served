@@ -1,18 +1,18 @@
 <div class="container">
   <button *ngIf = "this.us.hasRole('Cashier')" (click)="filterTable(TableStatus.OCCUPIED)"> {{ filterTables === TableStatus.OCCUPIED ? 'Show All Tables' : 'Show Occupied Tables'}} </button>
   <button (click)="filterTable(TableStatus.FREE)"> {{filterTables === TableStatus.FREE ? 'Show All Tables' : "Show Free Tables"}}</button>
-  <button (click)="filterTable(TableStatus.MINE)"> {{ filterTables === TableStatus.MINE ? 'Show All Tables' : 'Show My Tables'}}</button>
+  <button *ngIf="this.us.hasRole('Waiter')" (click)="filterTable(TableStatus.MINE)"> {{ filterTables === TableStatus.MINE ? 'Show All Tables' : 'Show My Tables'}}</button>
   <div *ngFor="let table of showTables()" class="card">
       <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId?.email,table.occupied)">
-        <h5>Table {{table.tableNumber}}</h5>
+        <h5>Table {{table.tableNumber}} {{groupOrderReady(table.tableNumber)?"- An order is ready":""}}</h5>
         <p>Number of Seats: {{table.seats}}</p>
-        <p>Number of Customers: {{table.customers}}</p>
+        <p *ngIf="table.occupied">Number of Customers: {{table.customers}}</p>
         <p>Occupied: {{table.occupied}}</p>
       </div>
   </div>
 </div>
 
-<div *ngIf="popup.showed && !(popup.occupied && !popup.isWaiter)" class="popup-overlay">
+<div *ngIf="this.us.hasRole('Waiter') && popup.showed && !(popup.occupied && !popup.isWaiter)" class="popup-overlay">
   <div class="popup-content">
     <button class="close-button" (click)="closePopup()">X</button>
     <h3>Table {{popup.tableNumber}}</h3>
@@ -36,6 +36,20 @@
         <button (click)="modifyCustomers()">Modify</button>
         <button (click)="changeStatus(popup.tableNumber,0,false); closePopup()">Free table</button>
       </p>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="this.us.hasRole('Cashier') && popup.showed && allOrdersReady(popup.tableNumber)" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Do you want to generate the table's receipt?</h5>
+        <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"> </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="generateReceiptEvent(popup.tableNumber); closePopup()" data-bs-dismiss="modal">Confirm</button>
+      </div>
     </div>
   </div>
 </div>

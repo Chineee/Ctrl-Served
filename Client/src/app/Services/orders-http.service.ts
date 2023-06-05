@@ -21,7 +21,14 @@ export class OrdersHttpService{
   }
 
   getOrders() {
-    return this.http.get<Order[]>(this.url);
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.us.getToken()
+      })
+    }
+    return this.http.get<Order[]>(this.url+"/orders", options);
   }
 
   createOrder(obj: any) {

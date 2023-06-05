@@ -2,7 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, Type} fro
 import {TablesHttpService} from '../Services/tables-http.service';
 import {Table} from "../models/Table";
 import {UserHttpService} from "../Services/user-http.service";
-
+import {Order} from "../models/Order";
 
 export enum TableStatus {
   ALL,
@@ -20,6 +20,7 @@ export enum TableStatus {
 export class TableComponentComponent implements OnInit{
 
   @Input() public tables : Table[] = [];
+  @Input() public orders : Order[] = [];
   @Output() public post = new EventEmitter<any>;
   public filterTables : TableStatus = TableStatus.ALL;
   protected readonly TableStatus = TableStatus;
@@ -28,10 +29,11 @@ export class TableComponentComponent implements OnInit{
   protected readonly Array = Array;
   protected isModifyingCustomers: boolean = false;
   protected dictionary : any = {};
+  @Output() protected receiptEvent = new EventEmitter<number>;
 
   constructor(protected us : UserHttpService) {
   }
-  
+  //TODO GESTIRE IL GRUPPO DEGLI ORDINI DIRETTAMENTE SULLA PAGINA DI WAITERS E PASSARLO IN INPUT COSÌ PASSIAMO QUA E SAPPIAMO COSA E LIBERO
   ngOnInit(): void {
 
   }
@@ -51,6 +53,31 @@ export class TableComponentComponent implements OnInit{
     })
   }
 
+  //check if ALL orders of a table are ready
+  allOrdersReady(tableNumber: number) : boolean {
+    const tableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber);
+    const readyTableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber && order.ready);
+    return tableOrder.length === readyTableOrder.length && tableOrder.length !== 0
+  }
+
+  //return true if at least one order is ready for a table
+  groupOrderReady(tableNumber: number)  : boolean {
+    // const tableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber);
+    // const readyTableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber && order.ready);
+    // return tableOrder.length === readyTableOrder.length && tableOrder.length !== 0
+    let res = false;
+    const dict : any = [];
+    for (let i = 0; i < this.orders.length; i++) {
+      if (!dict.includes(this.orders[i].orderNumber)) dict.push(this.orders[i].orderNumber)
+    }
+    for (let i = 0; i < dict.length; i++) {
+      const readyOrderNumber = this.orders.filter((order) => order.orderNumber === dict[i] && order.ready && order.tableNumber === tableNumber);
+      const ordersNumber = this.orders.filter((order) => order.orderNumber === dict[i] && order.tableNumber === tableNumber);
+      if (readyOrderNumber.length === ordersNumber.length && ordersNumber.length !== 0) res = true;
+    }
+    return res;
+  }
+
   filterTable(type : TableStatus) {
     if(this.filterTables === type)  this.filterTables = TableStatus.ALL;
     else this.filterTables = type;
@@ -62,7 +89,7 @@ export class TableComponentComponent implements OnInit{
   }
 
   showPopup(tableNumber: number, seats: number, waiterId: string, occupied: boolean) {
-    if (this.us.hasRole('Waiter')) {
+    if (this.us.hasRole('Waiter', "Cashier")) {
       const isWaiter : boolean = waiterId === this.us.getEmail();
 
       if (this.dictionary[tableNumber] === undefined)
@@ -70,6 +97,10 @@ export class TableComponentComponent implements OnInit{
 
       this.popup = {showed: true, seats: seats, tableNumber: tableNumber, isWaiter: isWaiter, occupied: occupied, customers: isWaiter ? this.dictionary[tableNumber] : 0};
     }
+  }
+
+  generateReceiptEvent(tableNumber : number) : void {
+    this.receiptEvent.emit(tableNumber);
   }
 
   closePopup() {

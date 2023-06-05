@@ -41,6 +41,7 @@ export class SocketioService {
       })
 
       this.socket.on('order_finished', (m:any) => {
+        console.log('RORDER FINISHUTA')
         observer.next(m);
       })
       

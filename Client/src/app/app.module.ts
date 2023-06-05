@@ -22,6 +22,9 @@ import { CreateOrderComponent } from './create-order/create-order.component';
 import {MakerPageComponent} from './makers-page/makers-page.component';
 import {QueueHttpService} from "./Services/queue-http.service";
 import { QueueComponent } from './queue/queue.component';
+import { CashierPageComponent } from './cashier-page/cashier-page.component';
+import {ReceiptsHttpService} from "./Services/receipts-http.service";
+import { ReceiptsListComponent } from './receipts-list/receipts-list.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +39,8 @@ import { QueueComponent } from './queue/queue.component';
     CreateOrderComponent,
     MakerPageComponent,
     QueueComponent,
+    CashierPageComponent,
+    ReceiptsListComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,7 +55,8 @@ import { QueueComponent } from './queue/queue.component';
     {provide: SocketioService, useClass: SocketioService},
     {provide: OrdersHttpService, useClass: OrdersHttpService},
     {provide: MenusHttpService, useClass: MenusHttpService},
-    {provide: QueueHttpService, useClass: QueueHttpService}
+    {provide: QueueHttpService, useClass: QueueHttpService},
+    {provide: ReceiptsHttpService, useClass: ReceiptsHttpService}
   ],
   bootstrap: [AppComponent]
 })

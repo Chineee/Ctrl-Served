@@ -55,8 +55,7 @@ export default (): Router => {
             const completeOrder = await Orders.find({orderNumber: drink.orderNumber, ready: false})
             // const completeOrder = await DrinkQueue.find({orderNumber: drink.orderNumber, end: false})
             if (completeOrder.length === 0) {
-                //todo notify waiter tutto finito
-                console.log("TUTTO FINITOOOOOOOOOOOOOO")
+                getIoInstance().emit('order_finished');
             }
         }
 

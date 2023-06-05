@@ -4,6 +4,9 @@ import Joi from "joi";
 import Receipts from "../../models/Receipts";
 import Orders from "../../models/Orders";
 import Tables from "../../models/Tables";
+import {Types} from "mongoose";
+import Users from "../../models/User";
+
 
 // Define a schema for receipt input validation using Joi
 export const ReceiptSchemaValidation = Joi.object().keys({
@@ -20,9 +23,10 @@ export default () : Router => {
         const {error} = ReceiptSchemaValidation.validate(req.body);
         if (error) return res.status(400).send(error);
 
-        if ((await Tables.findOne({tableNumber: req.body.tableNumber})).occupied === false) return res.status(400).send("Table isn't occupied")
+        const table = await Tables.findOne({tableNumber: req.body.tableNumber});
+        if (!table.occupied) return res.status(400).send("Table isn't occupied")
 
-        const dishes = await Orders.find({tableNumber: req.body.tableNumber}).populate('dish');
+        const dishes = await Orders.find({tableNumber: table.tableNumber}).populate('dish');
         const dishesId = [];
         let price = 0;
         for(let i = 0; i < dishes.length; i++) {
@@ -50,18 +54,21 @@ export default () : Router => {
 
         // Save the new receipt in thed database
         const receipt = new Receipts({
-            tableNumber: req.body.tableNumber,
+            tableNumber: table.tableNumber,
             dishes: dishesId,
             date: formattedDate,
             hour: formattedTime,
-            price: price.toFixed(2)
+            price: price.toFixed(2),
+            waiterId: table.waiterId
         });
 
         try {
             await receipt.save();
             // await Orders.deleteMany({tableNumber: req.body.tableNumber});
             //TODO SALVA CHE IL CAMERIERE HA SALVATO TOT ORDINI
-            await Tables.findOneAndUpdate({tableNumber: req.body.tableNumber}, {occupied:false, customers:0, waiterId: null})
+            await Tables.findOneAndUpdate({tableNumber: table.tableNumber}, {occupied:false, customers:0, waiterId: null})
+            // await Users.findOneAndUpdate({email: req.user.email}, {$inc: {counter: inc}});
+            await Orders.deleteMany({tableNumber: table.tableNumber});
             //todo notify waiter che il dispositivo ha changato tavolo free
             return res.status(200).send(receipt);
         } catch (err) {
@@ -70,7 +77,7 @@ export default () : Router => {
     });
 
     app.get('/', isLogged, hasRole("Cashier"), async (req, res) => {
-        const receipts = await Receipts.find(req.query).populate("dishes");
+        const receipts = await Receipts.find(req.query).populate('dishes', '-__v').populate("waiterId", "-password -role -email -__v");
         return res.status(200).send(receipts);
     });
 

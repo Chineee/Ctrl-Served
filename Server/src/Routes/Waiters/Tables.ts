@@ -4,6 +4,7 @@ import Joi from "joi";
 import Tables from "../../models/Tables";
 import Orders from "../../models/Orders";
 import getIoInstance from "../../socketio-config"
+import Users from "../../models/User";
 
 // Define a schema for table input validation using Joi
 export const TableSchemaValidation = Joi.object().keys({
@@ -43,7 +44,7 @@ export default (): Router => {
     app.put("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const table = await Tables.findOne({tableNumber: req.params.id});
         if (table === null) return res.status(400).send("Table doesn't exist");
-
+        const inc : number = table.customers;
         if (table.waiterId !== null && req.user._id.toString() !== table.waiterId) return res.status(400).send({error: true, status:400, errorMessage:"You are unauthorized"})
 
         // Update the fields of the table if provided in the request body
