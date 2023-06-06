@@ -37,6 +37,7 @@ export class ReceiptsListComponent implements OnInit {
     for(let i = 0; i < todayReceipts.length; i++){
       profit += todayReceipts[i].price;
     }
+    console.log(profit)
     return profit;
   }
 
@@ -81,6 +82,7 @@ export class ReceiptsListComponent implements OnInit {
     for(let i = 0; i < monthlyReceipt.length; i++){
       profit += monthlyReceipt[i].price;
     }
+    console.log(profit)
     return profit;
   }
 

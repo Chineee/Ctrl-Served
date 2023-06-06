@@ -11,7 +11,7 @@ export class SocketioService {
 
   connect(): Observable< any > {
 
-    this.socket = io('http://host.docker.internal:5000');
+    this.socket = io('http://localhost:5000');
 
     return new Observable( (observer) => {
 
@@ -44,7 +44,7 @@ export class SocketioService {
         console.log('RORDER FINISHUTA')
         observer.next(m);
       })
-      
+
       this.socket.on('drink_queue_change', (m:any) => {
         observer.next(m);
       })

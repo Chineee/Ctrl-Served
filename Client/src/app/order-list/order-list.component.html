@@ -1,5 +1,6 @@
-<button *ngIf = "this.us.hasRole('Waiter')" (click)="addOrderPopup()">Add new order</button>
-
+&nbsp;&nbsp;&nbsp;<button *ngIf = "this.us.hasRole('Waiter')" (click)="addOrderPopup()" class="btn btn-success">Add new order</button>
+<br>
+<br>
 <div class="container">
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
     <div *ngIf="isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)">
@@ -28,28 +29,6 @@
     </div>
   </div>
 </div>
-
-<!--<div *ngIf="popup.showed && popup.type === 'ADD'" class="popup-overlay">-->
-<!--  <div class="popup-content">-->
-<!--    <button class="close-button" (click)="closePopup()">X</button>-->
-<!--    <h3>Table {{popup.tableNumber}}</h3>-->
-<!--    <div *ngFor="let selection of popup.selections; let i = index;">-->
-<!--      <div class="selection-row">-->
-<!--        <select [(ngModel)]="selectionDish">-->
-<!--          <option *ngFor="let dish of dishOptions" [value]="dish._id">{{dish.name}}</option>-->
-<!--        </select>-->
-<!--        <label for="quantity">Quantity</label>-->
-<!--        <input type="number" id="quantity" [(ngModel)]="selectionQuantity"/>-->
-<!--        <div *ngFor="let selection of popup.selections; let i = index;">-->
-
-<!--          <button (click)="deleteSelection(i)">Delete</button>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <button (click)="addSelection()">+</button>-->
-<!--      <button (click)="closePopup()"> Confirm</button>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
 
 <div *ngIf="popup.showed && popup.type === 'ADD' && this.us.hasRole('Waiter')" class="popup-overlay">
   <div class="popup-content">

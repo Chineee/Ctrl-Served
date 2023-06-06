@@ -31,7 +31,10 @@ export class CashierPageComponent implements OnInit{
         this.getTables();
       }
     })
+  }
 
+  logout() {
+    this.us.logout();
   }
 
   getTables() {
@@ -43,7 +46,7 @@ export class CashierPageComponent implements OnInit{
 
   getOrders() {
     this.os.getOrders().subscribe({
-      next: (data) => this.orders = data,
+      next: (data) => this.orders = data.filter((order) => order.orderNumber !== -1),
       error: (err) => console.log(err)
     })
   }
@@ -52,7 +55,6 @@ export class CashierPageComponent implements OnInit{
     this.receipt.getReceipts().subscribe({
       next: (data) => {
         this.receipts = data
-        console.log(this.receipts);
       },
       error: (err) => console.log(err)
     })

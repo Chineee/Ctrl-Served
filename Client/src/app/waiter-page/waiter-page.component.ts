@@ -9,6 +9,7 @@ import {SocketioService} from "../Services/socketio.service";
 import {Order} from "../models/Order";
 import {OrdersHttpService} from "../Services/orders-http.service";
 import {MenusHttpService} from "../Services/menus-http.service";
+import {GroupOrderReady} from "../models/Table"
 
 export enum Page {
   TABLES,
@@ -27,34 +28,55 @@ export class WaiterPageComponent implements OnInit{
   public orders: Order[] = [];
   public page : Page = Page.TABLES;
   protected Page = Page;
+  public oneOrderReady : boolean = false;
   constructor(private ts : TablesHttpService, private us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService) {
   }
 
   ngOnInit() {
     if (!this.us.hasRole("Waiter")) {
-      this.router.navigate(['/test'])
+      this.router.navigate(['/login'])
     }else {
       this.getTables();
       this.getOrders();
         this.so.connect().subscribe( (m) => {
-          if (m === 'table') this.getTables();
-          else this.getOrders();
+          this.getTables();
+          this.getOrders();
         })
     }
   }
 
+  getStringOrder() {
+    if (this.page === Page.TABLES) {
+      for (let i = 0; i < this.tables.length; i++) {
+        if (GroupOrderReady(this.tables[i].tableNumber, this.orders)) return "Show order (one order ready)"
+      }
+      return "Show order"
+    }
+    return "Show tables"
+  }
 
-  // sortOrder(orders: Order[]) : Order[] {
-  //   return orders.sort( (o1 : Order,o2: Order) => {
-  //     if (o1.ready === o2.ready) return 0;
-  //     if (o1.ready) return -1;
-  //     return 1;
-  //   })
+  //todo spostare questa funzione dentro l'interfaccia TABLE
+  // groupOrderReady(tableNumber: number)  : boolean {
+  //   // const tableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber);
+  //   // const readyTableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber && order.ready);
+  //   // return tableOrder.length === readyTableOrder.length && tableOrder.length !== 0
+  //   let res = false;
+  //   const dict : any = [];
+  //   for (let i = 0; i < this.orders.length; i++) {
+  //     if (!dict.includes(this.orders[i].orderNumber)) dict.push(this.orders[i].orderNumber)
+  //   }
+  //   for (let i = 0; i < dict.length; i++) {
+  //     const readyOrderNumber = this.orders.filter((order) => order.orderNumber === dict[i] && order.ready && order.tableNumber === tableNumber);
+  //     const ordersNumber = this.orders.filter((order) => order.orderNumber === dict[i] && order.tableNumber === tableNumber);
+  //     if (readyOrderNumber.length === ordersNumber.length && ordersNumber.length !== 0) res = true;
+  //   }
+  //   return res;
   // }
+
   getOrders() {
     this.os.getWaiterOrders().subscribe({
       next: (data) => {
-        this.orders = data;
+        this.orders = data.filter((order)=>order.orderNumber !== -1);
       },
       error: (err) => console.log(err)
     })

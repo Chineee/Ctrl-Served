@@ -1,41 +1,71 @@
+<br>
 <div class="container">
-  <button *ngIf = "this.us.hasRole('Cashier')" (click)="filterTable(TableStatus.OCCUPIED)"> {{ filterTables === TableStatus.OCCUPIED ? 'Show All Tables' : 'Show Occupied Tables'}} </button>
-  <button (click)="filterTable(TableStatus.FREE)"> {{filterTables === TableStatus.FREE ? 'Show All Tables' : "Show Free Tables"}}</button>
-  <button *ngIf="this.us.hasRole('Waiter')" (click)="filterTable(TableStatus.MINE)"> {{ filterTables === TableStatus.MINE ? 'Show All Tables' : 'Show My Tables'}}</button>
+  <div class="d-flex">
+    <span class="left-form-label"> Show free tables </span>
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" (change)="handleSwitch()" [(ngModel)]="checked">
+      <label class="form-check-label" for="flexSwitchCheckDefault">{{this.us.hasRole('Cashier')?'Show occupied tables':'Show my tables'}}</label>
+    </div>
+  </div>
   <div *ngFor="let table of showTables()" class="card">
-      <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId?.email,table.occupied)">
-        <h5>Table {{table.tableNumber}} {{groupOrderReady(table.tableNumber)?"- An order is ready":""}}</h5>
+      <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId,table.occupied)">
+        <h5>Table {{table.tableNumber}} {{GroupOrderReady(table.tableNumber, orders)?"- An order is ready":""}}</h5>
         <p>Number of Seats: {{table.seats}}</p>
         <p *ngIf="table.occupied">Number of Customers: {{table.customers}}</p>
+        <p *ngIf="table.occupied && this.us.hasRole('Cashier')">Waiter: {{table.waiterId.name}} {{table.waiterId.surname}}</p>
         <p>Occupied: {{table.occupied}}</p>
       </div>
   </div>
 </div>
 
-<div *ngIf="this.us.hasRole('Waiter') && popup.showed && !(popup.occupied && !popup.isWaiter)" class="popup-overlay">
-  <div class="popup-content">
-    <button class="close-button" (click)="closePopup()">X</button>
-    <h3>Table {{popup.tableNumber}}</h3>
-    <div *ngIf="!popup.occupied">
-      <h5>Select the number of customers:</h5>
-      <select [(ngModel)]="customers">
-        <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1"> {{i+1}} </option>
-      </select>
-      <button (click)="changeStatus(popup.tableNumber, customers, true); closePopup()"> Confirm </button>
-    </div>
-    <div *ngIf="popup.occupied && popup.isWaiter">
-      <h5>Current number of customers: </h5>
-      <span *ngIf="isModifyingCustomers">
-        <select [(ngModel)]="customers" [disabled]="!isModifyingCustomers">
-          <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1"> {{i+1}} </option>
-        </select>
-        <button (click)="changeStatus(popup.tableNumber, customers, true); modifyCustomers(); closePopup()"> Confirm </button>
-      </span>
-      <p *ngIf="!isModifyingCustomers">
-        {{popup.customers}}
-        <button (click)="modifyCustomers()">Modify</button>
-        <button (click)="changeStatus(popup.tableNumber,0,false); closePopup()">Free table</button>
-      </p>
+<div *ngIf="this.us.hasRole('Waiter') && popup.showed && !(popup.occupied && !popup.isWaiter)" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Table {{popup.tableNumber}}</h4>
+        <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div *ngIf="!popup.occupied">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-auto">
+              <p class="mb-0">Select the number of customers:</p>
+            </div>
+            <div class="col-auto">
+              <select class="form-select mb-0" [(ngModel)]="customers">
+                <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1">{{i+1}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber, customers, true); closePopup()">Confirm</button>
+        </div>
+      </div>
+      <div *ngIf="popup.occupied && popup.isWaiter">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-auto">
+              <p>Current number of customers:</p>
+            </div>
+            <div class="col-auto">
+              <span *ngIf="isModifyingCustomers">
+                <select class="form-select" [(ngModel)]="customers" [disabled]="!isModifyingCustomers">
+                  <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1">{{i+1}}</option>
+                </select>
+              </span>
+              <p *ngIf="!isModifyingCustomers">
+                {{popup.customers}}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" *ngIf="isModifyingCustomers" (click)="changeStatus(popup.tableNumber, customers, true); modifyCustomers(); closePopup()">Confirm</button>
+          <button class="btn btn-primary" *ngIf="!isModifyingCustomers" (click)="modifyCustomers()">Modify</button>
+          <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber,0,false); closePopup()">Free table</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

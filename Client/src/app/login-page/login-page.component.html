@@ -1,27 +1,29 @@
 <div class="container">
-  <h1>CTRL SERVED  </h1>
-
+  <div class="login-page">
+    <h1> ctrl SERVED </h1>
+    <br>
     <div class="form-group">
-      <label for="username">Username:</label>
-      <input type="text" #usernametxt id="username" name="username" required>
+      <label for="email" class="fs-4">Email:</label>
+      <input type="text" #emailtxt id="email" name="email" required>
     </div>
     <div class="form-group">
-      <label for="password">Password:</label>
+      <label for="password" class="fs-4">Password:</label>
       <input type="password" #passwordtxt id="password" name="password" required>
     </div>
 
-    <div class="form-check">
-      <label><input type="checkbox" #rememberMe class="form-check-input" id="rememberMe" name="rememberMe"/><span>Remember me</span></label>
+    <div class="form-check d-flex justify-content-center">
+      <input class="form-check-input fs-5" type="checkbox" id="flexCheckDefault" #rememberMe>
+      <label class="form-check-label smaller-text" for="flexCheckDefault"> &nbsp; Remember me</label>
     </div>
 
     <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
       {{errorMessage}}
     </div>
-
+    <br>
     <div class="form-group">
-      <button type="submit" (click) = "login(usernametxt.value, passwordtxt.value, rememberMe.checked);">Login</button>
+      <button class="btn btn-primary" (click) = "login(emailtxt.value, passwordtxt.value, rememberMe.checked);">Login</button>
     </div>
 
-  <div *ngIf="this.hasRole('Admin')"> <p> Do you want to create a new user? <a routerLink="/register"> Click here! </a> </p> </div>
+    <div *ngIf="this.hasRole('Admin')"> <p> Do you want to create a new user? <a routerLink="/register"> Click here! </a> </p> </div>
+  </div>
 </div>
-

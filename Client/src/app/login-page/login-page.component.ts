@@ -23,25 +23,7 @@ export class LoginPageComponent implements OnInit {
   goToPageRole() {
     if (this.us.getToken() !== '') {
       const role = this.us.getRole();
-      this.router.navigate(['/waiters'])
-      // switch(role) {
-      //   case "Admin":
-      //     this.router.navigate(['Admin'])
-      //     break;
-      //   case "Cashier":
-      //     console.log("Cashier");
-      //     break;
-      //   case "Waiter":
-      //     console.log("Waiter");
-      //     break;
-      //   case "Cook":
-      //     console.log("Cook");
-      //     break;
-      //   case "Bartender":
-      //     console.log("Bartender");
-      //     break;
-      // }
-      // this.router.navigate(["/waiters"])
+      if (role !== 'Admin') this.router.navigate(['/'+role+'s'])
     }
   }
 

@@ -10,24 +10,31 @@ import {Router} from "@angular/router";
 export class RegisterPageComponent implements OnInit{
 
   public errorMessage: string | undefined = undefined;
+  public error : boolean = false;
+  public success : boolean = false;
+  public successMessage: string | undefined = undefined;
   constructor(private us : UserHttpService, private router : Router, private elementRef : ElementRef) {
   }
   ngOnInit(): void {
     if (!this.us.hasRole('Admin')) {
-      this.router.navigate(['/test'])
-      console.log("OK")
+      this.router.navigate(['/login'])
     }
   }
 
   register(name: string, surname: string, email: string, password: string, role: string) {
-    this.us.register(name, surname, email, password, role).subscribe({
-      next: () => {
-        this.router.navigate(['/test'])
-      },
-      error: (err) => {
-        this.errorMessage = err.error;
-      }
-    })
+    if (role === '') this.errorMessage = "Role required"
+    else {
+      this.us.register(name, surname, email, password, role).subscribe({
+        next: () => {
+          this.success = true
+          this.successMessage = "User ok registrered sium"
+        },
+        error: (err) => {
+          this.errorMessage = err.error;
+        }
+      })
+    }
   }
 
+  
 }

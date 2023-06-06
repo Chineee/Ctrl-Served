@@ -1,43 +1,49 @@
 <div class="container">
-  <h1>CTRL SERVED</h1>
+  <div class="register-page">
+    <h1>ctrl SERVED</h1>
 
-  <div class="form-group">
-    <label for="email">Email:</label>
-    <input type="text" #emailtxt id="email" name="email" required>
-  </div>
-  
-  <div class="form-group">
-      <label for="name">Name:</label>
-      <input type="text" #nametxt id="name" name="name" required>
-    </div>
-  
     <div class="form-group">
-      <label for="surname">Surname:</label>
-      <input type="text" #surnametxt id="surname" name="surname" required>
+      <label for="email" class="fs-5">Email:</label>
+      <input type="text" #emailtxt id="email" name="email" required>
     </div>
 
-  <div class="form-group">
-    <label for="password">Password:</label>
-    <input type="password" #passwordtxt id="password" name="password" required>
-  </div>
+    <div class="form-group">
+        <label for="name" class="fs-5">Name:</label>
+        <input type="text" #nametxt id="name" name="name" required>
+      </div>
 
-  <div class="form-select">
-      <label for="role">Role:</label>
-      <select name="role" #roletxt id="role" required>
-        <option value="Admin">Admin</option>
-        <option value="Cashier">Cashier</option>
-        <option value="Waiter">Waiter</option>
-        <option value="Cook">Cook</option>
-        <option value="Bartender">Bartender</option>
+      <div class="form-group">
+        <label for="surname" class="fs-5">Surname:</label>
+        <input type="text" #surnametxt id="surname" name="surname" required>
+      </div>
+
+    <div class="form-group">
+      <label for="password" class="fs-5">Password:</label>
+      <input type="password" #passwordtxt id="password" name="password" required>
+    </div>
+
+    <div class="form-group">
+      <label for="role" class="fs-5">Role:</label>
+      <select name="role" #roletxt id="role" required class="form-select">
+        <option class='fs-5' value="" selected>--Select Role--</option>
+        <option class='fs-5' value="Admin">Admin</option>
+        <option class='fs-5' value="Cashier">Cashier</option>
+        <option class='fs-5' value="Waiter">Waiter</option>
+        <option class='fs-5' value="Cook">Cook</option>
+        <option class='fs-5' value="Bartender">Bartender</option>
       </select>
-  </div>
+    </div>
+    <br>
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      Registration error: {{errorMessage}}
+    </div>
+    <div *ngIf="success" class="alert alert-success" role="alert">
+      {{successMessage}}
+    </div>
 
-  <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-    Registration error: {{errorMessage}}
-  </div>
-
-  <div class="form-group">
-    <button type="submit" (click)="register(nametxt.value, surnametxt.value, emailtxt.value, passwordtxt.value, roletxt.value)">Register</button>
+    <div class="form-group">
+      <button class="btn btn-primary" (click)="register(nametxt.value, surnametxt.value, emailtxt.value, passwordtxt.value, roletxt.value)">Register</button>
+    </div>
   </div>
 </div>
 

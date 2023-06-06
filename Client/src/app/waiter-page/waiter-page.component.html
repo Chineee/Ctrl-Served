@@ -1,12 +1,13 @@
-<button (click)="logout()">Logout</button>
-<button (click)="changePage()">{{page === Page.TABLES ? 'Show Orders' : "Show Tables"}}</button>
+<br>
+<button (click)="logout()" class="btn btn-danger float-end">Logout</button>
+<button (click)="changePage()" class="btn btn-warning">{{getStringOrder()}}</button>
 <span *ngIf="page === Page.TABLES">
   <app-table-component (post) = modifyTable($event) [tables]="tables" [orders]="orders"></app-table-component>
 </span>
 <span *ngIf="page === Page.ORDERS">
   <app-order-list [tables]="filterWaiterTable()" [orderDishes]="orders"></app-order-list>
 </span>
-<span *ngIf="page === Page.CREATE_ORDER">
-  <app-create-order></app-create-order>
-</span>
+<!--<span *ngIf="page === Page.CREATE_ORDER">-->
+<!--  <app-create-order></app-create-order>-->
+<!--</span>-->
 
