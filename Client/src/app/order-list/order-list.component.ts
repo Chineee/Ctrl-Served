@@ -96,6 +96,11 @@ export class OrderListComponent implements OnInit{
     this.selectionSize = this.selectionSize - 1;
   }
 
+  deleteOrderSelection() {
+
+  }
+
+
   confirmPopup() {
     if (this.selectionQuantity.length !== this.selectionDish.length ||
       this.selectionQuantity.filter( (num) => num <= 0 ).length > 0 ||
@@ -134,6 +139,30 @@ export class OrderListComponent implements OnInit{
     this.selectionSize = this.selectionSize + 1;
   }
 
+  decreaseQuantity(selection_key: unknown, select_value: unknown) {
+    let copy : any = {}
+    Object.keys(this.dishesQuantity).forEach((key, index) => {
+
+      if (key === selection_key) copy[key as string] = select_value as number - 1 <= 1 ? 1 : select_value as number - 1;
+      else copy[key as string] = this.dishesQuantity[key];
+
+    });
+    this.dishesQuantity = copy;
+  }
+
+  getDishQuantityByKey(key : unknown) {
+    return this.dishesQuantity[key as string];
+  }
+
+  increaseQuantity(selection_key : unknown, selection_value : unknown) {
+    let copy : any = {}
+    Object.keys(this.dishesQuantity).forEach((key, index) => {
+      if (key === selection_key) copy[key as string] = selection_value as number + 1
+      else copy[key as string] = this.dishesQuantity[key];
+    });
+    this.dishesQuantity = copy;
+  }
+
   createOrder(foods: any, drinks: any) {
     if (Object.keys(foods.dishDict).length !== 0) {
       this.os.createOrder(foods).subscribe({
@@ -160,9 +189,12 @@ export class OrderListComponent implements OnInit{
 
   }
 
-  modifyOrder(event : Event) {
+  modifyOrder(event : Event, dish_key: unknown) {
     event.stopPropagation();
-    this.popup = {showed: true, type:"MODIFY"}
+    this.setUpDishesQuantity(dish_key)
+    console.log(this.dishesQuantity);
+    this.popup = {showed: true, type:"MODIFY", tableNumber: this.orderGroup[dish_key as string], dishesQuantity: this.dishesQuantity, orderNumber: dish_key as number}
+
   }
 
   getDishQuantity(dishes : any, name : any) {
@@ -182,14 +214,77 @@ export class OrderListComponent implements OnInit{
   }
 
   showOrderPopup(key : any){
+    this.setUpDishesQuantity(key);
+    this.popup = {showed: true, dishesQuantity: this.dishesQuantity, orderNumber: key, type: "INFO"}
+  }
+
+  private setUpDishesQuantity(key : any) : any {
     const dishesOrderNumber = this.orderDishes.filter( (order) => order.orderNumber == key);
     for(const orderDish of dishesOrderNumber){
       if (this.dishesQuantity[orderDish.dish.name] === undefined) this.dishesQuantity[orderDish.dish.name] = 1;
       else this.dishesQuantity[orderDish.dish.name] += 1;
     }
-
-    this.popup = {showed: true, dishesQuantity: this.dishesQuantity, orderNumber: key, type: "INFO"}
   }
+
+  confirmModification(orderNumber: unknown) {
+    this.os.getOrdersByOrderNumber(orderNumber as number).subscribe({
+      next: (data) => {
+        const oldQuantity : any = {};
+        let success : boolean = true;
+        for(let order of data){
+          if(order.begin) {
+            //todo fai un errore o qualcosa
+            success = false;
+            break;
+          }
+          if(oldQuantity[order.dish.name] === undefined ) oldQuantity[order.dish.name] = [1, [order._id], order.dish._id, order.dish.type];
+          else {
+            oldQuantity[order.dish.name][0] += 1;
+            oldQuantity[order.dish.name][1].push(order._id);
+          }
+
+        }
+        if (success) {
+          const order : any = {
+            tableNumber: this.popup.tableNumber,
+            dishDict: {},
+            type: data[0].dish.type + "s"
+          }
+          for(let key of Object.keys(oldQuantity)){
+            if(this.dishesQuantity[key] === undefined) {
+              //todo elimina oldquantity[key][1] --> ciclo sui valori dell'array
+              for (let o of oldQuantity[key][1]) {
+                console.log(o);
+              }
+            }
+            else if(this.dishesQuantity[key] > oldQuantity[key][0]){
+              const toAdd = this.dishesQuantity[key] - oldQuantity[key][0];
+
+              order.dishDict[oldQuantity[key][2]] = toAdd;
+            }
+            else {
+
+            }
+          }
+          this.os.createOrder(order).subscribe({
+            next: (data) => {},
+            error: (err) => {console.log(err)}
+          });
+
+        }
+
+        this.closePopup();
+
+      },
+      error: (err) => {
+        if (err.errorMessage === 'You must be logged') this.us.logout()
+      }
+    });
+
+    return 0;
+  }
+
+
 }
 
 

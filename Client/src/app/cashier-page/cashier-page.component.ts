@@ -21,6 +21,7 @@ export class CashierPageComponent implements OnInit{
   constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService) {
   }
   ngOnInit(): void {
+    if (this.us.getToken() === '') this.router.navigate(['/login'])
     this.getTables()
     this.getOrders();
     this.getReceipts();
@@ -35,6 +36,7 @@ export class CashierPageComponent implements OnInit{
 
   logout() {
     this.us.logout();
+    this.router.navigate(['/login'])
   }
 
   getTables() {

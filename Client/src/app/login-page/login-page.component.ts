@@ -22,8 +22,11 @@ export class LoginPageComponent implements OnInit {
 
   goToPageRole() {
     if (this.us.getToken() !== '') {
-      const role = this.us.getRole();
-      if (role !== 'Admin') this.router.navigate(['/'+role+'s'])
+      const role = this.us.getRole() as string;
+      if (!['Bartender', 'Cook'].includes(role)) this.router.navigate(['/'+role.toLowerCase()+'s'])
+      else {
+        this.router.navigate(['/makers'])
+      }
     }
   }
 

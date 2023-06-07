@@ -5,7 +5,6 @@ import passport from "../passport-config"
 import jwt from "jsonwebtoken";
 import Users from "../models/User";
 import client from "../redis-config"
-import {type} from "os";
 
 // Define a schema for user input validation using Joi
 export const UserSchemaValidation = Joi.object().keys({
@@ -41,9 +40,12 @@ export const alreadyLogged = (req, res, next) => {
 
 // Middleware function to check if the user is logged in
 export const isLogged = async (req, res, next) => {
-    const token = req.header("auth-token");
+    // const token = req.header("Authorization").split(' ')[1];
+    const token = req.header('auth-token');
+
     try {
-        //todo invece di usare la redis cache, possibile soluzione è quella di usare un refresh token, ogni 10min access token lo aggiorna e controlla se esiste
+        //todo invece di usare la redis cache,
+        // possibile soluzione è quella di usare un refresh token, ogni 10min access token lo aggiorna e controlla se esiste
 
         // Verify the token and set the user data in the request object
         const decoded : IUser = jwt.verify(token, process.env.SECRET_TOKEN) as IUser;
@@ -61,7 +63,7 @@ export const isLogged = async (req, res, next) => {
         //if i found key in redis cache, I see his value, if true user wasn't deleted, else it was (if admin delete user, cache will be set to false)
         //unfortunately, redis returns string, so we cant treat it as a boolean
         else if (userExists === 'false') {
-            return res.status(401).send({message: "User doesn't exist anymore", error:true, status:401});
+            return res.status(401).send({errorMessage: "User doesn't exist anymore", error:true, status:401});
         }
 
         //be aware that inside JWT Token, password isn't stored
@@ -71,7 +73,7 @@ export const isLogged = async (req, res, next) => {
         next();
     } catch(err) {
         console.log(err);
-        return res.status(401).send({status:401, error: true, message:"You must be logged"});
+        return res.status(401).send({status:401, error: true, errorMessage:"You must be logged"});
     }
 }
 
@@ -147,14 +149,7 @@ export default (): Router  => {
         const accessToken = jwt.sign(tokenData, process.env.SECRET_TOKEN, { expiresIn: '8h' } );
         const refreshToken = jwt.sign(refreshTokenData, process.env.SECRET_REFRESH_TOKEN, {expiresIn: '7h'})
 
-
-        //TODO localStorage.setItem('jwtToken', token_signed); save the token in the client-side local storage --> VA FATTO NEL FRONT END
-
-        // Set the token as a response header
-
         return res.status(200).send({access_token: accessToken, refresh_token: refreshToken});
-
-        // return res.status(200).json({ error: false, errormessage: "", token: token_signed });
     });
 
 

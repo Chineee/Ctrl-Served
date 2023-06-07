@@ -17,45 +17,36 @@ import {Order} from "../models/Order";
 @Injectable()
 export class OrdersHttpService{
   private url = 'http://localhost:5000/api/v1';
+  private options = {
+    headers: new HttpHeaders({
+      'cache-control':'no-cache',
+      'Content-Type': 'application/json',
+      'auth-token': this.us.getToken()
+    })
+  }
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
 
   getOrders() {
-    const options = {
-      headers: new HttpHeaders({
-        'cache-control':'no-cache',
-        'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
-      })
-    }
-    return this.http.get<Order[]>(this.url+"/orders", options);
+    return this.http.get<Order[]>(this.url+"/orders", this.options);
   }
 
   createOrder(obj: any) {
-    const options = {
-      headers: new HttpHeaders({
-        'cache-control':'no-cache',
-        'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
-      })
-    }
-
-    return this.http.post(this.url+"/orders", obj, options);
+    return this.http.post(this.url+"/orders", obj, this.options);
   }
 
   getWaiterOrders() {
-    const options = {
-      headers: new HttpHeaders({
-          'cache-control': 'no-cache',
-          'Content-Type':  'application/json',
-          "auth-token": this.us.getToken()
-        }
-      )
-    }
-
-    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", options).pipe(tap(
+    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", this.options).pipe(tap(
       (data) => console.log("riuscito", data)
     ));
+  }
+
+  getOrdersByOrderNumber(orderNumber: number) : Observable<any> {
+    return this.http.get<Order[]>(this.url+"/orders?orderNumber=" + orderNumber, this.options).pipe((tap((data)=>{})));
+  }
+
+  modifyOrder(id: string) {
+
   }
 
 }

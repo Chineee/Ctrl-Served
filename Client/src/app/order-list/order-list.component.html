@@ -1,18 +1,17 @@
-&nbsp;&nbsp;&nbsp;<button *ngIf = "this.us.hasRole('Waiter')" (click)="addOrderPopup()" class="btn btn-success">Add new order</button>
+&nbsp;&nbsp;&nbsp;<button *ngIf = "this.us.hasRole('Waiter')" (click)="addOrderPopup()" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add new order</button>
 <br>
 <br>
 <div class="container">
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
-    <div *ngIf="isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)">
-      <button (click)="modifyOrder($event)">Modify order</button>
-      <button *ngIf="isReady(order.key)">Ready</button>
+    <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter')" class="card-body" (click)="showOrderPopup(order.key)">
+      <button class="btn btn-info">Ready</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} </p>
     </div>
   </div>
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
-    <div *ngIf="!isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)">
-      <button (click)="modifyOrder($event)">Modify order</button>
+    <div *ngIf="!isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)" data-bs-toggle="modal" data-bs-target="#infoModal">
+      <button (click)="modifyOrder($event, order.key)" type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify order</button>
       <button *ngIf="isReady(order.key)">Ready</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} </p>
@@ -20,54 +19,110 @@
   </div>
 </div>
 
-<div *ngIf="popup.showed && popup.type === 'INFO'" class="popup-overlay">
-  <div class="popup-content">
-    <button class="close-button" (click)="closePopup()">X</button>
-    <h4>Order {{popup.orderNumber}}:</h4>
-    <div *ngFor="let dish of popup.dishesQuantity | keyvalue">
-      {{dish.key}} - Quantity: {{dish.value}}
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Order {{popup.orderNumber}}</h4>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngFor="let dish of popup.dishesQuantity | keyvalue">
+            {{dish.key}} - Quantity: {{dish.value}}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="popup.showed && popup.type === 'ADD' && this.us.hasRole('Waiter')" class="popup-overlay">
-  <div class="popup-content">
-    <button class="close-button" (click)="closePopup()">X</button>
-    <div id="lista" style="max-height: 500px; overflow-y: scroll; max-width: 100%; overflow-x:hidden;">
-      <div class="d-flex flex-row mb-3">
-        <div class="p-2">
-          <h3>
-            Table {{popup.tableNumber ? popup.tableNumber < 10 ? "0" + popup.tableNumber : popup.tableNumber : "00"}}
-          </h3>
+<div class="modal-dialog modal-dialog-centered">
+  <div *ngIf="this.us.hasRole('Waiter')" class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Order {{popup.orderNumber}}</h4>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="p-2">
-          <select [(ngModel)]="popup.tableNumber" class="form-select">
-            <option *ngFor="let table of tables" [value]="table.tableNumber">{{table.tableNumber}}</option>
-          </select>
+        <div class="modal-body">
+          <div id="lista" style="max-height: 500px; overflow-y: scroll; max-width: 100%; overflow-x:hidden;">
+            <div class="d-flex flex-row mb-3">
+              <div class="p-2">
+                <h3>
+                  Table {{popup.tableNumber ? popup.tableNumber < 10 ? "0" + popup.tableNumber : popup.tableNumber : "00"}}
+                </h3>
+              </div>
+            </div>
+            <div class="p-2">
+              <select [(ngModel)]="popup.tableNumber" class="form-select">
+                <option *ngFor="let table of tables" [value]="table.tableNumber">{{table.tableNumber}}</option>
+              </select>
+            </div>
+            <div *ngFor="let _ of [].constructor(selectionSize); let i = index;">
+              <div class="row">
+                <div class="col-5">
+                  <label for="{{i}}">Dish Name</label>
+                  <select [(ngModel)]="selectionDish[i]" class="form-select" id="{{i}}">
+                    <option *ngFor="let dish of dishOptions" [value]="[dish._id, dish.type]">{{dish.name}}</option>
+                  </select>
+                </div>
+                <div class="col-5">
+                  <label for="quantity">Quantity</label>
+                  <input type="number" id="quantity" [(ngModel)]="selectionQuantity[i]" class="form-control" min="1"/>
+                </div>
+                <div class="col-2">
+                  <br>
+                  <button type="button" (click)="deleteSelection(i)" class="btn btn-danger">X</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      <div *ngFor="let _ of [].constructor(selectionSize); let i = index;">
-      <div class="row">
-        <div class="col-5">
-          <label for="{{i}}">Dish Name</label>
-          <select [(ngModel)]="selectionDish[i]" class="form-select" id="{{i}}">
-            <option *ngFor="let dish of dishOptions" [value]="[dish._id, dish.type]">{{dish.name}}</option>
-          </select>
-        </div>
-        <div class="col-5">
-          <label for="quantity">Quantity</label>
-          <input type="number" id="quantity" [(ngModel)]="selectionQuantity[i]" class="form-control" min="1"/>
-        </div>
-        <div class="col-2">
-          <br>
-          <button type="button" (click)="deleteSelection(i)" class="btn btn-danger">X</button>
+        <div class="modal-footer">
+          <button (click)="addSelection()" class="btn btn-primary">+</button>
+          &nbsp;
+          <button (click)="confirmPopup(); closePopup()" class="btn btn-success" data-bs-dismiss="modal"> Confirm</button>
         </div>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="modal-dialog modal-dialog-centered">
+  <div *ngIf="this.us.hasRole('Waiter')" class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Table {{popup.tableNumber}}</h4>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div *ngFor="let selection of popup.dishesQuantity | keyvalue; let i = index">
+            <div class="row">
+              <div class="col-5">
+                <br>
+                {{selection.key}}
+              </div>
+              <div class="col-5">
+                <label for="quantity_modify">Quantity</label>
+                <div class="input-group">
+                  <button class="btn btn-outline-secondary" type="button" (click)="decreaseQuantity(selection.key, getDishQuantityByKey(selection.key))">-</button>
+                  <p id="quantity_modify" class="form-control"> {{getDishQuantityByKey(selection.key)}}</p>
+                  <button class="btn btn-outline-secondary" type="button" (click)="increaseQuantity(selection.key, getDishQuantityByKey(selection.key))">+</button>
+                </div>
+              </div>
+              <div class="col-2">
+                <br>
+                <button type="button" (click)="deleteOrderSelection()" class="btn btn-danger">X</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="confirmModification(popup.orderNumber)" data-bs-dismiss="modal">Confirm</button>
+        </div>
+      </div>
     </div>
-    <hr>
-    <button (click)="addSelection()" class="btn btn-primary">+</button>
-    &nbsp;
-    <button (click)="confirmPopup()" class="btn btn-success"> Confirm</button>
   </div>
 </div>
