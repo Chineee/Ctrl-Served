@@ -18,67 +18,71 @@
   </div>
 </div>
 
-<div *ngIf="this.us.hasRole('Waiter') && popup.showed && !(popup.occupied && !popup.isWaiter)" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Table {{popup.tableNumber}}</h4>
-        <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div *ngIf="!popup.occupied">
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-auto">
-              <p class="mb-0">Select the number of customers:</p>
-            </div>
-            <div class="col-auto">
-              <select class="form-select mb-0" [(ngModel)]="customers">
-                <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1">{{i+1}}</option>
-              </select>
-            </div>
-          </div>
+<div class="modal-dialog modal-dialog-centered">
+  <div *ngIf="this.us.hasRole('Waiter') && popup.showed && !(popup.occupied && !popup.isWaiter)" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Table {{popup.tableNumber}}</h4>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber, customers, true); closePopup()">Confirm</button>
-        </div>
-      </div>
-      <div *ngIf="popup.occupied && popup.isWaiter">
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-auto">
-              <p>Current number of customers:</p>
-            </div>
-            <div class="col-auto">
-              <span *ngIf="isModifyingCustomers">
-                <select class="form-select" [(ngModel)]="customers" [disabled]="!isModifyingCustomers">
+        <div *ngIf="!popup.occupied">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-auto">
+                <p class="mb-0">Select the number of customers:</p>
+              </div>
+              <div class="col-auto">
+                <select class="form-select mb-0" [(ngModel)]="customers">
                   <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1">{{i+1}}</option>
                 </select>
-              </span>
-              <p *ngIf="!isModifyingCustomers">
-                {{popup.customers}}
-              </p>
+              </div>
             </div>
           </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber, customers, true); closePopup()">Confirm</button>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" *ngIf="isModifyingCustomers" (click)="changeStatus(popup.tableNumber, customers, true); modifyCustomers(); closePopup()">Confirm</button>
-          <button class="btn btn-primary" *ngIf="!isModifyingCustomers" (click)="modifyCustomers()">Modify</button>
-          <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber,0,false); closePopup()">Free table</button>
+        <div *ngIf="popup.occupied && popup.isWaiter">
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-auto">
+                <p>Current number of customers:</p>
+              </div>
+              <div class="col-auto">
+                <span *ngIf="isModifyingCustomers">
+                  <select class="form-select" [(ngModel)]="customers" [disabled]="!isModifyingCustomers">
+                    <option *ngFor="let num of Array(popup.seats); let i = index" [value]="i+1">{{i+1}}</option>
+                  </select>
+                </span>
+                <p *ngIf="!isModifyingCustomers">
+                  {{popup.customers}}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-primary" *ngIf="isModifyingCustomers" (click)="changeStatus(popup.tableNumber, customers, true); modifyCustomers(); closePopup()">Confirm</button>
+            <button class="btn btn-primary" *ngIf="!isModifyingCustomers" (click)="modifyCustomers()">Modify</button>
+            <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber,0,false); closePopup()">Free table</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div *ngIf="this.us.hasRole('Cashier') && popup.showed && allOrdersReady(popup.tableNumber)" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Do you want to generate the table's receipt?</h5>
-        <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"> </button>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" (click)="generateReceiptEvent(popup.tableNumber); closePopup()" data-bs-dismiss="modal">Confirm</button>
+<div class="modal-dialog modal-dialog-centered">
+  <div *ngIf="this.us.hasRole('Cashier') && popup.showed && allOrdersReady(popup.tableNumber)" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Do you want to generate the table's receipt?</h5>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"> </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" (click)="generateReceiptEvent(popup.tableNumber); closePopup()" data-bs-dismiss="modal">Confirm</button>
+        </div>
       </div>
     </div>
   </div>

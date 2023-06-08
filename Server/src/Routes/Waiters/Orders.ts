@@ -63,7 +63,7 @@ export default (): Router => {
             await client.set("orderNumber", orderNumber);
         }
         else*/
-        const orderNumber = await client.incr("orderNumber");
+        const orderNumber = req.query?.orderNumber ? req.query.orderNumber : await client.incr("orderNumber");
         // Iterate through the dish dictionary and create order and queue objects
         for (const key in dishDict) {
             const dish = await Menu.findById(key);
@@ -150,13 +150,27 @@ export default (): Router => {
         }
     });
 
-    app.delete('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
+    //order numbermust be provided in query
+    app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
+        try {
+            console.log('ok?')
+            await Order.updateMany({orderNumber: req.query.orderNumber}, {orderNumber: -1})
+            getIoInstance().emit('Order_sent')
+            return res.status(200).send({error: false, status: 200, message: "Order modified correctly"})
+        } catch(err) {
+            console.log(err);
+            return res.status(400).send({error:true, status:400, errorMessage:err})
+        }
+    })
+
+    app.delete('/:id', isLogged, hasRole('Waiter', 'Cashier'), async (req, res) => {
         const order = await Order.findById(req.params.id);
         if(order === null) return res.status(400).send({status: 400, error: true, errorMessage: "Order doesn't exist"});
 
         try{
             await order.deleteOne();
-            return res.status(400).send({status:400, error: true, errorMessage: "Order successfully deleted"})
+            getIoInstance().emit('Order_sent')
+            return res.status(200).send({status:200, error: false, message: "Order successfully deleted"})
         } catch (err) {
             return res.status(400).send(err);
         }

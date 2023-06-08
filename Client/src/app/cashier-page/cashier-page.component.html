@@ -1,7 +1,27 @@
+<br>
 <div class="container">
+  <div class="button-container">
+    <button class="btn btn-primary" *ngIf="page !== Page.RECEIPTS" (click)="changeStatus(Page.RECEIPTS)">Show receipts</button>
+    <button class="btn btn-primary" *ngIf="page !== Page.TABLES" (click)="changeStatus(Page.TABLES)">Show tables</button>
+    <button class="btn btn-primary" *ngIf="page !== Page.ORDERS" (click)="changeStatus(Page.ORDERS)">Show orders</button>
+    <button class="btn btn-primary" *ngIf="page !== Page.STATS" (click)="changeStatus(Page.STATS)">Show stats</button>
+  </div>
+
   <button class="btn btn-danger float-end" (click)="logout()">Logout</button>
-<!--  <app-table-component [tables]="tables" [orders]="orders" (receiptEvent)="createReceipt($event)"></app-table-component>-->
-<!--  <app-receipts-list [receipts]="receipts"></app-receipts-list>-->
-  <app-order-list [orderDishes]="orders"></app-order-list>
+  <br>
+  <br>
+  <h2>{{page}}</h2>
+  <div *ngIf="page === Page.TABLES">
+    <app-table-component [tables]="tables" [orders]="orders" (receiptEvent)="createReceipt($event)"></app-table-component>
+  </div>
+    <div *ngIf="page === Page.RECEIPTS">
+      <app-receipts-list [receipts]="receipts"></app-receipts-list>
+    </div>
+    <div *ngIf="page === Page.ORDERS">
+      <app-order-list [orderDishes]="orders"></app-order-list>
+    </div>
+  <div *ngIf="page === Page.STATS">
+    <app-stats-page [users]="users"></app-stats-page>
+  </div>
 </div>
 

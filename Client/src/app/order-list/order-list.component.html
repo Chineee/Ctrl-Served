@@ -1,10 +1,15 @@
 &nbsp;&nbsp;&nbsp;<button *ngIf = "this.us.hasRole('Waiter')" (click)="addOrderPopup()" type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addModal">Add new order</button>
 <br>
 <br>
+
+<div *ngIf="alert.showed" class="{{alert.error ? 'alert alert-danger' : 'alert alert-success'}}" role="alert">
+  {{alert.message}}
+</div>
+
 <div class="container">
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
     <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter')" class="card-body" (click)="showOrderPopup(order.key)">
-      <button class="btn btn-info">Ready</button>
+      <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} </p>
     </div>
@@ -12,9 +17,28 @@
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
     <div *ngIf="!isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)" data-bs-toggle="modal" data-bs-target="#infoModal">
       <button *ngIf="this.us.hasRole('Waiter')" (click)="modifyOrder($event, order.key)" type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify order</button>
-      <button *ngIf="isReady(order.key)">Ready</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} </p>
+    </div>
+  </div>
+</div>
+
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade" id="readyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Order {{popup.orderNumber}} is ready</h4>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Have you delivered the order?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="confirmDelivery(popup.orderNumber)">Confirm</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -98,7 +122,7 @@
           <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div *ngFor="let selection of popup.dishesQuantity | keyvalue; let i = index">
+          <div *ngFor="let selection of dishesQuantity | keyvalue; let i = index">
             <div class="row">
               <div class="col-5">
                 <br>
@@ -114,7 +138,7 @@
               </div>
               <div class="col-2">
                 <br>
-                <button type="button" (click)="deleteOrderSelection()" class="btn btn-danger">X</button>
+                <button type="button" (click)="deleteOrderSelection(selection.key)" class="btn btn-danger">X</button>
               </div>
             </div>
           </div>

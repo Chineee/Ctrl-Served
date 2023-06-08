@@ -1,0 +1,14 @@
+<br>
+<div class="container">
+  <div class="container-button">
+    <button class="btn btn-secondary" (click)="showStats(Role.COOK)">Show cooks statistics</button>
+    <button class="btn btn-secondary" (click)="showStats(Role.BARTENDER)">Show bartenders statistics</button>
+    <button class="btn btn-secondary" (click)="showStats(Role.WAITER)">Show waiters statistics</button>
+    <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="showStats(Role.CASHIER)">Show cashiers statistics</button>
+  </div>
+</div>
+<canvas id="barChart"></canvas> 
+
+
+
+

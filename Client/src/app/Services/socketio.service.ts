@@ -47,6 +47,10 @@ export class SocketioService {
 
       this.socket.on('drink_queue_change', (m:any) => {
         observer.next(m);
+      });
+
+      this.socket.on('receipt_created', (m:any)=>{
+        observer.next(m);
       })
 
       // When the consumer unsubscribes, clean up data ready for next subscription.

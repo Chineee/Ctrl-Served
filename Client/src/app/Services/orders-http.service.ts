@@ -27,26 +27,29 @@ export class OrdersHttpService{
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
 
+  modifyOrderNumber(orderNumber: number) {
+    return this.http.put(this.url+'/orders?orderNumber='+orderNumber, {}, this.options);
+  }
+
+  deleteOrder(id:string) {
+    return this.http.delete(this.url+"/orders/"+id, this.options);
+  }
+
   getOrders() {
     return this.http.get<Order[]>(this.url+"/orders", this.options);
   }
 
-  createOrder(obj: any) {
-    return this.http.post(this.url+"/orders", obj, this.options);
+  createOrder(obj: any, orderNumber:number|undefined, modified:boolean) {
+    if (!modified) return this.http.post(this.url+"/orders", obj, this.options);
+    else return this.http.post(this.url+"/orders?orderNumber="+orderNumber, obj, this.options);
   }
 
   getWaiterOrders() {
-    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", this.options).pipe(tap(
-      (data) => console.log("riuscito", data)
-    ));
+    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", this.options);
   }
 
   getOrdersByOrderNumber(orderNumber: number) : Observable<any> {
     return this.http.get<Order[]>(this.url+"/orders?orderNumber=" + orderNumber, this.options).pipe((tap((data)=>{})));
-  }
-
-  modifyOrder(id: string) {
-
   }
 
 }

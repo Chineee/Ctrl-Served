@@ -68,7 +68,7 @@ export class TableComponentComponent implements OnInit{
     const readyTableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber && order.ready);
     return tableOrder.length === readyTableOrder.length && tableOrder.length !== 0
   }
-  
+
 
   filterTable(type : TableStatus) {
     this.filterTables = type;
@@ -80,7 +80,7 @@ export class TableComponentComponent implements OnInit{
   }
 
   showPopup(tableNumber: number, seats: number, waiterId: User, occupied: boolean) {
-    if (this.us.hasRole('Waiter')) {
+    if (this.us.hasRole('Waiter', 'Cashier')) {
       const isWaiter : boolean = waiterId?.email === this.us.getEmail();
 
       if (this.dictionary[tableNumber] === undefined)

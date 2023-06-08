@@ -4,14 +4,22 @@ import {Router} from "@angular/router";
 import {ReceiptsHttpService} from "../Services/receipts-http.service";
 import Receipt from "../models/Receipt";
 
+enum RangeProfit {
+  DAILY,
+  WEEKLY,
+  MONTHLY,
+  YEARLY
+}
 
 @Component({
   selector: 'app-receipts-list',
   templateUrl: './receipts-list.component.html',
-  styleUrls: ['./receipts-list.component.css']
+  styleUrls: ['./receipts-list.component.css'],
 })
 export class ReceiptsListComponent implements OnInit {
   @Input() public receipts : Receipt[] = [];
+  protected funcSelected : Function = this.dailyProfit;
+  protected RangeProfit = RangeProfit;
 
   constructor(private us : UserHttpService, private router : Router, private rs : ReceiptsHttpService) {}
 
@@ -20,7 +28,8 @@ export class ReceiptsListComponent implements OnInit {
   }
 
   //todo aggiungi date
-  daylyProfit() {
+  dailyProfit(date : Date) {
+    console.log('daily')
     const options: Intl.DateTimeFormatOptions = {
       timeZone: 'Europe/Rome',
       year: 'numeric',
@@ -29,7 +38,7 @@ export class ReceiptsListComponent implements OnInit {
     };
 
     const formatter = new Intl.DateTimeFormat('it-IT', options);
-    const formattedDateTime = formatter.format(new Date());
+    const formattedDateTime = formatter.format(date);
     const [formattedDate, formattedTime] = formattedDateTime.split(', ');
     const todayReceipts = this.receipts.filter((receipt) => receipt.date.toString() === formattedDate);
     let profit : number = 0;
@@ -41,9 +50,18 @@ export class ReceiptsListComponent implements OnInit {
     return profit;
   }
 
-  //todo fai in modo che selezioni solo lunedì come giorno di partenza
-  weeklyProfit() {
-    const currentDate = new Date();
+  getToday() {
+    let today = new Date().toLocaleDateString().split('/');
+    return today[2] + '-' + today[1].padStart(2, '0') + '-' + today[0].padStart(2, '0');
+  }
+
+  handleDataSelection(date : any) {
+    // this.dailyProfit(new Date(date));
+    this.funcSelected(new Date(date));
+  }
+
+  weeklyProfit(currentDate : Date) {
+    console.log('weekly')
 
     const firstDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1));
     firstDayOfWeek.setHours(0, 0, 0, 0);
@@ -67,8 +85,25 @@ export class ReceiptsListComponent implements OnInit {
     return profit;
   }
 
-  monthlyProfit(){
-    const currentDate = new Date();
+  setFunc(type : RangeProfit) : void {
+    switch (type) {
+      case RangeProfit.DAILY:
+        this.funcSelected = this.dailyProfit;
+        break;
+      case RangeProfit.MONTHLY:
+        this.funcSelected = this.monthlyProfit;
+        break;
+      case RangeProfit.WEEKLY:
+        this.funcSelected = this.weeklyProfit;
+        break;
+      case RangeProfit.YEARLY:
+        this.funcSelected = this.yearlyProfit;
+    }
+  }
+
+  monthlyProfit(currentDate: Date){
+    console.log('monthly')
+
     const options: Intl.DateTimeFormatOptions = {
       timeZone: 'Europe/Rome',
       month: 'numeric',
@@ -86,8 +121,9 @@ export class ReceiptsListComponent implements OnInit {
     return profit;
   }
 
-  yearlyProfit() {
-    const currentDate = new Date();
+  yearlyProfit(currentDate: Date) {
+    console.log('yearly')
+
     const options: Intl.DateTimeFormatOptions = {
       timeZone: 'Europe/Rome',
       year: 'numeric',
@@ -104,4 +140,5 @@ export class ReceiptsListComponent implements OnInit {
     console.log((profit))
     return profit;
   }
+
 }

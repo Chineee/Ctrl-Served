@@ -42,7 +42,8 @@ export class OrderListComponent implements OnInit{
   protected selectionDish : Array<string> = [];
   protected selectionQuantity : Array<number> = [];
   protected selectionSize : number = 1;
-  protected error : {type: Error | undefined} = {type: undefined}
+  protected error : {type: Error | undefined} = {type: undefined};
+  protected alert : any = {showed: false, error:false, message:""}
 
 
   constructor(private os : OrdersHttpService, protected us : UserHttpService, private router: Router, private so : SocketioService,
@@ -96,7 +97,10 @@ export class OrderListComponent implements OnInit{
     this.selectionSize = this.selectionSize - 1;
   }
 
-  deleteOrderSelection() {
+  deleteOrderSelection(key : unknown) {
+    const cpy= this.dishesQuantity;
+    delete cpy[key as string];
+    this.dishesQuantity = cpy;
 
   }
 
@@ -131,7 +135,6 @@ export class OrderListComponent implements OnInit{
 
       this.createOrder(foodsSent, drinkSent);
       this.closePopup();
-
     }
   }
 
@@ -148,6 +151,7 @@ export class OrderListComponent implements OnInit{
 
     });
     this.dishesQuantity = copy;
+    console.log(this.dishesQuantity)
   }
 
   getDishQuantityByKey(key : unknown) {
@@ -165,7 +169,7 @@ export class OrderListComponent implements OnInit{
 
   createOrder(foods: any, drinks: any) {
     if (Object.keys(foods.dishDict).length !== 0) {
-      this.os.createOrder(foods).subscribe({
+      this.os.createOrder(foods, undefined, false).subscribe({
         next: (data) => {
 
         },
@@ -174,7 +178,7 @@ export class OrderListComponent implements OnInit{
     }
 
     if (Object.keys(drinks.dishDict).length !== 0) {
-      this.os.createOrder(drinks).subscribe({
+      this.os.createOrder(drinks, undefined, false).subscribe({
         next: (data) => {
 
         },
@@ -226,14 +230,24 @@ export class OrderListComponent implements OnInit{
     }
   }
 
+  confirmDelivery(orderNumber: number | undefined) {
+    this.os.modifyOrderNumber(orderNumber as number).subscribe({
+      next: (data) => {
+        console.log("HELP i'M DYiNG")
+      },
+      error: (err) => console.log(err)
+    })
+  }
+
   confirmModification(orderNumber: unknown) {
+    console.log(this.dishesQuantity);
     this.os.getOrdersByOrderNumber(orderNumber as number).subscribe({
       next: (data) => {
         const oldQuantity : any = {};
         let success : boolean = true;
         for(let order of data){
-          if(order.begin) {
-            //todo fai un errore o qualcosa
+          if(order.ready) {
+            console.log("NON PUOIIIIIIII")
             success = false;
             break;
           }
@@ -242,8 +256,8 @@ export class OrderListComponent implements OnInit{
             oldQuantity[order.dish.name][0] += 1;
             oldQuantity[order.dish.name][1].push(order._id);
           }
-
         }
+        console.log(success)
         if (success) {
           const order : any = {
             tableNumber: this.popup.tableNumber,
@@ -252,9 +266,8 @@ export class OrderListComponent implements OnInit{
           }
           for(let key of Object.keys(oldQuantity)){
             if(this.dishesQuantity[key] === undefined) {
-              //todo elimina oldquantity[key][1] --> ciclo sui valori dell'array
               for (let o of oldQuantity[key][1]) {
-                console.log(o);
+                this.os.deleteOrder(o).subscribe({});
               }
             }
             else if(this.dishesQuantity[key] > oldQuantity[key][0]){
@@ -262,15 +275,25 @@ export class OrderListComponent implements OnInit{
 
               order.dishDict[oldQuantity[key][2]] = toAdd;
             }
-            else {
+            else if (this.dishesQuantity[key] < oldQuantity[key][0]) {
+              const toDelete = oldQuantity[key][0] - this.dishesQuantity[key];
+
+              for (let i = 0; i < toDelete; i++) {
+                this.os.deleteOrder(oldQuantity[key][1][i]).subscribe({})
+              }
 
             }
           }
-          this.os.createOrder(order).subscribe({
+          this.os.createOrder(order, orderNumber as number, true).subscribe({
             next: (data) => {},
-            error: (err) => {console.log(err)}
+            error: (err) => {
+              this.alert = {showed: true, error: true, message:err.message}
+            }
           });
+          this.alert = {showed: true, error: false, message:"Ordine modificato con successo"}
 
+        } else {
+          this.alert = {showed: true, error: true, message:"Something went wrong..."}
         }
 
         this.closePopup();
@@ -285,6 +308,7 @@ export class OrderListComponent implements OnInit{
   }
 
 
+  protected readonly undefined = undefined;
 }
 
 

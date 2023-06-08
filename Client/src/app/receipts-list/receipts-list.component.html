@@ -1,6 +1,31 @@
 <div class="container">
-  <button (click)="daylyProfit()">Show dayly income</button>
-  <button (click)="weeklyProfit()">Show weekly income</button>
-  <button (click)="monthlyProfit()">Show monthly income</button>
-  <button (click)="yearlyProfit()">Show yearly income</button>
+  <div class="container-button">
+    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.DAILY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show dayly income</button>
+    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.WEEKLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show weekly income</button>
+    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.MONTHLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show monthly income</button>
+    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.YEARLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show yearly income</button>
+  </div>
 </div>
+
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade" id="datePickerModal" tabindex="-1" role="dialog" aria-labelledby="datePickerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="datePickerModalLabel">Select a date</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="input-group date">
+            <input type="date" class="form-control" id="datepicker" #date value="{{getToday()}}">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="handleDataSelection(date.value)" data-bs-dismiss="modal">Select</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

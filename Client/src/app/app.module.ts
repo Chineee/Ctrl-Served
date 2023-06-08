@@ -25,6 +25,9 @@ import { QueueComponent } from './queue/queue.component';
 import { CashierPageComponent } from './cashier-page/cashier-page.component';
 import {ReceiptsHttpService} from "./Services/receipts-http.service";
 import { ReceiptsListComponent } from './receipts-list/receipts-list.component';
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatInputModule} from "@angular/material/input";
+import { StatsPageComponent } from './stats-page/stats-page.component';
 
 @NgModule({
   declarations: [
@@ -41,12 +44,15 @@ import { ReceiptsListComponent } from './receipts-list/receipts-list.component';
     QueueComponent,
     CashierPageComponent,
     ReceiptsListComponent,
+    StatsPageComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    MatDatepickerModule,
+    MatInputModule
   ],
   providers: [
     {provide: UserHttpService, useClass: UserHttpService},

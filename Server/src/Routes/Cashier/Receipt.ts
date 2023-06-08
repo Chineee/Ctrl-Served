@@ -6,6 +6,7 @@ import Orders from "../../models/Orders";
 import Tables from "../../models/Tables";
 import {Types} from "mongoose";
 import Users from "../../models/User";
+import getIoInstance from "../../socketio-config";
 
 
 // Define a schema for receipt input validation using Joi
@@ -70,6 +71,7 @@ export default () : Router => {
             // await Users.findOneAndUpdate({email: req.user.email}, {$inc: {counter: inc}});
             await Orders.deleteMany({tableNumber: table.tableNumber});
             //todo notify waiter che il dispositivo ha changato tavolo free
+            getIoInstance().emit('receipt_created');
             return res.status(200).send(receipt);
         } catch (err) {
             return res.status(400).send(err);

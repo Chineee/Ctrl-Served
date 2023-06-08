@@ -8,6 +8,14 @@ import {OrdersHttpService} from "../Services/orders-http.service";
 import {ReceiptsHttpService} from "../Services/receipts-http.service";
 import Receipt from "../models/Receipt";
 import {SocketioService} from "../Services/socketio.service";
+import User from "../models/User";
+
+enum Page {
+  TABLES = "TABLES PAGE",
+  ORDERS = "ORDERS PAGE",
+  RECEIPTS = "RECEIPTS PAGE",
+  STATS = "STATS PAGE"
+}
 
 @Component({
   selector: 'app-cashier-page',
@@ -17,7 +25,10 @@ import {SocketioService} from "../Services/socketio.service";
 export class CashierPageComponent implements OnInit{
   protected tables : Table[] = [];
   protected orders : Order[] = [];
-  protected receipts : Receipt[] = []
+  protected receipts : Receipt[] = [];
+  protected users : User[] = []
+  protected page : Page = Page.RECEIPTS;
+  protected Page = Page;
   constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService) {
   }
   ngOnInit(): void {
@@ -25,14 +36,30 @@ export class CashierPageComponent implements OnInit{
     this.getTables()
     this.getOrders();
     this.getReceipts();
+    this.getUsers();
     this.so.connect().subscribe({
       next: (data) => {
         this.getReceipts();
         this.getOrders();
         this.getTables();
+        this.getUsers();
       }
     })
   }
+
+  getUsers() {
+    this.us.getUsers().subscribe({
+      next: (data) => {
+        this.users = data;
+        console.log(data)
+      }
+    })
+  }
+
+  changeStatus(newPage : Page) {
+    this.page = newPage;
+  }
+
 
   logout() {
     this.us.logout();

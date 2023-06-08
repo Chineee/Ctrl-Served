@@ -64,7 +64,20 @@ export class UserHttpService {
 
     return this.http.post(this.url + '/users', body, options);
   }
+  
+  getUsers() {
 
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control': 'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.token
+      })
+    }
+    
+    return this.http.get<User[]>(this.url + '/users', options);
+  }
+  
   getId() : string | null{
     if (this.token) return (jwtdecode(this.token) as User)._id;
     return null;
