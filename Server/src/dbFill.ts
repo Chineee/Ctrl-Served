@@ -19,42 +19,48 @@ async function insertAll() {
                 "surname": "admin",
                 "email": "admin@gmail.com",
                 "password": await getPassword("admin"),
-                "role": "Admin"
+                "role": "Admin",
+                "counter":0
             }),
             new User({
                 "name": "cassiere",
                 "surname": "cassiere",
                 "email": "cassiere@gmail.com",
                 "password": await getPassword("cassiere"),
-                "role": "Cashier"
+                "role": "Cashier",
+                "counter":0
             }),
             new User({
                 "name": "cuoco",
                 "surname": "cuoco",
                 "email": "cuoco@gmail.com",
                 "password": await getPassword("cuoco"),
-                "role": "Cook"
+                "role": "Cook",
+                "counter":0
             }),
             new User({
                 "name": "barista",
                 "surname": "barista",
                 "email": "barista@gmail.com",
                 "password": await getPassword("barista"),
-                "role": "Bartender"
+                "role": "Bartender",
+                "counter":0
             }),
             new User({
                 "name": "cameriere",
                 "surname": "cameriere",
                 "email": "cameriere@gmail.com",
                 "password": await getPassword("cameriere"),
-                "role": "Waiter"
+                "role": "Waiter",
+                "counter":0
             }),
             new User({
                 "name":"cameriere2",
                 "surname":"cameriere2",
                 "email":"cameriere2@gmail.com",
                 "password":await getPassword("cameriere2"),
-                "role":"Waiter"
+                "role":"Waiter",
+                "counter":0
             })
 
         ]);

@@ -3,5 +3,6 @@ export default interface User {
   surname: string,
   email: string,
   role: string,
-  _id: string
+  _id: string,
+  counter: number
 }

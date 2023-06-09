@@ -1,13 +1,28 @@
 <br>
 <div class="container">
   <div class="container-button">
-    <button class="btn btn-secondary" (click)="showStats(Role.COOK)">Show cooks statistics</button>
-    <button class="btn btn-secondary" (click)="showStats(Role.BARTENDER)">Show bartenders statistics</button>
-    <button class="btn btn-secondary" (click)="showStats(Role.WAITER)">Show waiters statistics</button>
-    <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="showStats(Role.CASHIER)">Show cashiers statistics</button>
+    <button class="btn btn-secondary" (click)="buildStats(Role.COOK)">Show cooks statistics</button>
+    <button class="btn btn-secondary" (click)="buildStats(Role.BARTENDER)">Show bartenders statistics</button>
+    <button class="btn btn-secondary" (click)="buildStats(Role.WAITER)">Show waiters statistics</button>
+    <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="buildStats(Role.CASHIER)">Show cashiers statistics</button>
   </div>
 </div>
-<canvas id="barChart"></canvas> 
+<br><br>
+<div class="chart-container">
+  <ngx-charts-bar-vertical
+    [results]="statsUserRole[pageRole]"
+    [gradient]="verticalBarOptions.gradient"
+    [xAxis]="verticalBarOptions.showXAxis"
+    [yAxis]="verticalBarOptions.showYAxis"
+    [showXAxisLabel]="verticalBarOptions.showXAxisLabel"
+    [showYAxisLabel]="verticalBarOptions.showYAxisLabel"
+    [xAxisLabel]="verticalBarOptions.xAxisLabel"
+    [yAxisLabel]="verticalBarOptions.yAxisLabel"
+    [barPadding]="verticalBarOptions.barPadding"
+    [showGridLines]="verticalBarOptions.showGridLines"
+    [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+  ></ngx-charts-bar-vertical>
+</div>
 
 
 

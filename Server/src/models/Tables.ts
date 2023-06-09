@@ -12,7 +12,6 @@ export interface ITable {
 
 // Create a new mongoose schema for tables
 const TablesSchema = new mongoose.Schema({
-    // waiterId: {type: String, required: function() { this.waiterId !== null || typeof this.waiterId !== 'string'}, ref: 'Users'}, // It can either be an actual waiterId or null
     waiterId: {type: mongoose.Schema.Types.Mixed, ref:"Users"},
     tableNumber: {type: Number, required: true, unique:true},
     occupied: {type: Boolean, required: true},

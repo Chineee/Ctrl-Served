@@ -29,6 +29,7 @@ export class CashierPageComponent implements OnInit{
   protected users : User[] = []
   protected page : Page = Page.RECEIPTS;
   protected Page = Page;
+  protected statsUserRole : any;
   constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService) {
   }
   ngOnInit(): void {
@@ -51,15 +52,28 @@ export class CashierPageComponent implements OnInit{
     this.us.getUsers().subscribe({
       next: (data) => {
         this.users = data;
-        console.log(data)
+        this.statsUserRole = {
+          0: this.buildUserRole("Waiter"),
+          1: this.buildUserRole("Cook"),
+          2: this.buildUserRole("Cashier"),
+          3: this.buildUserRole("Bartender")
+        }
       }
     })
+  }
+
+  buildUserRole(role: string) {
+    const usersRole = this.users.filter((user)=> user.role === role);
+    const result : {name: string, value: number}[] = []
+    for(const user of usersRole) {
+      result.push({name: user.name + ' ' + user.surname, value: user.counter})
+    }
+    return result;
   }
 
   changeStatus(newPage : Page) {
     this.page = newPage;
   }
-
 
   logout() {
     this.us.logout();

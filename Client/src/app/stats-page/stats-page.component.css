@@ -3,3 +3,8 @@
   justify-content: space-between;
   width: 100%;
 }
+
+.chart-container ngx-charts-x-axis, .chart-container ngx-charts-y-axis {
+  font-size: 30px;
+  font-weight: bold;
+}

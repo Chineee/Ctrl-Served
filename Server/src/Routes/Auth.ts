@@ -20,7 +20,7 @@ export const hasRole = (...role: string[]) => {
     return (req, res, next) => {
         const userRole = req.user?.role;
 
-        if (!role.includes(userRole) && userRole !== 'Admin') return res.status(401).send("You don't have the permission to perform this action")
+        if (!role.includes(userRole) && userRole !== 'Admin') return res.status(403).send("You don't have the permission to perform this action")
 
         next();
     }

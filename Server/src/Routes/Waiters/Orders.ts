@@ -6,6 +6,7 @@ import Menu from "../../models/Menus";
 import {FoodQueue, DrinkQueue} from "../../models/Queue";
 import client from "../../redis-config"
 import getIoInstance from "../../socketio-config";
+import User from "../../models/User";
 
 //Define a schema for order input validation using Joi
 export const OrderSchemaValidation = Joi.object().keys({
@@ -153,8 +154,10 @@ export default (): Router => {
     //order numbermust be provided in query
     app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
         try {
-            console.log('ok?')
-            await Order.updateMany({orderNumber: req.query.orderNumber}, {orderNumber: -1})
+            const orders = await Order.find({orderNumber: req.query.orderNumber});
+            if (orders.length > 0 && orders[0].waiterId.toString() !== req.user._id.toString()) return res.status(403).send({error: true, status:403, errorMessage:"Insufficient permission"})
+            const orderModified = await Order.updateMany({orderNumber: req.query.orderNumber}, {orderNumber: -1});
+            await User.findOneAndUpdate({_id: req.user._id}, {$inc: {counter: orderModified.modifiedCount}})
             getIoInstance().emit('Order_sent')
             return res.status(200).send({error: false, status: 200, message: "Order modified correctly"})
         } catch(err) {

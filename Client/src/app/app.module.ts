@@ -28,6 +28,8 @@ import { ReceiptsListComponent } from './receipts-list/receipts-list.component';
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatInputModule} from "@angular/material/input";
 import { StatsPageComponent } from './stats-page/stats-page.component';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -52,7 +54,9 @@ import { StatsPageComponent } from './stats-page/stats-page.component';
     HttpClientModule,
     FormsModule,
     MatDatepickerModule,
-    MatInputModule
+    MatInputModule,
+    NgxChartsModule,
+    BrowserAnimationsModule
   ],
   providers: [
     {provide: UserHttpService, useClass: UserHttpService},

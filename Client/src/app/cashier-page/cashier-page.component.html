@@ -21,7 +21,7 @@
       <app-order-list [orderDishes]="orders"></app-order-list>
     </div>
   <div *ngIf="page === Page.STATS">
-    <app-stats-page [users]="users"></app-stats-page>
+    <app-stats-page [users]="users" [statsUserRole]="statsUserRole"></app-stats-page>
   </div>
 </div>
 

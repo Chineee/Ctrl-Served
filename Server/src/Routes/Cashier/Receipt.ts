@@ -25,13 +25,16 @@ export default () : Router => {
         if (error) return res.status(400).send(error);
 
         const table = await Tables.findOne({tableNumber: req.body.tableNumber});
-        if (!table.occupied) return res.status(400).send("Table isn't occupied")
+        if (!table.occupied) return res.status(400).send({status: 400, error: true, errorMessage: "Table isn't occupied"})
 
         const dishes = await Orders.find({tableNumber: table.tableNumber}).populate('dish');
         const dishesId = [];
         let price = 0;
+        //NB WE USE ORDER NUMBER SET TO -1 IF WAITER HAS DELIVERED DISH ORDER NUMBER TO THAT TABLE
+        // ordernumber is made by more dishes, when a waiter delivere an entire order number, all dishes which have that order number
+        //will have order number set to -1, then when receipt has been made, order will be deleted
         for(let i = 0; i < dishes.length; i++) {
-            if (dishes[i].ready === false) return res.status(400).send("Orders haven't been finished yet")
+            if (dishes[i].ready === false || dishes[i].orderNumber !== -1) return res.status(400).send({error: true, status: 400, errorMessage:"Dishes haven't been finished"})
             price += dishes[i].price;
             dishesId.push(dishes[i].dish._id);
         }
@@ -72,6 +75,7 @@ export default () : Router => {
             await Orders.deleteMany({tableNumber: table.tableNumber});
             //todo notify waiter che il dispositivo ha changato tavolo free
             getIoInstance().emit('receipt_created');
+            await Users.findOneAndUpdate({_id:req.user._id}, {$inc:{counter: 1}});
             return res.status(200).send(receipt);
         } catch (err) {
             return res.status(400).send(err);

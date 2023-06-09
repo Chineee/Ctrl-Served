@@ -17,39 +17,87 @@ import {Order} from "../models/Order";
 @Injectable()
 export class OrdersHttpService{
   private url = 'http://localhost:5000/api/v1';
-  private options = {
-    headers: new HttpHeaders({
-      'cache-control':'no-cache',
-      'Content-Type': 'application/json',
-      'auth-token': this.us.getToken()
-    })
-  }
+
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
 
   modifyOrderNumber(orderNumber: number) {
-    return this.http.put(this.url+'/orders?orderNumber='+orderNumber, {}, this.options);
+
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.us.getToken()
+      })
+    }
+
+    return this.http.put(this.url+'/orders?orderNumber='+orderNumber, {}, options);
   }
 
   deleteOrder(id:string) {
-    return this.http.delete(this.url+"/orders/"+id, this.options);
+
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.us.getToken()
+      })
+    }
+
+    return this.http.delete(this.url+"/orders/"+id, options);
   }
 
   getOrders() {
-    return this.http.get<Order[]>(this.url+"/orders", this.options);
+
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.us.getToken()
+      })
+    }
+
+    return this.http.get<Order[]>(this.url+"/orders", options);
   }
 
   createOrder(obj: any, orderNumber:number|undefined, modified:boolean) {
-    if (!modified) return this.http.post(this.url+"/orders", obj, this.options);
-    else return this.http.post(this.url+"/orders?orderNumber="+orderNumber, obj, this.options);
+
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.us.getToken()
+      })
+    }
+
+    if (!modified) return this.http.post(this.url+"/orders", obj, options);
+    else return this.http.post(this.url+"/orders?orderNumber="+orderNumber, obj, options);
   }
 
   getWaiterOrders() {
-    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", this.options);
+
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.us.getToken()
+      })
+    }
+
+    return this.http.get<Order[]>(this.url+"/users/waiters/"+this.us.getId()+"/orders", options);
   }
 
   getOrdersByOrderNumber(orderNumber: number) : Observable<any> {
-    return this.http.get<Order[]>(this.url+"/orders?orderNumber=" + orderNumber, this.options).pipe((tap((data)=>{})));
+
+    const options = {
+      headers: new HttpHeaders({
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+        'auth-token': this.us.getToken()
+      })
+    }
+
+    return this.http.get<Order[]>(this.url+"/orders?orderNumber=" + orderNumber, options).pipe((tap((data)=>{})));
   }
 
 }

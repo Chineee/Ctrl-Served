@@ -19,7 +19,6 @@ const UsersSchema =  new mongoose.Schema(
         surname: {type: String, required: true},
         email: {type: String, required: true},
         password: {type: String, required: true},
-        //todo gestire count
         counter: {type: Number},
         role: {type: String, enum: ['Cashier', 'Waiter', 'Cook', 'Bartender', 'Admin'], required: true }
     },
