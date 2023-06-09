@@ -50,16 +50,21 @@ export default (): Router => {
             food.makerId = req.user._id.toString();
         }
         else {
-            food.end = true;
-            const order = await Orders.findById(food.order);
-            console.log(order)
-            order.ready = true;
-            await order.save();
-            const completeOrder = await Orders.find({orderNumber: food.orderNumber, ready: false})
-            //todo pensa a qualcosa di più bello
-            // const completeOrder = await FoodQueue.find({orderNumber: food.orderNumber, end:false});
-            if (completeOrder.length === 0) {
-                getIoInstance().emit('order_finished')
+            //todo mettiamo sotto try catch
+            try {
+                food.end = true;
+                const order = await Orders.findById(food.order);
+                console.log(order)
+                order.ready = true;
+                await order.save();
+                const completeOrder = await Orders.find({orderNumber: food.orderNumber, ready: false})
+                //todo pensa a qualcosa di più bello
+                // const completeOrder = await FoodQueue.find({orderNumber: food.orderNumber, end:false});
+                if (completeOrder.length === 0) {
+                    getIoInstance().emit('order_finished')
+                }
+            } catch (err) {
+                return res.status(400).send(err);
             }
         }
 
