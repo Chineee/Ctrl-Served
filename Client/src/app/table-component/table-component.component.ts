@@ -31,6 +31,7 @@ export class TableComponentComponent implements OnInit{
   protected dictionary : any = {};
   @Output() protected receiptEvent = new EventEmitter<number>;
   protected checked : boolean = false;
+  protected filterNumber : number = -1;
 
   constructor(protected us : UserHttpService) {
   }
@@ -47,16 +48,23 @@ export class TableComponentComponent implements OnInit{
       this.filterTable(TableStatus.FREE);
     }
   }
+
+  filterTableNumber(event:any) {
+    const filter = event.target.value;
+    if (filter == '') this.filterNumber = -1;
+    else this.filterNumber = parseInt(filter);
+  }
   showTables() {
     return this.tables.filter((table) => {
+      const NotApplyFilter = this.filterNumber === -1;
       switch (this.filterTables) {
         case TableStatus.OCCUPIED:
-          return table.occupied;
+          return table.occupied && (NotApplyFilter || this.filterNumber===table.tableNumber);
         case TableStatus.FREE:
-          return !table.occupied;
+          return !table.occupied && (NotApplyFilter || this.filterNumber===table.tableNumber);
         case TableStatus.MINE:
           this.dictionary[table.tableNumber] = table.customers;
-          return table.occupied && table.waiterId?.email === this.us.getEmail();
+          return table.occupied && table.waiterId?.email === this.us.getEmail() && (NotApplyFilter || this.filterNumber===table.tableNumber);
       }
       return true;
     });

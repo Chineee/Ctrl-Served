@@ -1,5 +1,5 @@
 h2 {
-  text-align: center;
+  text-align: center
 }
 
 .button-container {
@@ -7,3 +7,66 @@ h2 {
   justify-content: space-between;
   align-items: center;
 }
+
+.modal-dialog {
+  max-width: 500px;
+}
+
+.modal-content {
+  border: none;
+}
+
+.modal-header {
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #cccccc;
+}
+
+.receipt-title {
+  font-size: 24px;
+  margin: 0;
+  text-align: center;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.receipt-date-time {
+  margin: 0;
+  font-size: 16px;
+}
+
+.receipt-body table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.price-column {
+  text-align: right;
+}
+
+.receipt-footer {
+  margin-top: 20px;
+}
+
+.total {
+  font-weight: bold;
+  text-align: right;
+}
+
+.total-label {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.total-price {
+  font-size: 20px;
+}
+
+.waiter{
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+

@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {UserHttpService} from "./user-http.service";
 import {Observable} from "rxjs";
 import {io} from "socket.io-client";
+import {SOCKET_URL} from "../Variables";
 
 @Injectable()
 export class SocketioService {
@@ -11,7 +12,7 @@ export class SocketioService {
 
   connect(): Observable< any > {
 
-    this.socket = io('http://localhost:5000');
+    this.socket = io(SOCKET_URL);
 
     return new Observable( (observer) => {
 

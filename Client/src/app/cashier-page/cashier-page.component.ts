@@ -30,6 +30,7 @@ export class CashierPageComponent implements OnInit{
   protected page : Page = Page.RECEIPTS;
   protected Page = Page;
   protected statsUserRole : any;
+  protected popup : {showed: boolean, receipt?: Receipt} = {showed: false};
   constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService) {
   }
   ngOnInit(): void {
@@ -62,6 +63,10 @@ export class CashierPageComponent implements OnInit{
     })
   }
 
+  showModal(modal: any) {
+    console.log(modal);
+  }
+
   buildUserRole(role: string) {
     const usersRole = this.users.filter((user)=> user.role === role);
     const result : {name: string, value: number}[] = []
@@ -89,7 +94,7 @@ export class CashierPageComponent implements OnInit{
 
   getOrders() {
     this.os.getOrders().subscribe({
-      next: (data) => this.orders = data.filter((order) => order.orderNumber !== -1),
+      next: (data) => this.orders = data,
       error: (err) => console.log(err)
     })
   }
@@ -103,14 +108,24 @@ export class CashierPageComponent implements OnInit{
     })
   }
 
+  showReceiptPopup(receipt : Receipt){
+
+  }
+
   createReceipt(event : any){
     this.receipt.createReceipt(event).subscribe({
       next: (data) => {
         this.getTables();
-        this.getOrders()
+        this.getOrders();
+        this.showReceiptPopup(data);
+        this.popup = {showed:true, receipt:data}
       },
       error: (err) => console.log(err)
     })
+  }
+
+  closePopup() {
+    this.popup = {showed: false}
   }
 
 }

@@ -25,3 +25,50 @@
   </div>
 </div>
 
+<!-- d-block" tabindex="-1" role="dialog"-->
+
+<div [class]="popup.showed ? 'modal show d-block' : 'modal'" tabindex="-1" role="dialog" id="modalReceipt" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" (click)="closePopup()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="receipt-header">
+            <h3 class="receipt-title">ctrl SERVED</h3>
+          </div>
+          <hr>
+          <div class="receipt-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="dish-collumn">Dish</th>
+                  <th class="price-column">Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let dish of popup.receipt?.dishes">
+                  <td class="dish-column">{{dish.name}}</td>
+                  <td class="price-column">{{dish.price}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <hr>
+          <div class="receipt-footer">
+            <div class="total">
+              <span class="total-label">Total:</span>
+              <span class="total-price">{{popup.receipt?.price}}</span>
+            </div>
+            <p class="receipt-date-time">{{popup.receipt?.date}} - {{popup.receipt?.hour}}</p>
+            <div class="waiter">
+              <span>Waiter: {{popup.receipt?.waiterId?.name}} {{popup.receipt?.waiterId?.surname}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+
+
+

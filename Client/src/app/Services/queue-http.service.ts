@@ -3,10 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import {UserHttpService} from "./user-http.service";
 import {Queue} from "../models/Queue";
+import {URL} from "../Variables";
 
 @Injectable()
 export class QueueHttpService{
-  private url = 'http://localhost:5000/api/v1';
+  private url = URL
   private options = {
     headers: new HttpHeaders({
       'cache-control':'no-cache',

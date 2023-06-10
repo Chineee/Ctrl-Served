@@ -7,9 +7,15 @@
       <label class="form-check-label" for="flexSwitchCheckDefault">{{this.us.hasRole('Cashier')?'Show occupied tables':'Show my tables'}}</label>
     </div>
   </div>
+  <div class="row">
+    <div class="col-2">
+      <input type="text" class="form-control" placeholder="Search table" (input)="filterTableNumber($event)"/>
+    </div>
+  </div>
+  <br>
   <div *ngFor="let table of showTables()" class="card">
       <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId,table.occupied)">
-        <h5>Table {{table.tableNumber}} {{GroupOrderReady(table.tableNumber, orders)?"- An order is ready":""}}</h5>
+        <h5>Table {{table.tableNumber}} {{GroupOrderReady(table.tableNumber, orders) && this.us.hasRole('Waiter')?"- An order is ready":""}}</h5>
         <p>Number of Seats: {{table.seats}}</p>
         <p *ngIf="table.occupied">Number of Customers: {{table.customers}}</p>
         <p *ngIf="table.occupied && this.us.hasRole('Cashier')">Waiter: {{table.waiterId.name}} {{table.waiterId.surname}}</p>

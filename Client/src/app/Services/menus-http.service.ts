@@ -4,10 +4,12 @@ import { tap, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import {UserHttpService} from "./user-http.service";
 import {Order} from "../models/Order";
+import {URL} from "../Variables"
 
 @Injectable()
 export class MenusHttpService{
-  private url = 'http://localhost:5000/api/v1/menu';
+  // private url = 'http://localhost:5000/api/v1/menu';
+  private url : string = URL +'/menu'
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
 
