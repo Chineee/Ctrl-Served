@@ -1,4 +1,12 @@
 <br>
+<!--<div *ngIf="getStringOrder() == 'Show order (one order ready)'" class="alert alert-success" role="alert">-->
+<!--  An order is ready!-->
+<!--</div>-->
+<div *ngIf="getStringOrder() == 'Show order (one order ready)'" class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>Hey guacamole!</strong> An order is ready!
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+  </button>
+</div>
 <button (click)="logout()" class="btn btn-danger float-end">Logout</button>
 <button (click)="changePage()" class="btn btn-warning">{{getStringOrder()}}</button>
 <span *ngIf="page === Page.TABLES">
@@ -7,7 +15,4 @@
 <span *ngIf="page === Page.ORDERS">
   <app-order-list [tables]="filterWaiterTable()" [orderDishes]="orders"></app-order-list>
 </span>
-<!--<span *ngIf="page === Page.CREATE_ORDER">-->
-<!--  <app-create-order></app-create-order>-->
-<!--</span>-->
 

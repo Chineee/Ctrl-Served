@@ -30,6 +30,7 @@ import {MatInputModule} from "@angular/material/input";
 import { StatsPageComponent } from './stats-page/stats-page.component';
 import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -48,16 +49,17 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     ReceiptsListComponent,
     StatsPageComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    MatDatepickerModule,
-    MatInputModule,
-    NgxChartsModule,
-    BrowserAnimationsModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        MatDatepickerModule,
+        MatInputModule,
+        NgxChartsModule,
+        BrowserAnimationsModule,
+        NgOptimizedImage
+    ],
   providers: [
     {provide: UserHttpService, useClass: UserHttpService},
     {provide: WaiterHttpService, useClass: WaiterHttpService},

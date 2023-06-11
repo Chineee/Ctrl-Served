@@ -5,6 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import {UserHttpService} from "./user-http.service";
 import {Table} from "../models/Table";
 import {Order} from "../models/Order";
+import {URL} from "../Variables";
 
 // interface TokenData {
 //   name:string,
@@ -16,7 +17,7 @@ import {Order} from "../models/Order";
 
 @Injectable()
 export class OrdersHttpService{
-  private url = 'http://localhost:5000/api/v1';
+  private url = URL;
 
   constructor(private http: HttpClient, private us : UserHttpService) {
   }

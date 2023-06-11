@@ -1,14 +1,16 @@
 <br>
 <div class="container">
-  <div class="container-button">
-    <button class="btn btn-secondary" (click)="buildStats(Role.COOK)">Show cooks statistics</button>
-    <button class="btn btn-secondary" (click)="buildStats(Role.BARTENDER)">Show bartenders statistics</button>
-    <button class="btn btn-secondary" (click)="buildStats(Role.WAITER)">Show waiters statistics</button>
-    <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="buildStats(Role.CASHIER)">Show cashiers statistics</button>
+  <div class="btn-group">
+    <button class="btn btn-secondary" (click)="buildStatsRole(Role.COOK)">Show cooks statistics</button>
+    <button class="btn btn-secondary" (click)="buildStatsRole(Role.BARTENDER)">Show bartenders statistics</button>
+    <button class="btn btn-secondary" (click)="buildStatsRole(Role.WAITER)">Show waiters statistics</button>
+    <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="buildStatsRole(Role.CASHIER)">Show cashiers statistics</button>
+    <button class="btn btn-secondary" (click)="buildOtherStats(Stats.DISHES)">Show dishes statistics</button>
+    <button class="btn btn-secondary" (click)="buildOtherStats(Stats.PROFITS)">Show profit statistics</button>
   </div>
 </div>
 <br><br>
-<div class="chart-container">
+<div class="chart-container" *ngIf="currentStatsPage == Stats.ROLE">
   <ngx-charts-bar-vertical
     [results]="statsUserRole[pageRole]"
     [gradient]="verticalBarOptions.gradient"
@@ -23,6 +25,30 @@
     [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
   ></ngx-charts-bar-vertical>
 </div>
+<div class="pie-chart-container" *ngIf="currentStatsPage == Stats.DISHES">
+  <div class="pie-chart-wrapper">
+    <ngx-charts-advanced-pie-chart [results]="statsFoods"></ngx-charts-advanced-pie-chart>
+  </div>
+  <div class="pie-chart-wrapper">
+    <ngx-charts-advanced-pie-chart [results]="statsDrinks"></ngx-charts-advanced-pie-chart>
+  </div>
+</div>
+<div class="chart-container" *ngIf="currentStatsPage == Stats.PROFITS">
+  <ngx-charts-bar-vertical
+    [results]="statsProfitMonth"
+    [gradient]="verticalBarOptions.gradient"
+    [xAxis]="verticalBarOptions.showXAxis"
+    [yAxis]="verticalBarOptions.showYAxis"
+    [showXAxisLabel]="verticalBarOptions.showXAxisLabel"
+    [showYAxisLabel]="verticalBarOptions.showYAxisLabel"
+    [xAxisLabel]="verticalBarOptions.xAxisLabel"
+    [yAxisLabel]="verticalBarOptions.yAxisLabel"
+    [barPadding]="verticalBarOptions.barPadding"
+    [showGridLines]="verticalBarOptions.showGridLines"
+    [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+  ></ngx-charts-bar-vertical>
+</div>
+
 
 
 

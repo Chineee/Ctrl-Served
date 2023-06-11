@@ -14,8 +14,11 @@ import drinkQueue from "./Routes/Makers/DrinkQueue"
 import receipt from "./Routes/Cashier/Receipt"
 import cors from "cors";
 import * as http from "http";
+import * as https from "https"
 import {setUpSocketio} from "./socketio-config";
 import getIoInstance from "./socketio-config"
+import fs from "fs";
+import path from "path"
 // Load environment variables from .env file
 dotenv.config({path:__dirname+"/../.env"})
 
@@ -73,7 +76,10 @@ app.use('/api/v1/receipts', receipt());
 
 // Starting the server and listening on the specific port
 
-const server = http.createServer(app);
+const server = https.createServer({
+    key: fs.readFileSync(path.join(__dirname, '../Keys/key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
+},app);
 
 setUpSocketio(server);
 
@@ -83,6 +89,6 @@ server.listen(PORT, () => {
 
 app.get('/', (req, res) => {
     const io = getIoInstance();
-    io.emit("broadcast", "SIUUUUUUUUUUUUUUUUUUUUUUUUM")
+    io.emit("Order_sent", "SIUUUUUUUUUUUUUUUUUUUUUUUUM")
     return res.status(200).send("Ok")
 })

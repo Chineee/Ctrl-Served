@@ -9,6 +9,7 @@ import {ReceiptsHttpService} from "../Services/receipts-http.service";
 import Receipt from "../models/Receipt";
 import {SocketioService} from "../Services/socketio.service";
 import User from "../models/User";
+import {MenusHttpService} from "../Services/menus-http.service";
 
 enum Page {
   TABLES = "TABLES PAGE",
@@ -31,7 +32,10 @@ export class CashierPageComponent implements OnInit{
   protected Page = Page;
   protected statsUserRole : any;
   protected popup : {showed: boolean, receipt?: Receipt} = {showed: false};
-  constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService) {
+  protected receiptStatsFoods : {name: string, value: number}[] = [];
+  protected receiptStatsDrinks : {name: string, value: number}[] = [];
+  protected profitStatsMonth : {name: string, value: number}[] = []
+  constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService, private menu : MenusHttpService) {
   }
   ngOnInit(): void {
     if (this.us.getToken() === '') this.router.navigate(['/login'])
@@ -49,6 +53,44 @@ export class CashierPageComponent implements OnInit{
     })
   }
 
+
+  getDishesStats(receipts : Receipt[]) {
+    const month = new Date().toLocaleDateString().split('/')[1];
+    const receiptFiltered = receipts.filter((receipt) => {
+      return receipt.date.toString().split('/')[1] === month.padStart(2, '0');
+    });
+
+    const foods : any = {}
+    const drinks : any = {}
+
+    for (const receipt of receiptFiltered) {
+      for (const dish of receipt.dishes) {
+        if (dish.type === 'Food') {
+          if (foods[dish.name] === undefined) foods[dish.name] = 1;
+          else foods[dish.name] += 1;
+
+        }
+        else {
+          if (drinks[dish.name] === undefined) drinks[dish.name] = 1;
+          else drinks[dish.name] += 1;
+        }
+      }
+    }
+    const suppFoods : {name: string, value: number}[] = [];
+    const suppDrinks : {name: string, value: number}[] = [];
+    //build foods stats
+    for (const key of Object.keys(foods)) {
+      suppFoods.push({name: key, value: foods[key]});
+    }
+
+    for (const key of Object.keys(drinks)) {
+      suppDrinks.push({name: key, value: drinks[key]});
+    }
+
+    this.receiptStatsFoods = suppFoods;
+    this.receiptStatsDrinks = suppDrinks;
+  }
+
   getUsers() {
     this.us.getUsers().subscribe({
       next: (data) => {
@@ -59,6 +101,10 @@ export class CashierPageComponent implements OnInit{
           2: this.buildUserRole("Cashier"),
           3: this.buildUserRole("Bartender")
         }
+      },
+      error: (err) => {
+        this.logout()
+        console.log("sono qua");
       }
     })
   }
@@ -82,6 +128,7 @@ export class CashierPageComponent implements OnInit{
 
   logout() {
     this.us.logout();
+    this.so.disconnect()
     this.router.navigate(['/login'])
   }
 
@@ -99,9 +146,40 @@ export class CashierPageComponent implements OnInit{
     })
   }
 
+  getReceiptsDataMonth(receipts : Receipt[]){
+
+    let supp : any = [];
+    const getMonthName = (monthNumber : number) => {
+      const date = new Date();
+      date.setMonth(monthNumber - 1);
+
+      return date.toLocaleString('en-US', {
+        month: 'long',
+      });
+    }
+
+    const currentYear = new Date().toLocaleDateString().split('/')[2]
+    for (let month = 1; month <= 12; month++) {
+      const monthlyReceipt = receipts.filter((receipt)=>{
+        const receiptDate = receipt.date.toString().split('/')
+        return receiptDate[1] === month.toString().padStart(2, '0') && currentYear === receiptDate[2];
+      })
+      let price = 0
+      for (const receipt of monthlyReceipt) {
+        price += receipt.price;
+      }
+
+      supp.push({name: getMonthName(month), value: parseFloat(price.toFixed(2))});
+    }
+    this.profitStatsMonth = supp;
+
+  }
+
   getReceipts() {
     this.receipt.getReceipts().subscribe({
       next: (data) => {
+        this.getDishesStats(data)
+        this.getReceiptsDataMonth(data);
         this.receipts = data
       },
       error: (err) => console.log(err)

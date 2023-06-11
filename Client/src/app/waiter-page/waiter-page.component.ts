@@ -55,24 +55,6 @@ export class WaiterPageComponent implements OnInit{
     return "Show tables"
   }
 
-  //todo spostare questa funzione dentro l'interfaccia TABLE
-  // groupOrderReady(tableNumber: number)  : boolean {
-  //   // const tableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber);
-  //   // const readyTableOrder = this.orders.filter( (order) => order.tableNumber === tableNumber && order.ready);
-  //   // return tableOrder.length === readyTableOrder.length && tableOrder.length !== 0
-  //   let res = false;
-  //   const dict : any = [];
-  //   for (let i = 0; i < this.orders.length; i++) {
-  //     if (!dict.includes(this.orders[i].orderNumber)) dict.push(this.orders[i].orderNumber)
-  //   }
-  //   for (let i = 0; i < dict.length; i++) {
-  //     const readyOrderNumber = this.orders.filter((order) => order.orderNumber === dict[i] && order.ready && order.tableNumber === tableNumber);
-  //     const ordersNumber = this.orders.filter((order) => order.orderNumber === dict[i] && order.tableNumber === tableNumber);
-  //     if (readyOrderNumber.length === ordersNumber.length && ordersNumber.length !== 0) res = true;
-  //   }
-  //   return res;
-  // }
-
   getOrders() {
     this.os.getWaiterOrders().subscribe({
       next: (data) => {

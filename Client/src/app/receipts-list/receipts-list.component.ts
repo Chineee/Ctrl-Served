@@ -69,11 +69,14 @@ export class ReceiptsListComponent implements OnInit {
     const lastDayOfWeek = new Date(currentDate.setDate(currentDate.getDate() + 6));
     firstDayOfWeek.setHours(23, 59, 59, 999);
     const weeklyReceipts = this.receipts.filter((receipt) => {
-      const date = new Date(receipt.date).getTime();
-      // console.log(new Date(receipt.date));
+      const dateString = receipt.date.toString().split('/');
+      const date = new Date(`${dateString[1]}/${dateString[0]}/${dateString[2]}`).getTime()
+      return date >= new Date(firstDayOfWeek).getTime() && date <= new Date(lastDayOfWeek).getTime();
 
-      return date >= new Date(firstDayOfWeek.toLocaleDateString()).getTime() && date <= new Date(lastDayOfWeek.toLocaleDateString()).getTime();
     });
+
+    console.log(firstDayOfWeek)
+    console.log(lastDayOfWeek)
 
     let profit: number = 0;
     for (let i = 0; i < weeklyReceipts.length; i++) {
@@ -111,9 +114,8 @@ export class ReceiptsListComponent implements OnInit {
 
     const formatter = new Intl.DateTimeFormat('it-IT', options);
     const formattedMonth = formatter.format(currentDate);
-    const monthlyReceipt = this.receipts.filter((receipt) => parseInt(receipt.date.toString().split('/')[1], 10).toString() === formattedMonth);
+    const monthlyReceipt = this.receipts.filter((receipt) =>  parseInt(receipt.date.toString().split('/')[1], 10).toString() === formattedMonth)
     let profit : number = 0;
-
     for(let i = 0; i < monthlyReceipt.length; i++){
       profit += monthlyReceipt[i].price;
     }

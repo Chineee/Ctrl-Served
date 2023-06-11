@@ -106,7 +106,12 @@
         <div class="modal-footer">
           <button (click)="addSelection()" class="btn btn-primary">+</button>
           &nbsp;
-          <button (click)="confirmPopup(); closePopup()" class="btn btn-success" data-bs-dismiss="modal"> Confirm</button>
+          <span *ngIf="!cannotCloseConfirm()">
+            <button (click)="confirmPopup(); closePopup()" class="btn btn-success" data-bs-dismiss="modal"> Confirm </button>
+          </span>
+          <span *ngIf="cannotCloseConfirm()">
+            <button class="btn btn-success"> Confirma </button>
+          </span>
         </div>
       </div>
     </div>

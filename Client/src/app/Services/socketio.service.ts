@@ -65,6 +65,10 @@ export class SocketioService {
 
   }
 
+  disconnect() {
+    this.socket.disconnect();
+  }
+
   setAdminSocker() {
 
   }

@@ -8,3 +8,22 @@
   font-size: 30px;
   font-weight: bold;
 }
+
+.pie-chart-container {
+  width: 1600px;
+  height: 1600px;
+  position: relative;
+  top: -550px;
+  display: flex;
+  z-index: -1;
+}
+
+.pie-chart-wrapper {
+  flex: 1;
+  margin-right: -10px;
+}
+
+.pie-chart-wrapper:last-child {
+  margin-right: -10px;
+}
+

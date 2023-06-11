@@ -9,7 +9,7 @@ passport.use(new BasicStrategy(async (email, password, done) => {
     const currentUser = await User.findOne({email: email});
     //If no user is found or the user's password is incorrect, return an error
     if(!currentUser || !await currentUser.verifyPassword(password)){
-        done({message:'email o password errati'}, false);
+        done({message:'Email or password incorrect}'}, false);
     }
     else {
         await client.set(currentUser.email, "true")

@@ -20,7 +20,6 @@ export class MakerPageComponent implements OnInit {
       this.router.navigate(['/test'])
     }
     else {
-      console.log(this.us.getRole())
       // this.us.logout();
       this.getQueue();
       this.so.connect().subscribe({

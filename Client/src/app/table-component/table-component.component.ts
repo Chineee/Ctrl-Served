@@ -97,6 +97,7 @@ export class TableComponentComponent implements OnInit{
       this.popup = {showed: true, seats: seats, tableNumber: tableNumber, isWaiter: isWaiter, occupied: occupied, customers: isWaiter ? this.dictionary[tableNumber] : 0};
     }
   }
+  
 
   generateReceiptEvent(tableNumber : number) : void {
     this.receiptEvent.emit(tableNumber);

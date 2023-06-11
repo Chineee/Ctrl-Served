@@ -7,8 +7,15 @@ enum Role {
   WAITER,
   COOK ,
   CASHIER,
-  BARTENDER
+  BARTENDER,
 }
+
+enum Stats {
+  ROLE,
+  DISHES,
+  PROFITS
+}
+
 
 @Component({
   selector: 'app-stats-page',
@@ -20,10 +27,13 @@ export class StatsPageComponent implements OnInit{
   protected Role = Role;
   protected pageRole : Role = Role.WAITER
   @Input() users : User[] = [];
-  protected usersStats : {name: string, value:number}[] = [];
   private mapper_role_x = {0: "Waiter", 1: "Cook", 2:"Cashier", 3:"Bartender"}
   private mapper_role_y = {0: "Plates served", 1: "Dishes prepared", 2: "Receipts made", 3:"Drinks prepared"}
   @Input() statsUserRole : any;
+  @Input() statsFoods: any;
+  @Input() statsDrinks: any;
+  @Input() statsProfitMonth: any;
+
   protected verticalBarOptions = {
     showXAxis: true,
     showYAxis: true,
@@ -38,6 +48,9 @@ export class StatsPageComponent implements OnInit{
     wrapTicks: true
   };
 
+  protected readonly Stats = Stats
+  protected currentStatsPage : Stats = Stats.ROLE
+
   constructor(protected us : UserHttpService, private router : Router) {
 
   }
@@ -46,18 +59,16 @@ export class StatsPageComponent implements OnInit{
     else if (!this.us.hasRole('Cashier')) this.router.navigate(["/test"])
   }
 
-  buildStats(role : Role)  {
-    // const usersRole = this.users.filter((user)=> user.role === this.mapper_role_x[role]);
-    // const result : {name: string, value: number}[] = []
-    // for(const user of usersRole) {
-    //   console.log(user);
-    //   result.push({name: user.name + ' ' + user.surname, value: user.counter})
-    // }
+  buildStatsRole(role : Role)  {
     this.verticalBarOptions.xAxisLabel = this.mapper_role_x[role];
     this.verticalBarOptions.yAxisLabel = this.mapper_role_y[role];
     this.pageRole = role;
-    // console.log(this.statsUserRole)
+    this.currentStatsPage = Stats.ROLE
   }
 
-
+  buildOtherStats(page : Stats) {
+    this.verticalBarOptions.xAxisLabel = "Month"
+    this.verticalBarOptions.yAxisLabel = "Profits"
+    this.currentStatsPage = page;
+  }
 }

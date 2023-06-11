@@ -104,14 +104,17 @@ export class OrderListComponent implements OnInit{
 
   }
 
-
-  confirmPopup() {
+  cannotCloseConfirm() {
     if (this.selectionQuantity.length !== this.selectionDish.length ||
       this.selectionQuantity.filter( (num) => num <= 0 ).length > 0 ||
       this.selectionQuantity.length !== this.selectionSize ||
-    this.popup.tableNumber === undefined) {
-      this.error = {type: Error.MISS_FIELD_ERROR}
+      this.popup.tableNumber === undefined) {
+        return true;
     }
+    return false;
+  }
+  confirmPopup() {
+    if (this.cannotCloseConfirm()) this.error = {type: Error.MISS_FIELD_ERROR}
     else {
       //todo qua poi faremo una richiesta:
       const foods : any = {};
