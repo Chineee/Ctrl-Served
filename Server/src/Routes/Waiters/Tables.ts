@@ -4,7 +4,6 @@ import Joi from "joi";
 import Tables from "../../models/Tables";
 import Orders from "../../models/Orders";
 import getIoInstance from "../../socketio-config"
-import Users from "../../models/User";
 
 // Define a schema for table input validation using Joi
 export const TableSchemaValidation = Joi.object().keys({
@@ -20,7 +19,7 @@ export default (): Router => {
     app.post('/', isLogged, hasRole('Admin'), async (req, res) =>{
         // Validate the input data using the defined schema
         const {error} = TableSchemaValidation.validate(req.body);
-        if (error) return res.status(400).send("Invalid input");
+        if (error) return res.status(400).send({status: 400, error: true, errorMessage: "Invalid input"});
 
         // Create a new table instance
         const table = new Tables({
@@ -32,9 +31,9 @@ export default (): Router => {
         });
 
         // Save the new table in the database
-        try{
+        try {
             await table.save();
-            return res.status(200).send({error: false, status:200, message:"Table added successfully"});
+            return res.status(200).send({status:200, error: false, message:"Table added successfully"});
         } catch (err) {
             return res.status(400).send(err)
         }
@@ -43,7 +42,7 @@ export default (): Router => {
     // PUT endpoint to modify an existing table
     app.put("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const table = await Tables.findOne({tableNumber: req.params.id});
-        if (table === null) return res.status(400).send("Table doesn't exist");
+        if (table === null) return res.status(400).send({status:400, error: true, errorMessage: "The table doesn't exist"});
         const inc : number = table.customers;
         if (table.waiterId !== null && req.user._id.toString() !== table.waiterId) return res.status(400).send({error: true, status:400, errorMessage:"You are unauthorized"})
 
@@ -60,10 +59,10 @@ export default (): Router => {
         }
 
         // Save the changes to the table in the database
-        try{
+        try {
             await table.save();
             getIoInstance().emit("table_modified", "table");
-            return res.status(200).send({error: false, status:200, message:"Table info modified correctly"});
+            return res.status(200).send({error: false, status:200, message:"The table info was modified correctly"});
         } catch (err) {
             return res.status(400).send(err);
         }
@@ -71,7 +70,7 @@ export default (): Router => {
 
     // GET endpoint to retrieve tables based on the query parameters passed
     app.get("/", isLogged, hasRole('Waiter', "Cashier"), async (req, res) => {
-        try{
+        try {
             //AV QUERY: occupied free or not free
             const query = req.query.occupied ? {occupied: req.query.occupied} : {};
             const tables = await Tables.find(query).populate("waiterId", "-password -__v");
@@ -81,14 +80,19 @@ export default (): Router => {
         }
     });
 
+    // GET endpoint to retrieve all the orders related to a specific table number
     app.get('/:id/orders', isLogged, hasRole("Cashier"), async (req, res) => {
-        const orders = await Orders.find({tableNumber: req.params.id, orderNumber: {$gt: -1}}).populate("dish").populate("waiterId", "-password -__v")
-        return res.status(200).send(orders);
+        try {
+            const orders = await Orders.find({tableNumber: req.params.id, orderNumber: {$gt: -1}}).populate("dish").populate("waiterId", "-password -__v")
+            return res.status(200).send(orders);
+        } catch (err) {
+            return res.status(400).send(err);
+        }
     })
 
     // GET endpoint to retrieve a table by its ID
     app.get("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
-        try{
+        try {
             const table = await Tables.findOne({tableNumber: req.params.id});
             return res.status(200).send(table);
         } catch (err) {
@@ -99,13 +103,13 @@ export default (): Router => {
     // DELETE endpoint to delete a table by its ID
     app.delete("/:id", isLogged, hasRole('Admin'), async (req, res) => {
         const table = await Tables.findOne({tableNumber: req.params.id});
-        if(table === null) return res.status(400).send("Table doesn't exist");
+        if(table === null) return res.status(400).send({status: 400, error: true, errorMessage: "The table doesn't exist"});
 
-        if(table.occupied)  return res.status(400).send("The table is occupied it cannot be deleted");
+        if(table.occupied)  return res.status(400).send({status: 400, error: true, errorMessage: "The table is still occupied, it cannot be deleted"});
 
         try{
             await table.deleteOne();
-            return res.status(200).send("Table deleted successfully");
+            return res.status(200).send({status: 200, error: true, errorMessage: "The table was deleted successfully"});
         } catch (err) {
             return res.status(400).send(err);
         }

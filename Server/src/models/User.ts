@@ -36,7 +36,7 @@ const UsersSchema =  new mongoose.Schema(
 UsersSchema.pre('save', async function (next) {
     // Check if the password field has been modified
     if(!this.isModified('password')) return next()
-    // If the password has been modified,hash the password using bcrypt
+    // If the password has been modified, hash the new password using bcrypt
     try{
         const salt = await bcrypt.genSalt(10); // Generate a salt for the password hashing
         this.password = await bcrypt.hash(this.password, salt);

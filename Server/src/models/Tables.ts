@@ -17,7 +17,7 @@ const TablesSchema = new mongoose.Schema({
     occupied: {type: Boolean, required: true},
     seats: {type: Number, required: true},
     customers: {type: Number, required: true, validate: {
-        validator: function() { // The number of customers has to be equal or lower than the seats number
+        validator: function() { // The number of customers has to be equal or lower than the number of seats
             return this.customers <= this.seats;
         }
     }}

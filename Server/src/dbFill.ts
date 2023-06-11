@@ -4,7 +4,7 @@ import Tables from "./models/Tables";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
-
+//
 async function getPassword(password) {
     const salt = await bcrypt.genSalt(10); // Generate a salt for the password hashing
     return await bcrypt.hash(password, salt)

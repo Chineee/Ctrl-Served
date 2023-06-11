@@ -46,7 +46,7 @@ export default (): Router => {
     app.post('/', isLogged, hasRole('Waiter'), async (req, res) => {
         // Validate the input data using the defined schema
         const {error} = OrderSchemaValidation.validate(req.body);
-        if (error) return res.status(400).send({status:400, error:true, errorMessage: "invalid input"});
+        if (error) return res.status(400).send({status:400, error:true, errorMessage: "Invalid input"});
 
         let dishDict = req.body.dishDict;
         const allOrders = [];
@@ -109,7 +109,7 @@ export default (): Router => {
 
             getIoInstance().emit("Order_sent");
             
-            return res.status(200).send({status:200, error: false, message: "Order sent successfully"})
+            return res.status(200).send({status:200, error: false, message: "The order was sent successfully"})
             //TODO notify cook
         } catch(err) {
             return res.status(400).send(err);
@@ -119,7 +119,7 @@ export default (): Router => {
     // PUT endpoint to update an existing order
     app.put("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const order = await Order.findById(req.params.id);
-        if (order === null) return res.status(400).send({status: 400, error: true, errorMessage: "Order doesn't exist"});
+        if (order === null) return res.status(400).send({status: 400, error: true, errorMessage: "The order doesn't exist"});
 
         if(req.body.new_tableNumber !== null) order.tableNumber = req.body.new_tableNumber;
 
@@ -129,7 +129,7 @@ export default (): Router => {
         else dishInQueue = await DrinkQueue.find({order: req.params.id});
 
         if(req.body.new_dish !== null){
-            if(dishInQueue.begin) return res.status(400).send({status:400, error: true, errorMessage: "This order is already in the making you cannot modify it"});
+            if(dishInQueue.begin) return res.status(400).send({status:400, error: true, errorMessage: "This order is already in the making, you cannot modify it"});
         }
 
         const id1 : string = req.user._id.toString();
@@ -145,13 +145,13 @@ export default (): Router => {
         // Save the changes to the order in the database
         try{
             await order.save();
-            return res.status(200).send({error: false, status:200, message:"Order updated correctly"});
+            return res.status(200).send({error: false, status:200, message:"The order was updated correctly"});
         }catch (err) {
             return res.status(400).send(err);
         }
     });
 
-    //order numbermust be provided in query
+    // PUT endpoint to modify an order with a specific order number
     app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
         try {
             const orders = await Order.find({orderNumber: req.query.orderNumber});
@@ -159,31 +159,33 @@ export default (): Router => {
             const orderModified = await Order.updateMany({orderNumber: req.query.orderNumber}, {orderNumber: -1});
             await User.findOneAndUpdate({_id: req.user._id}, {$inc: {counter: orderModified.modifiedCount}})
             getIoInstance().emit('Order_sent')
-            return res.status(200).send({error: false, status: 200, message: "Order modified correctly"})
+            return res.status(200).send({error: false, status: 200, message: "The orrder was modified correctly"})
         } catch(err) {
             console.log(err);
             return res.status(400).send({error:true, status:400, errorMessage:err})
         }
     })
 
+    // DELETE endpoint to delete an order based on the order ID
     app.delete('/:id', isLogged, hasRole('Waiter', 'Cashier'), async (req, res) => {
         const order = await Order.findById(req.params.id);
-        if(order === null) return res.status(400).send({status: 400, error: true, errorMessage: "Order doesn't exist"});
+        if(order === null) return res.status(400).send({status: 400, error: true, errorMessage: "The order doesn't exist"});
 
         try{
             await order.deleteOne();
             getIoInstance().emit('Order_sent')
-            return res.status(200).send({status:200, error: false, message: "Order successfully deleted"})
+            return res.status(200).send({status:200, error: false, message: "The order was successfully deleted"})
         } catch (err) {
             return res.status(400).send(err);
         }
     });
 
+    // DELETE endpoint to delete all orders with a specific order number
     app.delete('/', isLogged, hasRole("Cashier"), async (req, res) => {
         //WARNING USE IT WITH REQ.QUERY TO DELETE ORDER NUMBER SPECIFICO
         try {
             await Order.deleteMany(req.query);
-            return res.status(200).send({status:200, error: false, message: "Orders deletes"})
+            return res.status(200).send({status:200, error: false, message: "The orders were successfully deleted"})
         } catch (err) {
             return res.status(400).send(err);
         }

@@ -32,7 +32,7 @@ export default (): Router => {
         // Save the new menu dish in the database
         try{
             await menuDish.save();
-            return res.status(200).send("Menu dish added successfully");
+            return res.status(200).send({status: 200, error: false, message: "The menu dish was added successfully"});
         } catch (err) {
             return res.status(400).send(err);
         }
@@ -41,7 +41,7 @@ export default (): Router => {
     // PUT endpoint to modify an existing menu dish
     app.put("/:id", isLogged, hasRole('Admin'), async (req, res) => {
         const menuDish = await Menu.findById(req.params.id);
-        if (menuDish === null) return res.status(400).send("Menu dish doesn't exist");
+        if (menuDish === null) return res.status(400).send({status: 400, error: true, errorMessage: "This menu dish doesn't exist"});
 
         // Update the fields of the menu dish if provided in the request body
         if(req.body.new_name !== null) menuDish.name = req.body.new_name;
@@ -52,13 +52,13 @@ export default (): Router => {
         // Save the changes to the menu dish in the database
         try{
             await menuDish.save();
-            return res.status(200).send("Menu dish modified successfully");
+            return res.status(200).send({status: 200, error: false, message: "The menu dish was modified successfully"});
         } catch (err) {
             return res.status(400).send(err);
         }
     });
 
-    // GET endpoint to retrieve a menu dish by its ID
+    // GET endpoint to retrieve a menu dish by ID
     app.get("/:id", isLogged, async (req,res) => {
         try {
             const dish = await Menu.findById(req.params.id);
@@ -79,14 +79,14 @@ export default (): Router => {
         }
     });
 
-    // DELETE endpoint to delete a menu dish by its ID
+    // DELETE endpoint to delete a menu dish by ID
     app.delete("/:id", isLogged, hasRole('Admin'), async (req,res) => {
         const menuDish = await Menu.findById(req.params.id);
-        if(menuDish === null) return res.status(400).send("Menu dish doesn't exist");
+        if(menuDish === null) return res.status(400).send({status: 400, error: true, errorMessage: "This menu dish doesn't exist"});
 
         try{
             await menuDish.deleteOne();
-            return res.status(200).send("Menu dish deleted successfully");
+            return res.status(200).send({status: 200, error: false, message: "The menu dish was deleted successfully"});
         } catch (err) {
             return res.status(400).send(err);
         }

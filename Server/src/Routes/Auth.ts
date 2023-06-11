@@ -3,7 +3,6 @@ import Joi from 'joi'
 import User, {IUser} from "../models/User";
 import passport from "../passport-config"
 import jwt from "jsonwebtoken";
-import Users from "../models/User";
 import client from "../redis-config"
 
 // Define a schema for user input validation using Joi
@@ -15,12 +14,12 @@ export const UserSchemaValidation = Joi.object().keys({
     role: Joi.string().valid('Cashier', 'Waiter', 'Cook', 'Bartender', 'Admin').required()
 });
 
-// Middleware function to check if the user has a specific role
+// Middleware function to check if the user's role is in a specific set of roles, if the user has role Admin it will always return true
 export const hasRole = (...role: string[]) => {
     return (req, res, next) => {
         const userRole = req.user?.role;
 
-        if (!role.includes(userRole) && userRole !== 'Admin') return res.status(403).send("You don't have the permission to perform this action")
+        if (!role.includes(userRole) && userRole !== 'Admin') return res.status(403).send({status: 403, error: true, errorMessage: "You don't have the necessary permissions to perform this action"})
 
         next();
     }
@@ -32,7 +31,7 @@ export const alreadyLogged = (req, res, next) => {
     try{
         // Verify the token and return error if the token is valid
         jwt.verify(token, process.env.SECRET_TOKEN);
-        return res.status(401).send("Already logged");
+        return res.status(401).send({status: 401, error: true, errorMessage: "Already logged"});
     }catch(err){
         next();
     }
@@ -53,22 +52,21 @@ export const isLogged = async (req, res, next) => {
         const userExists : string = await client.get(decoded.email);
 
         if (userExists === null) {
-            //if i cant find value cache is empty, so I must do a query (this might happens only once)
-            //if user exists I set redis cache to true, else false
+            // If the value cannot be found the cache is empty, so a query must be performed (this might happen only once)
+            // If the users exists the redis cache is set to true, otherwise it is set to false
             const user = await User.findOne({email: decoded.email})
             // if (user) await client.set(decoded.email, "true");
             // else await client.set(decoded.email, "false");
             await client.set(decoded.email, user ? "true" : "false");
         }
-        //if i found key in redis cache, I see his value, if true user wasn't deleted, else it was (if admin delete user, cache will be set to false)
-        //unfortunately, redis returns string, so we cant treat it as a boolean
+        // If a key is found in the redis cache its value is visible, if that value is true the corresponding user wasn't deleted, otherwise it was (if one of the admins deletes a user, the value in the redis cache will be set to false)
+        // Since redis returns a string the value cannot be treated as a boolean
         else if (userExists === 'false') {
             return res.status(401).send({errorMessage: "User doesn't exist anymore", error:true, status:401});
         }
 
-        //be aware that inside JWT Token, password isn't stored
-        //we create a new user so we can use function
-        //this may not be used, we could directly set req.user = decoded since decoded is "as" IUser
+        // Be aware that inside the JWT Token the user password isn't stored
+        // this may not be used, we could directly set req.user = decoded since decoded is "as" IUser
         req.user = new User(decoded);
         next();
     } catch(err) {
@@ -86,6 +84,7 @@ export default (): Router  => {
         // const a = await req.user.verifyPassword("ciao");
         return res.status(200).send("SIUM")
     })
+
     // POST endpoint to add a new user
     app.post('/users', isLogged, hasRole('Admin'), async (req, res) => {
 
@@ -117,6 +116,7 @@ export default (): Router  => {
         }
     });
 
+    // GET endpoint
     app.get('/token', async (req, res) => {
         const token = req.header("refresh-token");
         let accessToken;
@@ -152,11 +152,5 @@ export default (): Router  => {
         return res.status(200).send({access_token: accessToken, refresh_token: refreshToken});
     });
 
-
-
     return app;
 }
-
-
-//decoded = jwt.verify(token_signed, process.env.SECRET_TOKEN)
-//decoded.exp < Date.now() / 1000

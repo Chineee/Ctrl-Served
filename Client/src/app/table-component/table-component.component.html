@@ -14,6 +14,8 @@
   </div>
   <br>
   <div *ngFor="let table of showTables()" class="card">
+    <img class="card-img-top" src="../images/greenTable.png" alt="Card image" style="width:100%">
+    <div class="card-img-overlay">
       <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId,table.occupied)">
         <h5>Table {{table.tableNumber}} {{GroupOrderReady(table.tableNumber, orders) && this.us.hasRole('Waiter')?"- An order is ready":""}}</h5>
         <p>Number of Seats: {{table.seats}}</p>
@@ -21,6 +23,7 @@
         <p *ngIf="table.occupied && this.us.hasRole('Cashier')">Waiter: {{table.waiterId.name}} {{table.waiterId.surname}}</p>
         <p>Occupied: {{table.occupied}}</p>
       </div>
+    </div>
   </div>
 </div>
 
