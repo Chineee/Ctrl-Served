@@ -23,12 +23,6 @@ export async function getUser(id) {
 export default (): Router => {
     const app = Router();
 
-    //TODO /users/waiter/(:id)/tables ---> tutti i tavoli gestiti da un cameriere in questo momento
-    //TODO /users/waiter/orders --> tutti gli ordini che stanno gestendo ora (maybe filtrarli per ready=false?)
-    //TODO /users/cook/foods ---> tutti i piatti fatti da un cuoco ora/che ha iniziato a fare
-    //todo /users/bartenders/drinks --> tutti i drinks fatti dal bartender ora/che ha iniziato a fare
-    //TODO IDEA PER GLI ORDINI: QUANDO FINISCONO INVECE DI ELIMINARLI SETTARE ORDER NUMBER A -1
-
     // GET endpoint to retrieve a user by ID or email
     app.get('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
         try {

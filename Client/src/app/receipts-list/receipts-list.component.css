@@ -3,3 +3,12 @@
   justify-content: space-between;
   width: 100%;
 }
+
+.profit {
+  font-weight: bold;
+  text-align: right;
+}
+
+.profit-text {
+  font-weight: bold;
+}

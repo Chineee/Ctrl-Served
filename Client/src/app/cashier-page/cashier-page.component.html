@@ -15,7 +15,7 @@
     <app-table-component [tables]="tables" [orders]="orders" (receiptEvent)="createReceipt($event)"></app-table-component>
   </div>
     <div *ngIf="page === Page.RECEIPTS">
-      <app-receipts-list [receipts]="receipts"></app-receipts-list>
+      <app-receipts-list [receipts]="receipts" (openReceiptPopup)="showReceiptPopup($event)"></app-receipts-list>
     </div>
     <div *ngIf="page === Page.ORDERS">
       <app-order-list [orderDishes]="orders"></app-order-list>

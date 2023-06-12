@@ -16,7 +16,7 @@ export class MenusHttpService{
   getMenus() : Observable<any>{
     const options = {
       headers: new HttpHeaders({
-        'auth-token':this.us.getToken()
+        Authorization: 'Bearer ' + this.us.getToken()
       })
     }
     //todo options

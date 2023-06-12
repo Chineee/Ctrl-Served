@@ -4,5 +4,11 @@ export default interface User {
   email: string,
   role: string,
   _id: string,
-  counter: number
+  counter: WaiterStats | number
+}
+
+export interface WaiterStats {
+  tablesServed : number,
+  dishesServed : number,
+  customersServed : number
 }

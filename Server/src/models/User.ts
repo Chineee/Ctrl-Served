@@ -8,7 +8,7 @@ export interface IUser {
     email: string; // Email of the user as a string
     role: 'Cashier' | 'Waiter' | 'Cook'| 'Bartender' | 'Admin'; // Role of the user as a string, limited to specific options
     password: string; // Password of the user as a string
-    counter: number,
+    counter: any,
     verifyPassword: (plainPassword: string) => Promise<boolean>; // Method to verify the user's password
 };
 
@@ -19,7 +19,7 @@ const UsersSchema =  new mongoose.Schema(
         surname: {type: String, required: true},
         email: {type: String, required: true},
         password: {type: String, required: true},
-        counter: {type: Number},
+        counter: {type: mongoose.Schema.Types.Mixed},
         role: {type: String, enum: ['Cashier', 'Waiter', 'Cook', 'Bartender', 'Admin'], required: true }
     },
     {

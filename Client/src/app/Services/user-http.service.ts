@@ -19,6 +19,7 @@ export class UserHttpService {
   // public url : string = 'http://192.168.51.91:5000/api/v1'
   public url : string = URL;
   protected token : string = '';
+  private adminRole : string | undefined = undefined;
 
   constructor(private http: HttpClient ) {
     const token = localStorage.getItem('auth-token');
@@ -56,9 +57,9 @@ export class UserHttpService {
 
     const options = {
       headers: new HttpHeaders({
-        'cache-control': 'no-cache',
-        'Content-Type':  'application/json',
-        'auth-token': this.token
+        Authorization: 'Bearer ' + this.token,
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
       })
     }
 
@@ -69,9 +70,9 @@ export class UserHttpService {
 
     const options = {
       headers: new HttpHeaders({
-        'cache-control': 'no-cache',
+        Authorization: 'Bearer ' + this.token,
+        'cache-control':'no-cache',
         'Content-Type': 'application/json',
-        'auth-token': this.token
       })
     }
 
@@ -100,8 +101,18 @@ export class UserHttpService {
 
   }
 
+  setAdminRole(role : string) {
+    if (this.hasRole('Admin')) {
+      this.adminRole = role;
+    }
+  }
+
   getRole() : string | null {
-    if (this.token) return (jwtdecode(this.token) as User).role;
+    if (this.token) {
+      const role =  (jwtdecode(this.token) as User).role;
+      if (role === 'Admin') return this.adminRole as string;
+      else return role;
+    }
     return null;
   }
   logout() : void{

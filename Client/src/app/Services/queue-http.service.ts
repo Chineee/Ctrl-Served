@@ -8,13 +8,6 @@ import {URL} from "../Variables";
 @Injectable()
 export class QueueHttpService{
   private url = URL
-  private options = {
-    headers: new HttpHeaders({
-      'cache-control':'no-cache',
-      'Content-Type': 'application/json',
-      'auth-token': this.us.getToken()
-    })
-  }
 
   private mapper : any = {Cook:"foodqueue", Bartender:"drinkqueue"};
 
@@ -22,11 +15,27 @@ export class QueueHttpService{
   }
 
   getQueue(role:string) {
-    return this.http.get<Queue[]>(this.url+"/" + this.mapper[role], this.options);
+
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+      })
+    }
+    
+    return this.http.get<Queue[]>(this.url+"/" + this.mapper[role], options);
   }
 
   putQueue(id:string, role:string) : Observable<any>{
-      return this.http.put(this.url+"/"+this.mapper[role]+"/"+id, {}, this.options);
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+      })
+    }
+    return this.http.put(this.url+"/"+this.mapper[role]+"/"+id, {}, options);
   }
 }
 

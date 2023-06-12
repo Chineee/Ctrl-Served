@@ -27,3 +27,12 @@
   margin-right: -10px;
 }
 
+.chart-container {
+  width: 40%;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

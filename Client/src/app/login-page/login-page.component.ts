@@ -38,6 +38,7 @@ export class LoginPageComponent implements OnInit {
         this.router.navigate(['/waiters']);
       },
       error: (err) => {
+        console.log(err);
         this.errorMessage = err.message;
       }
     })

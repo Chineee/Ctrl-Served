@@ -52,7 +52,7 @@ async function insertAll() {
                 "email": "cameriere@gmail.com",
                 "password": await getPassword("cameriere"),
                 "role": "Waiter",
-                "counter":0
+                "counter": {tablesServed: 0, customersServed: 0, dishesServed: 0}
             }),
             new User({
                 "name":"cameriere2",
@@ -60,7 +60,7 @@ async function insertAll() {
                 "email":"cameriere2@gmail.com",
                 "password":await getPassword("cameriere2"),
                 "role":"Waiter",
-                "counter":0
+                "counter": {tablesServed: 0, customersServed: 0, dishesServed: 0}
             })
 
         ]);

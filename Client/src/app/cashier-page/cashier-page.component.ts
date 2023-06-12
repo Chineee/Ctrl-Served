@@ -8,7 +8,7 @@ import {OrdersHttpService} from "../Services/orders-http.service";
 import {ReceiptsHttpService} from "../Services/receipts-http.service";
 import Receipt from "../models/Receipt";
 import {SocketioService} from "../Services/socketio.service";
-import User from "../models/User";
+import User, {WaiterStats} from "../models/User";
 import {MenusHttpService} from "../Services/menus-http.service";
 
 enum Page {
@@ -96,7 +96,11 @@ export class CashierPageComponent implements OnInit{
       next: (data) => {
         this.users = data;
         this.statsUserRole = {
-          0: this.buildUserRole("Waiter"),
+          0: {
+            tablesServed: this.buildUserRole("Waiter", 'tablesServed'),
+            customersServed: this.buildUserRole('Waiter', 'customersServed'),
+            dishesServed: this.buildUserRole('Waiter', "dishesServed")
+          },
           1: this.buildUserRole("Cook"),
           2: this.buildUserRole("Cashier"),
           3: this.buildUserRole("Bartender")
@@ -109,15 +113,15 @@ export class CashierPageComponent implements OnInit{
     })
   }
 
-  showModal(modal: any) {
-    console.log(modal);
-  }
-
-  buildUserRole(role: string) {
+  buildUserRole(role: string, type ?: 'tablesServed' | 'customersServed' | 'dishesServed') {
     const usersRole = this.users.filter((user)=> user.role === role);
     const result : {name: string, value: number}[] = []
     for(const user of usersRole) {
-      result.push({name: user.name + ' ' + user.surname, value: user.counter})
+      if (type && role === 'Waiter') {
+        const waiterStats : WaiterStats = user.counter as WaiterStats;
+        result.push({name: user.name + ' ' + user.surname, value: waiterStats[type]})
+      }
+      else result.push({name: user.name + ' ' + user.surname, value: user.counter as number})
     }
     return result;
   }
@@ -186,22 +190,20 @@ export class CashierPageComponent implements OnInit{
     })
   }
 
-  showReceiptPopup(receipt : Receipt){
-
+  showReceiptPopup(receipt : Receipt) {
+    this.popup = {showed:true, receipt:receipt}
   }
-
   createReceipt(event : any){
     this.receipt.createReceipt(event).subscribe({
       next: (data) => {
         this.getTables();
         this.getOrders();
-        this.showReceiptPopup(data);
-        this.popup = {showed:true, receipt:data}
+        this.showReceiptPopup(data)
+
       },
       error: (err) => console.log(err)
     })
   }
-
   closePopup() {
     this.popup = {showed: false}
   }

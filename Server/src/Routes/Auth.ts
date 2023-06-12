@@ -4,6 +4,8 @@ import User, {IUser} from "../models/User";
 import passport from "../passport-config"
 import jwt from "jsonwebtoken";
 import client from "../redis-config"
+import Users from "../models/User";
+import Tables from "../models/Tables"
 
 // Define a schema for user input validation using Joi
 export const UserSchemaValidation = Joi.object().keys({
@@ -40,7 +42,7 @@ export const alreadyLogged = (req, res, next) => {
 // Middleware function to check if the user is logged in
 export const isLogged = async (req, res, next) => {
     // const token = req.header("Authorization").split(' ')[1];
-    const token = req.header('auth-token');
+    const token = req.header('Authorization').split(' ')[1];
 
     try {
         //todo invece di usare la redis cache,
@@ -82,6 +84,9 @@ export default (): Router  => {
     //test route, inside it we do stuff to test other stuff
     app.get('/testone', isLogged, async (req, res) => {
         // const a = await req.user.verifyPassword("ciao");
+        // await Users.findOneAndUpdate({_id:"648045fd07c136c4d861d4db"}, {$inc:{"counter.tablesServed": 1}})
+        const b = await Tables.findOneAndUpdate({tableNumber: 5}, {tableNumber:22})
+        console.log(b);
         return res.status(200).send("SIUM")
     })
 
@@ -103,7 +108,7 @@ export default (): Router  => {
             email: req.body.email,
             password: req.body.password,
             role: req.body.role,
-            counter: 0
+            counter: req.body.role === 'Waiter' ? {tablesServed: 0, customersServed: 0, dishesServed: 0} : 0
         });
 
         // Save the new user in the database

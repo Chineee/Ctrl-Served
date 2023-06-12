@@ -115,5 +115,17 @@ export default (): Router => {
         }
     });
 
+    // GET endpoint to retrieve all orders with a specific table number
+    app.get("/:id/orders", isLogged, hasRole('Waiter','Cashier'), async (req, res) => {
+        const table = await Tables.findById(req.params.id);
+        try {
+            const orders = await Orders.find({tableNumber: table?.tableNumber});
+            return res.status(200).send(orders);
+        } catch(err) {
+            return res.status(400).send(err);
+        }
+    })
+
+
     return app;
 }

@@ -19,24 +19,24 @@ export class ReceiptsHttpService {
   createReceipt(tableNumber : number) : Observable<any> {
     const options = {
       headers: new HttpHeaders({
-        'cache-control': 'no-cache',
-        'Content-Type':  'application/json',
-        'auth-token': this.user.getToken()
+        Authorization: 'Bearer ' + this.user.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
       })
     }
 
     return this.http.post(this.url, {tableNumber: tableNumber}, options).pipe(tap((data)=>console.log(data)));
   }
-  
+
   getReceipts() : Observable<any> {
     const options = {
       headers: new HttpHeaders({
-        'cache-control': 'no-cache',
-        'Content-Type':  'application/json',
-        'auth-token': this.user.getToken()
+        Authorization: 'Bearer ' + this.user.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
       })
     }
-    
+
     return this.http.get<Receipt[]>(this.url, options);
   }
 

@@ -1,9 +1,24 @@
+<br>
 <div class="container">
   <div class="container-button">
     <button class="btn btn-secondary" (click)="setFunc(RangeProfit.DAILY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show dayly income</button>
     <button class="btn btn-secondary" (click)="setFunc(RangeProfit.WEEKLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show weekly income</button>
     <button class="btn btn-secondary" (click)="setFunc(RangeProfit.MONTHLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show monthly income</button>
     <button class="btn btn-secondary" (click)="setFunc(RangeProfit.YEARLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show yearly income</button>
+  </div>
+  <br>
+  <div class="profit">
+    <h3>{{rangeProfit}} profit: €{{profitClicked}}</h3>
+  </div>
+  <hr>
+  <div class="container">
+    <div *ngFor="let receipt of receiptFiltered" class="card" (click)="showReceipt(receipt)" style="margin-bottom: 20px">
+      <div class="card-body">
+        <h5>Table {{receipt.tableNumber}}</h5>
+        <p>{{receipt.date}} - {{receipt.hour}}</p>
+        <p class="profit-text">Total: €{{receipt.price}}</p>
+      </div>
+    </div>
   </div>
 </div>
 

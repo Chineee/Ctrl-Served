@@ -18,9 +18,9 @@ export class TablesHttpService{
 
     const options = {
       headers: new HttpHeaders({
-        'cache-control': 'no-cache',
-        'Content-Type':  'application/json',
-        'auth-token': this.user.getToken()
+        Authorization: 'Bearer ' + this.user.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
       })
     }
 
@@ -31,9 +31,9 @@ export class TablesHttpService{
 
     const options = {
       headers: new HttpHeaders({
-        'cache-control': 'no-cache',
-        'Content-Type':  'application/json',
-        'auth-token': this.user.getToken()
+        Authorization: 'Bearer ' + this.user.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
       })
     }
 

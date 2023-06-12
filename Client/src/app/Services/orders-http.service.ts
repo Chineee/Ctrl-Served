@@ -26,9 +26,9 @@ export class OrdersHttpService{
 
     const options = {
       headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
         'cache-control':'no-cache',
         'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
       })
     }
 
@@ -39,9 +39,9 @@ export class OrdersHttpService{
 
     const options = {
       headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
         'cache-control':'no-cache',
         'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
       })
     }
 
@@ -52,9 +52,9 @@ export class OrdersHttpService{
 
     const options = {
       headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
         'cache-control':'no-cache',
         'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
       })
     }
 
@@ -65,9 +65,9 @@ export class OrdersHttpService{
 
     const options = {
       headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
         'cache-control':'no-cache',
         'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
       })
     }
 
@@ -79,9 +79,9 @@ export class OrdersHttpService{
 
     const options = {
       headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
         'cache-control':'no-cache',
         'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
       })
     }
 
@@ -92,9 +92,9 @@ export class OrdersHttpService{
 
     const options = {
       headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
         'cache-control':'no-cache',
         'Content-Type': 'application/json',
-        'auth-token': this.us.getToken()
       })
     }
 

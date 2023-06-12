@@ -52,18 +52,6 @@ export default (): Router => {
         const allOrders = [];
         const queue = [];
 
-        //TODO usa una variabile globale per evitare due ordini con lo stesso numero
-        // Generate a unique order number
-        // const orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1 || 1;
-        
-        //todo se la redis cache crasha che succede? Il counter si resetta?
-
-        /*let orderNumber;
-        if (!(await client.exist("orderNumber"))) {
-            orderNumber = (await Order.find().sort({orderNumber: -1}).limit(1))[0]?.orderNumber + 1
-            await client.set("orderNumber", orderNumber);
-        }
-        else*/
         const orderNumber = req.query?.orderNumber ? req.query.orderNumber : await client.incr("orderNumber");
         // Iterate through the dish dictionary and create order and queue objects
         for (const key in dishDict) {
@@ -157,7 +145,7 @@ export default (): Router => {
             const orders = await Order.find({orderNumber: req.query.orderNumber});
             if (orders.length > 0 && orders[0].waiterId.toString() !== req.user._id.toString()) return res.status(403).send({error: true, status:403, errorMessage:"Insufficient permission"})
             const orderModified = await Order.updateMany({orderNumber: req.query.orderNumber}, {orderNumber: -1});
-            await User.findOneAndUpdate({_id: req.user._id}, {$inc: {counter: orderModified.modifiedCount}})
+            await User.findOneAndUpdate({_id: req.user._id}, {$inc: {"counter.dishesServed": orderModified.modifiedCount}})
             getIoInstance().emit('Order_sent')
             return res.status(200).send({error: false, status: 200, message: "The orrder was modified correctly"})
         } catch(err) {

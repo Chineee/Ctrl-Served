@@ -1,16 +1,18 @@
 <br>
 <div class="container">
-  <div class="btn-group">
-    <button class="btn btn-secondary" (click)="buildStatsRole(Role.COOK)">Show cooks statistics</button>
-    <button class="btn btn-secondary" (click)="buildStatsRole(Role.BARTENDER)">Show bartenders statistics</button>
-    <button class="btn btn-secondary" (click)="buildStatsRole(Role.WAITER)">Show waiters statistics</button>
-    <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="buildStatsRole(Role.CASHIER)">Show cashiers statistics</button>
-    <button class="btn btn-secondary" (click)="buildOtherStats(Stats.DISHES)">Show dishes statistics</button>
-    <button class="btn btn-secondary" (click)="buildOtherStats(Stats.PROFITS)">Show profit statistics</button>
-  </div>
+
+    <div class="button-container ">
+      <button class="btn btn-secondary" (click)="buildStatsRole(Role.COOK)">Show cooks statistics</button>
+      <button class="btn btn-secondary" (click)="buildStatsRole(Role.BARTENDER)">Show bartenders statistics</button>
+      <button class="btn btn-secondary" (click)="buildStatsRole(Role.WAITER)">Show waiters statistics</button>
+      <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="buildStatsRole(Role.CASHIER)">Show cashiers statistics</button>
+      <button class="btn btn-secondary" (click)="buildOtherStats(Stats.DISHES)">Show dishes statistics</button>
+      <button class="btn btn-secondary" (click)="buildOtherStats(Stats.PROFITS)">Show profit statistics</button>
+    </div>
 </div>
+
 <br><br>
-<div class="chart-container" *ngIf="currentStatsPage == Stats.ROLE">
+<div class="chart-container" *ngIf="currentStatsPage === Stats.ROLE && pageRole !== Role.WAITER">
   <ngx-charts-bar-vertical
     [results]="statsUserRole[pageRole]"
     [gradient]="verticalBarOptions.gradient"
@@ -23,8 +25,54 @@
     [barPadding]="verticalBarOptions.barPadding"
     [showGridLines]="verticalBarOptions.showGridLines"
     [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+    style="height: 500px;"
   ></ngx-charts-bar-vertical>
 </div>
+<div class="chart-container" *ngIf="pageRole === Role.WAITER && currentStatsPage === Stats.ROLE">
+  <ngx-charts-bar-vertical
+    [results]="statsUserRole[pageRole]['tablesServed']"
+    [gradient]="verticalBarOptions.gradient"
+    [xAxis]="verticalBarOptions.showXAxis"
+    [yAxis]="verticalBarOptions.showYAxis"
+    [showXAxisLabel]="verticalBarOptions.showXAxisLabel"
+    [showYAxisLabel]="verticalBarOptions.showYAxisLabel"
+    [xAxisLabel]="verticalBarOptions.xAxisLabel"
+    [yAxisLabel]="verticalBarOptions.yAxisLabel[2]"
+    [barPadding]="verticalBarOptions.barPadding"
+    [showGridLines]="verticalBarOptions.showGridLines"
+    [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+    style="height: 500px;"
+  ></ngx-charts-bar-vertical>
+  <ngx-charts-bar-vertical
+    [results]="statsUserRole[pageRole]['customersServed']"
+    [gradient]="verticalBarOptions.gradient"
+    [xAxis]="verticalBarOptions.showXAxis"
+    [yAxis]="verticalBarOptions.showYAxis"
+    [showXAxisLabel]="verticalBarOptions.showXAxisLabel"
+    [showYAxisLabel]="verticalBarOptions.showYAxisLabel"
+    [xAxisLabel]='verticalBarOptions.xAxisLabel'
+    [yAxisLabel]="verticalBarOptions.yAxisLabel[1]"
+    [barPadding]="verticalBarOptions.barPadding"
+    [showGridLines]="verticalBarOptions.showGridLines"
+    [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+    style="height: 500px;"
+  ></ngx-charts-bar-vertical>
+  <ngx-charts-bar-vertical
+    [results]="statsUserRole[pageRole]['dishesServed']"
+    [gradient]="verticalBarOptions.gradient"
+    [xAxis]="verticalBarOptions.showXAxis"
+    [yAxis]="verticalBarOptions.showYAxis"
+    [showXAxisLabel]="verticalBarOptions.showXAxisLabel"
+    [showYAxisLabel]="verticalBarOptions.showYAxisLabel"
+    [xAxisLabel]="verticalBarOptions.xAxisLabel"
+    [yAxisLabel]="verticalBarOptions.yAxisLabel[0]"
+    [barPadding]="verticalBarOptions.barPadding"
+    [showGridLines]="verticalBarOptions.showGridLines"
+    [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+    style="height: 500px;"
+  ></ngx-charts-bar-vertical>
+</div>
+
 <div class="pie-chart-container" *ngIf="currentStatsPage == Stats.DISHES">
   <div class="pie-chart-wrapper">
     <ngx-charts-advanced-pie-chart [results]="statsFoods"></ngx-charts-advanced-pie-chart>
@@ -46,6 +94,7 @@
     [barPadding]="verticalBarOptions.barPadding"
     [showGridLines]="verticalBarOptions.showGridLines"
     [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+    style="height: 500px;"
   ></ngx-charts-bar-vertical>
 </div>
 
