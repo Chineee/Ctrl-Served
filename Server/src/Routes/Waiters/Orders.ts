@@ -32,7 +32,7 @@ export default (): Router => {
     });
 
     //GET endpoint to retrieve one order based on the parameters passed
-    app.get('/:id', isLogged, hasRole("Waiter"), async (req, res) => {
+    app.get('/:id', isLogged, hasRole("Waiter", "Cashier"), async (req, res) => {
         try {
             const order = await Order.findById(req.params.id);
             return res.status(200).send(order);
@@ -161,6 +161,8 @@ export default (): Router => {
 
         try{
             await order.deleteOne();
+            if (order.type === 'Foods') await FoodQueue.deleteOne({order: order._id});
+            else await DrinkQueue.deleteOne({order: order._id});
             getIoInstance().emit('Order_sent')
             return res.status(200).send({status:200, error: false, message: "The order was successfully deleted"})
         } catch (err) {
@@ -172,7 +174,11 @@ export default (): Router => {
     app.delete('/', isLogged, hasRole("Cashier"), async (req, res) => {
         //WARNING USE IT WITH REQ.QUERY TO DELETE ORDER NUMBER SPECIFICO
         try {
-            await Order.deleteMany(req.query);
+            if (req.user.role !== 'Admin' && Object.keys(req.query).length !== 0 && req.query.orderNumber !== undefined) {
+                await Order.deleteMany(req.query);
+                await FoodQueue.deleteMany(req.query)
+            } else return res.status(403).send({status:403, error: true, errorMessage:"Insufficient permission"})
+
             return res.status(200).send({status:200, error: false, message: "The orders were successfully deleted"})
         } catch (err) {
             return res.status(400).send(err);

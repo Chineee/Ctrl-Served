@@ -145,7 +145,10 @@ export class CashierPageComponent implements OnInit{
 
   getOrders() {
     this.os.getOrders().subscribe({
-      next: (data) => this.orders = data,
+      next: (data) => {
+        this.orders = data
+        console.log(data);
+      },
       error: (err) => console.log(err)
     })
   }

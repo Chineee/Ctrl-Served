@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import client from "../redis-config"
 import Users from "../models/User";
 import Tables from "../models/Tables"
+import getIoInstance from "../socketio-config";
 
 // Define a schema for user input validation using Joi
 export const UserSchemaValidation = Joi.object().keys({
@@ -115,6 +116,7 @@ export default (): Router  => {
         try {
             await user.save();
             await client.set(req.body.email, "true");
+            getIoInstance().emit("new_user");
             return res.status(200).send({status: 200, error: false, message: "User correctly added to the database"});
         } catch(err) {
             return res.status(400).send(err);

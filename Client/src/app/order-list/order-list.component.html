@@ -8,8 +8,8 @@
 
 <div class="container">
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
-    <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter')" class="card-body" (click)="showOrderPopup(order.key)">
-      <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
+    <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter', 'Cashier')" class="card-body" (click)="showOrderPopup(order.key)" data-bs-target="#infoModal" data-bs-toggle="modal">
+      <button *ngIf="this.us.hasRole('Waiter')" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} </p>
     </div>
@@ -80,6 +80,7 @@
             </div>
             <div class="p-2">
               <select [(ngModel)]="popup.tableNumber" class="form-select">
+                <option value="undefined" selected> --Select a table -- </option>
                 <option *ngFor="let table of tables" [value]="table.tableNumber">{{table.tableNumber}}</option>
               </select>
             </div>

@@ -1,0 +1,100 @@
+<br>
+<button class="btn btn-primary align-left" (click)="router.navigate(['/register']);">Create new user</button>
+<button class="btn btn-danger float-end" (click)="logout()">Logout</button>
+<br>
+<div *ngIf="alert.error !== undefined" class="{{alert.error ? 'alert alert-danger' : 'alert alert-success'}}" role="alert">
+  <strong>{{alert.message}}</strong>
+  <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close" (click)="closeAlert()"></button>
+</div>
+<br>
+<div class="container">
+  <select class="form-select" [(ngModel)]="filter">
+    <option value="{{Role.WAITERS}}">WAITERS</option>
+    <option value="{{Role.CASHIERS}}">CASHIERS</option>
+    <option value="{{Role.BARTENDERS}}">BARTENDERS</option>
+    <option value="{{Role.COOKS}}">COOKS</option>
+    <option value="{{Role.ALL}}">NO FILTERS</option>
+  </select>
+  <br>
+  <button class="btn btn-primary" *ngIf="filter !== Role.ALL" (click) = "impersonateUser(filter)">Impersonate a {{filter}}</button>
+  <br>
+  <div *ngFor="let user of showUsers()" class="card" style="margin-bottom: 20px" (click)="showPopup(user)">
+    <div class="card-body" data-bs-target="#userInfoModal" data-bs-toggle="modal">
+      <button (click)="setModifyPopup(user)" type="button" class="btn btn-primary" data-bs-target="#modifyUserModal" data-bs-toggle="modal">Modify user</button>
+      <h5>{{user.name}} {{user.surname}}</h5>
+      <p>Role: {{user.role}}</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="userInfoModal" tabindex="-1" aria-hidden="true" aria-labelledby="userInfoModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{popup.confirm === false? popup.name + ' ' + popup.surname: "Do you really want to delete the user?"}}</h4>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" *ngIf="!popup.confirm">
+          <p>Role: {{popup.role}}</p>
+        </div>
+        <div class="modal-footer">
+          <div *ngIf="!popup.confirm || popup.confirm === undefined">
+            <button type="button" class="btn btn-secondary" (click)="setConfirm()">Delete user</button>
+          </div>
+          <div *ngIf="popup.confirm">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="deleteUser(popup.id); closePopup()">Confirm deletion</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modifyUserModal" tabindex="-1" aria-hidden="true" aria-labelledby="userDeleteModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Modify user</h4>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label for="nameInput" class="form-label">Name</label>
+            <input type="text" class="form-control" id="nameInput" [(ngModel)]="popupModify.name" name="{{popupModify.name}}">
+          </div>
+          <div class="mb-3">
+            <label for="surnameInput" class="form-label">Surname</label>
+            <input type="text" class="form-control" id="surnameInput" [(ngModel)]="popupModify.surname" name="{{popupModify.surname}}">
+          </div>
+          <div class="mb-3">
+            <label for="emailInput" class="form-label">Email</label>
+            <input type="text" class="form-control" id="emailInput" [(ngModel)]="popupModify.email" name="{{popupModify.email}}">
+          </div>
+          <div class="mb-3">
+            <label for="passwordInput" class="form-label">Password</label>
+            <input type="password" class="form-control" id="passwordInput" [(ngModel)]="popupModify.password">
+          </div>
+          <div class="mb-3">
+            <label for="roleSelect" class="form-label">Role</label>
+            <select class="form-select" id="roleSelect" [(ngModel)]="popupModify.role">
+              <option value="Cashier" [selected]="popupModify.role === 'Cashier'">Cashier</option>
+              <option value="Waiter" [selected]="popupModify.role === 'Waiter'">Waiter</option>
+              <option value="Cook" [selected]="popupModify.role === 'Cook'">Cook</option>
+              <option value="Bartender" [selected]="popupModify.role === 'Bartender'">Bartender</option>
+              <option value="Admin" [selected]="popupModify.role === 'Admin'">Admin</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="closePopup()">Cancel</button>
+         <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="modifyUser(popupModify); closePopup()">Confirm</button>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>

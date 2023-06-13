@@ -23,7 +23,7 @@ export class QueueHttpService{
         'Content-Type': 'application/json',
       })
     }
-    
+
     return this.http.get<Queue[]>(this.url+"/" + this.mapper[role], options);
   }
 
@@ -36,6 +36,17 @@ export class QueueHttpService{
       })
     }
     return this.http.put(this.url+"/"+this.mapper[role]+"/"+id, {}, options);
+  }
+
+  deleteFromQueue(id: string, role:string) : Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+      })
+    }
+    return this.http.delete(this.url+'/'+this.mapper[role]+'/'+id, options)
   }
 }
 

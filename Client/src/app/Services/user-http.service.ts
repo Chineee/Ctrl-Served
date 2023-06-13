@@ -19,7 +19,7 @@ export class UserHttpService {
   // public url : string = 'http://192.168.51.91:5000/api/v1'
   public url : string = URL;
   protected token : string = '';
-  private adminRole : string | undefined = undefined;
+  private adminRole : string | undefined = 'Admin';
 
   constructor(private http: HttpClient ) {
     const token = localStorage.getItem('auth-token');
@@ -39,11 +39,25 @@ export class UserHttpService {
     return this.http.get(this.url + '/login', options).pipe(
       tap( (data) => {
         this.token = (data as LoginResponse).access_token;
+        if (this.hasRole('Admin')) this.adminRole = 'Admin'
         if (remember) {
           localStorage.setItem('auth-token', this.token as string);
         }
     }));
 
+  }
+
+  modifyUser(userObj:any, id: string) : Observable<any> {
+
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.token,
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+      })
+    }
+
+    return this.http.put(this.url + '/users/'+id,  userObj, options);
   }
 
   register(name: string, surname: string, email: string, password: string, role: string) : Observable<any> {
@@ -66,6 +80,18 @@ export class UserHttpService {
     return this.http.post(this.url + '/users', body, options);
   }
 
+  deleteUser(id:string) : Observable<any>{
+
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.token,
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+      })
+    }
+
+    return this.http.delete(this.url+'/users'+'/'+id, options);
+  }
   getUsers() {
 
     const options = {
@@ -115,8 +141,9 @@ export class UserHttpService {
     }
     return null;
   }
-  logout() : void{
+  logout() : void {
     localStorage.setItem('auth-token', '');
+    if (this.hasRole('Admin')) this.adminRole = ''
     this.token = '';
   }
 }

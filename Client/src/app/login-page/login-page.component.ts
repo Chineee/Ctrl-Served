@@ -21,21 +21,20 @@ export class LoginPageComponent implements OnInit {
 
 
   goToPageRole() {
-    if (this.us.getToken() !== '') {
-      const role = this.us.getRole() as string;
+    const role = this.us.getRole() as string;
+    if (role) {
       if (!['Bartender', 'Cook'].includes(role)) this.router.navigate(['/'+role.toLowerCase()+'s'])
       else {
         this.router.navigate(['/makers'])
       }
-    }
+    } 
   }
 
 
   login(email: string, password: string, rememberMe: boolean) {
     this.us.login(email, password, rememberMe).subscribe({
       next: (data) => {
-        //this.goToPageRole();
-        this.router.navigate(['/waiters']);
+        this.goToPageRole();
       },
       error: (err) => {
         console.log(err);

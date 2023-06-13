@@ -17,7 +17,7 @@ export class MakerPageComponent implements OnInit {
   constructor(private queue : QueueHttpService, private us : UserHttpService, private router : Router, private so : SocketioService) {}
   ngOnInit(): void {
     if(!this.us.hasRole("Cook", "Bartender")){
-      this.router.navigate(['/test'])
+      this.router.navigate(['/login'])
     }
     else {
       // this.us.logout();
@@ -57,7 +57,9 @@ export class MakerPageComponent implements OnInit {
 
   modifyOrderQueue(id: string) {
     this.queue.putQueue(id, this.us.getRole() as string).subscribe({
-      next: () => console.log("FATTOOOOOOOO"),
+      next: (data) => {
+        if (data.data.end) this.queue.deleteFromQueue(data.data._id, this.us.getRole() as string).subscribe({})
+      },
       error: (err) => console.log(err)
     });
   }

@@ -60,6 +60,7 @@ export class StatsPageComponent implements OnInit{
   }
 
   buildStatsRole(role : Role)  {
+    console.log(this.statsUserRole)
     this.verticalBarOptions.yAxisLabel = this.mapper_role_y[role];
     this.verticalBarOptions.xAxisLabel = this.mapper_role_x[role];
     this.pageRole = role;

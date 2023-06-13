@@ -8,6 +8,7 @@ import {WaiterPageComponent} from "./waiter-page/waiter-page.component";
 import {QueueHttpService} from "./Services/queue-http.service";
 import {MakerPageComponent} from "./makers-page/makers-page.component";
 import {CashierPageComponent} from "./cashier-page/cashier-page.component";
+import {AdminPageComponent} from "./admin-page/admin-page.component";
 
 const routes: Routes = [
   {path:'', redirectTo:'/login', pathMatch:'full'},
@@ -16,7 +17,8 @@ const routes: Routes = [
   {path: 'register', component: RegisterPageComponent, canActivate: [AdminRequiredGuard]},
   {path: 'waiters', component: WaiterPageComponent},
   {path: 'makers', component: MakerPageComponent},
-  {path: 'cashiers', component: CashierPageComponent}
+  {path: 'cashiers', component: CashierPageComponent},
+  {path: 'admins', component: AdminPageComponent, canActivate: [AdminRequiredGuard]}
 ];
 
 @NgModule({
