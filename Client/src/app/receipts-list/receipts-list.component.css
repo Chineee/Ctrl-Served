@@ -12,3 +12,7 @@
 .profit-text {
   font-weight: bold;
 }
+
+.download {
+  display: none
+}

@@ -14,7 +14,7 @@ services:
       context: ./Client
     ports:
       - "4200:4200"
-      - "49153:49513"
+      - "49513:49513"
     volumes:
       - /app/node_modules
       - ./Client:/app

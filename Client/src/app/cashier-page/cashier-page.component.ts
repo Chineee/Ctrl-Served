@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild, ElementRef} from '@angular/core';
 import {UserHttpService} from "../Services/user-http.service";
 import {Router} from "@angular/router";
 import {Table} from "../models/Table";
@@ -10,6 +10,8 @@ import Receipt from "../models/Receipt";
 import {SocketioService} from "../Services/socketio.service";
 import User, {WaiterStats} from "../models/User";
 import {MenusHttpService} from "../Services/menus-http.service";
+import html2canvas from "html2canvas"
+import jsPDF from "jspdf";
 
 enum Page {
   TABLES = "TABLES PAGE",
@@ -35,9 +37,15 @@ export class CashierPageComponent implements OnInit{
   protected receiptStatsFoods : {name: string, value: number}[] = [];
   protected receiptStatsDrinks : {name: string, value: number}[] = [];
   protected profitStatsMonth : {name: string, value: number}[] = []
-  constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService, private menu : MenusHttpService) {
-  }
+  constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService, private menu : MenusHttpService) {}
+
+  @ViewChild('modalReceipt') modalReceipt !: ElementRef;
+  @ViewChild('canvas') canvas !: ElementRef
+  @ViewChild('downloadLink') downloadLink !: ElementRef
+  @ViewChild('downloadButton') downloadButton !: ElementRef;
+
   ngOnInit(): void {
+    console.log("SIUMM")
     if (this.us.getToken() === '') this.router.navigate(['/login'])
     this.getTables()
     this.getOrders();
@@ -53,6 +61,18 @@ export class CashierPageComponent implements OnInit{
     })
   }
 
+  downloadReceipt(date ?: string) {
+
+    this.downloadButton.nativeElement.setAttribute('style', 'display: none;');
+
+    html2canvas(this.modalReceipt.nativeElement).then( (canvas) => {
+      this.canvas.nativeElement.src = canvas.toDataURL();
+      this.downloadLink.nativeElement.href = canvas.toDataURL('image/png');
+      this.downloadLink.nativeElement.download = `receipt_${date}.png`;
+      this.downloadLink.nativeElement.click();
+      this.downloadButton.nativeElement.setAttribute('style', 'display: show;')
+    } )
+  }
 
   getDishesStats(receipts : Receipt[]) {
     const month = new Date().toLocaleDateString().split('/')[1];
@@ -145,7 +165,10 @@ export class CashierPageComponent implements OnInit{
 
   getOrders() {
     this.os.getOrders().subscribe({
-      next: (data) => this.orders = data,
+      next: (data) => {
+        this.orders = data
+        console.log(data);
+      },
       error: (err) => console.log(err)
     })
   }

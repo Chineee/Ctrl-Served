@@ -27,7 +27,7 @@
 
 <!-- d-block" tabindex="-1" role="dialog"-->
 
-<div [class]="popup.showed ? 'modal show d-block' : 'modal'" tabindex="-1" role="dialog" id="modalReceipt" style="background-color: rgba(0, 0, 0, 0.5);">
+<div [class]="popup.showed ? 'modal show d-block' : 'modal'" tabindex="-1" role="dialog" id="modalReceipt" style="background-color: rgba(0, 0, 0, 0.5);" #modalReceipt>
   <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -64,10 +64,16 @@
             <div class="waiter">
               <span>Waiter: {{popup.receipt?.waiterId?.name}} {{popup.receipt?.waiterId?.surname}}</span>
             </div>
+            <button type="button" class="btn btn-success" #downloadButton (click)="downloadReceipt(popup.receipt?.date?.toString()); closePopup()">Download Receipt</button>
           </div>
         </div>
       </div>
   </div>
+</div>
+
+<div id="download">
+  <img style="display: none;" #canvas id="canvas">
+  <a style="display: none;" #downloadLink></a>
 </div>
 
 

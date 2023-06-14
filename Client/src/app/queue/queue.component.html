@@ -1,12 +1,20 @@
-<br>
 <div class="container">
-  <div *ngFor="let order of queue; let i=index">
-    <div class="card" (click)="openPopup(i)">
-      <div class="card-body">
-        <h5 class="card-title">{{order.begin ? order.dish.name + " - (In preparation)" : order.dish.name}}</h5>
-        <p>Order Number: {{order.orderNumber}}</p>
-        <p>Preparation Time: {{order.dish.productionTime}}</p>
-        <p *ngIf="order.begin">Iniziato</p>
+  <div class="row justify-content-md-center">
+    <div *ngFor="let order of queue; let i=index" class="card col-auto" style="margin-bottom: 20px; margin-left:75px; margin-right: 75px">
+      <div class="card" (click)="openPopup(i)">
+        <div class="card-image">
+          <img src="{{!order.begin ? 'assets/images/greenTray.png' : 'assets/images/redTray.png'}}" style="width:200%; height:200%"/>
+        </div>
+        <div class="card-body">
+          <!-- <h5 class="card-title">{{order.begin ? order.dish.name + " -- In preparation" : order.dish.name}}</h5> -->
+          <h5 class="card-title">
+            <span *ngIf="order.begin" class="in-preparation">{{order.dish.name}}</span>
+            <span *ngIf="!order.begin" class="not-in-preparation"> {{order.dish.name}} </span>
+          </h5>
+          <p>Order Number: {{order.orderNumber}}</p>
+          <p>Preparation Time: {{order.dish.productionTime}}</p>
+          <p *ngIf="order.begin">Begun</p>
+        </div>
       </div>
     </div>
   </div>
@@ -20,7 +28,7 @@
         <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"> </button>
       </div>
       <div class="modal-body">
-          <h3>{{popup.begin ? "Have you finished?" : "Wanna start preparing amo?"}}</h3>
+          <h3>{{popup.begin ? "Have you finished?" : "Do you want to start this dish?"}}</h3>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-success" (click)="changeStatus(popup.id); closePopup()" data-bs-dismiss="modal">{{popup.begin?"Finish preparation":"Start preparation"}}</button>

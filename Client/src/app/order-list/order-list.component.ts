@@ -192,6 +192,7 @@ export class OrderListComponent implements OnInit{
     }
   }
 
+
   isModifyingSelection(index: number) {
 
   }

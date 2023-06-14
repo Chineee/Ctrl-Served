@@ -81,6 +81,8 @@ const server = https.createServer({
     cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
 },app);
 
+// const server = http.createServer(app);
+
 setUpSocketio(server);
 
 server.listen(PORT, () => {
@@ -88,6 +90,7 @@ server.listen(PORT, () => {
 });
 
 app.get('/', (req, res) => {
+    console.log(Object.keys(req.query).length === 0)
     const io = getIoInstance();
     io.emit("Order_sent", "SIUUUUUUUUUUUUUUUUUUUUUUUUM")
     return res.status(200).send("Ok")

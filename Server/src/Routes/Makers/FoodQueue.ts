@@ -52,7 +52,6 @@ export default (): Router => {
             try {
                 food.end = true;
                 const order = await Orders.findById(food.order);
-                console.log(order)
                 order.ready = true;
                 await order.save();
                 const completeOrder = await Orders.find({orderNumber: food.orderNumber, ready: false})
@@ -71,7 +70,7 @@ export default (): Router => {
             await food.save();
             if (food.end) await Users.findOneAndUpdate({email: req.user.email}, {$inc: {counter: 1}});
             getIoInstance().emit("food_queue")
-            return res.status(200).send({error:false, status:200, message: "The dish was modified correctly"});
+            return res.status(200).send({error:false, status:200, message: "The dish was modified correctly", data: food});
         } catch (err) {
             return res.status(400).send(err);
         }
@@ -84,7 +83,7 @@ export default (): Router => {
 
         try{
             await food.deleteOne();
-            return res.status(200).send("The dish was successfully deleted");
+            return res.status(200).send({status: 200, error: false, message:"Queue item successfully deleted"});
         } catch (err) {
             return res.status(400).send(err);
         }

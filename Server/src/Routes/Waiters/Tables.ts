@@ -43,8 +43,8 @@ export default (): Router => {
     app.put("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
         const table = await Tables.findOne({tableNumber: req.params.id});
         if (table === null) return res.status(400).send({status:400, error: true, errorMessage: "The table doesn't exist"});
-        const inc : number = table.customers;
-        if (table.waiterId !== null && req.user._id.toString() !== table.waiterId) return res.status(400).send({error: true, status:400, errorMessage:"You are unauthorized"})
+
+        if (table.waiterId !== null && req.user._id.toString() !== table.waiterId) return res.status(403).send({error: true, status:400, errorMessage:"You are unauthorized"})
 
         // Update the fields of the table if provided in the request body
         //TODO: make it so waiterId in models\Tables is an ObjectId
@@ -91,7 +91,7 @@ export default (): Router => {
     })
 
     // GET endpoint to retrieve a table by its ID
-    app.get("/:id", isLogged, hasRole('Waiter'), async (req, res) => {
+    app.get("/:id", isLogged, hasRole('Waiter', "Cashier"), async (req, res) => {
         try {
             const table = await Tables.findOne({tableNumber: req.params.id});
             return res.status(200).send(table);
@@ -116,15 +116,15 @@ export default (): Router => {
     });
 
     // GET endpoint to retrieve all orders with a specific table number
-    app.get("/:id/orders", isLogged, hasRole('Waiter','Cashier'), async (req, res) => {
-        const table = await Tables.findById(req.params.id);
-        try {
-            const orders = await Orders.find({tableNumber: table?.tableNumber});
-            return res.status(200).send(orders);
-        } catch(err) {
-            return res.status(400).send(err);
-        }
-    })
+    // app.get("/:id/orders", isLogged, hasRole('Waiter','Cashier'), async (req, res) => {
+    //     const table = await Tables.findById(req.params.id);
+    //     try {
+    //         const orders = await Orders.find({tableNumber: table?.tableNumber});
+    //         return res.status(200).send(orders);
+    //     } catch(err) {
+    //         return res.status(400).send(err);
+    //     }
+    // })
 
 
     return app;

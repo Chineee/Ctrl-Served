@@ -1,4 +1,6 @@
+<br>
+<button (click)="logout()" class="btn btn-danger float-end">Logout</button>
+<br>
 <div class="container">
   <app-queue (orderEvent)="modifyOrderQueue($event)" [queue]="this.queueDish"></app-queue>
 </div>
-

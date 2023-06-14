@@ -16,3 +16,40 @@
   padding: 20px;
   border-radius: 5px;
 }
+
+.card {
+  position: relative;
+  background: transparent;
+  border: none;
+  margin: 10px;
+  display: inline-block;
+}
+
+.card .card-image {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: -1;
+  background: transparent;
+}
+
+.card .card-image img {
+  object-fit: contain;
+}
+
+.card .card-body {
+  position: relative;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.card-title {
+  height: 20px;
+}
+
+
+
+.not-in-preparation {
+  text-align: center;
+}

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ElementRef} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {UserHttpService} from "../Services/user-http.service";
 import {WaiterHttpService} from "../Services/waiters-http.service";
@@ -29,7 +29,8 @@ export class WaiterPageComponent implements OnInit{
   public page : Page = Page.TABLES;
   protected Page = Page;
   public oneOrderReady : boolean = false;
-  constructor(private ts : TablesHttpService, private us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService) {
+  constructor(private ts : TablesHttpService, private us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService, private el : ElementRef) {
+    this.el.nativeElement.ownerDocument.body.className = 'Waiter';
   }
 
   ngOnInit() {
@@ -88,6 +89,7 @@ export class WaiterPageComponent implements OnInit{
   }
 
   logout() {
+    this.so.disconnect()
     this.us.logout();
     this.router.navigate(['/login'])
   }

@@ -13,15 +13,21 @@
     </div>
   </div>
   <br>
-  <div *ngFor="let table of showTables()" class="card">
-    <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId,table.occupied)">
-      <h5>Table {{table.tableNumber}} {{GroupOrderReady(table.tableNumber, orders) && this.us.hasRole('Waiter')?"- An order is ready":""}}</h5>
-      <p>Number of Seats: {{table.seats}}</p>
-      <p *ngIf="table.occupied">Number of Customers: {{table.customers}}</p>
-      <p *ngIf="table.occupied && this.us.hasRole('Cashier')">Waiter: {{table.waiterId.name}} {{table.waiterId.surname}}</p>
-      <p>Occupied: {{table.occupied}}</p>
+  <!-- <div class="container text-center"> -->
+    <div class="row justify-content-center">
+      <div *ngFor="let table of showTables(); let i = index;" class="card col-auto" style="margin-top:150px; margin-bottom:120px; margin-left:auto; margin-right: auto">
+        <div class="card-image"> 
+          <img src="{{!table.occupied ? 'assets/images/greenTable.png' : 'assets/images/redTable.png'}}"/>
+        </div>
+        <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId,table.occupied)">
+          <h5>Table {{table.tableNumber}} {{GroupOrderReady(table.tableNumber, orders) && this.us.hasRole('Waiter')?"- An order is ready":""}}</h5>
+          <p>Number of Seats: {{table.seats}}</p> 
+          <p *ngIf="table.occupied">Number of Customers: {{table.customers}}</p>
+          <p *ngIf="table.occupied && this.us.hasRole('Cashier')">Waiter: {{table.waiterId.name}} {{table.waiterId.surname}}</p>
+        </div>
+      </div>
     </div>
-  </div>
+  <!-- </div> -->
 </div>
 
 <div class="modal-dialog modal-dialog-centered">

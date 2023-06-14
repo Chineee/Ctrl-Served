@@ -23,7 +23,7 @@ export async function getUser(id) {
 export default (): Router => {
     const app = Router();
 
-    // GET endpoint to retrieve a user by ID or email
+        // GET endpoint to retrieve a user by ID or email
     app.get('/:id', isLogged, hasRole('Cashier'), async (req, res) => {
         try {
             const user = await getUser(req.params.id);
@@ -48,20 +48,28 @@ export default (): Router => {
     // PUT endpoint to modify user data
     app.put('/:id', isLogged, async (req, res) => {
         const user = await getUser(req.params.id);
+        console.log(req.body)
         if (user === null) return res.status(400).send({status: 400, error: true, errorMessage: "This user doesn't exist"});
         else if (user.email !== req.user.email && req.user.role !== 'Admin') return res.status(400).send({status: 400, error: true, errorMessage: "You don't have the necessary permissions to do this action"});
-
+        
+        let oldEmail = user.email;
         // Update the user data if provided in the request body
         if (req.body.new_name !== undefined) user.name = req.body.new_name;
         if (req.body.new_surname !== undefined) user.surname = req.body.new_surname;
         if (req.body.new_password !== undefined) user.password = req.body.new_password;
-        if (req.body.new_role !== undefined && req.user.role === 'Admin') user.role = req.body.new_role;
+        if (req.body.new_role !== undefined && req.user.role === 'Admin') {
+            if (req.body.new_role !== user.role) {
+                if (req.body.new_role === 'Waiter') user.counter = {};
+                else user.counter = 0;
+            }
+            user.role = req.body.new_role;
+        }
         if (req.body.new_email !== undefined) user.email = req.body.new_email;
 
         // Save the changes to the user in the database
         try{
             await user.save();
-            if (req.body.new_email !== undefined) await client.set(user.email, "false");
+            if (req.body.new_email !== undefined && req.body.new_email !== oldEmail) await client.set(oldEmail, "false");
             return res.status(200).send({status: 200, error: false, message: "The user was modified correctly"});
         } catch (err) {
             return res.status(400).send(err);
