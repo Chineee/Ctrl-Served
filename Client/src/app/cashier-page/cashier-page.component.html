@@ -21,7 +21,7 @@
       <app-order-list [orderDishes]="orders"></app-order-list>
     </div>
   <div *ngIf="page === Page.STATS">
-    <app-stats-page [users]="users" [statsUserRole]="statsUserRole" [statsFoods]="receiptStatsFoods" [statsDrinks]="receiptStatsDrinks" [statsProfitMonth]="profitStatsMonth"></app-stats-page>
+    <app-stats-page [users]="users" [statsUserRole]="statsUserRole" [statsFoods]="receiptStatsFoods" [statsDrinks]="receiptStatsDrinks" [statsProfitMonth]="profitStatsMonth" [statsProfitYear]="profitStatsYear" (set_last_year)="set_LAST_YEAR($event)"></app-stats-page>
   </div>
 </div>
 

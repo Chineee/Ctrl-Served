@@ -15,14 +15,10 @@ export class SocketioService {
     this.socket = io(SOCKET_URL);
 
     return new Observable( (observer) => {
-
-      //todo settare le connessioni con il socket in base al ruolo che si ha
-
-
-      this.socket.on('broadcast', (m:any) => {
-        console.log('Socket.io message received: ' + JSON.stringify(m) );
-        observer.next( m );
-      });
+      // this.socket.on('broadcast', (m:any) => {
+      //   console.log('Socket.io message received: ' + JSON.stringify(m) );
+      //   observer.next( m );
+      // });
 
       this.socket.on('error', (err:any) => {
         console.log('Socket.io error: ' + err );
@@ -42,7 +38,6 @@ export class SocketioService {
       })
 
       this.socket.on('order_finished', (m:any) => {
-        console.log('RORDER FINISHUTA')
         observer.next(m);
       })
 
@@ -52,14 +47,10 @@ export class SocketioService {
 
       this.socket.on('receipt_created', (m:any)=>{
         observer.next(m);
-      })
-
-      // When the consumer unsubscribes, clean up data ready for next subscription.
-      return {
-        unsubscribe: () => {
-          this.socket.disconnect();
-        }
-      };
+      });
+      
+      this.socket.on('user_modified', (m: any) => observer.next());
+      this.socket.on('order_modified', (m:any) => observer.next());
 
     });
 

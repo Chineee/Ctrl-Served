@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {UserHttpService} from "../Services/user-http.service";
 import {Router} from "@angular/router";
 import User from "../models/User";
@@ -33,6 +33,10 @@ export class StatsPageComponent implements OnInit{
   @Input() statsFoods: any;
   @Input() statsDrinks: any;
   @Input() statsProfitMonth: any;
+  @Input() statsProfitYear : any;
+  @Output() set_last_year = new EventEmitter<number>
+  private MAX_LASTS_YEAR = 25;
+  private MIN_LASTS_YEAR = 2;
 
   protected verticalBarOptions : any = {
     showXAxis: true,
@@ -45,7 +49,9 @@ export class StatsPageComponent implements OnInit{
     yAxisLabel: this.mapper_role_y[0],
     xAxisLabel: "Waiter",
     rotateXAxisTicks: true,
-    wrapTicks: true
+    wrapTicks: true,
+    yearProfit: 'Year',
+    barYearPadding: "9"
   };
 
   protected readonly Stats = Stats
@@ -71,5 +77,12 @@ export class StatsPageComponent implements OnInit{
     this.verticalBarOptions.xAxisLabel = "Month"
     this.verticalBarOptions.yAxisLabel = "Profits"
     this.currentStatsPage = page;
+  }
+
+  setLastsYear(value : any) {
+    value = Math.min(Math.max(value.target.value, this.MIN_LASTS_YEAR), this.MAX_LASTS_YEAR);
+    this.verticalBarOptions.barYearPadding = (value/5).toString()
+
+    this.set_last_year.emit(value);
   }
 }

@@ -36,7 +36,10 @@ export class CashierPageComponent implements OnInit{
   protected popup : {showed: boolean, receipt?: Receipt} = {showed: false};
   protected receiptStatsFoods : {name: string, value: number}[] = [];
   protected receiptStatsDrinks : {name: string, value: number}[] = [];
-  protected profitStatsMonth : {name: string, value: number}[] = []
+  protected profitStatsMonth : {name: string, value: number}[] = [];
+  protected profitStatsYear : {name: string, value: number}[] = [];
+  private LAST_YEAR = 15;
+
   constructor(private us : UserHttpService, private router : Router, private ts : TablesHttpService, private os : OrdersHttpService, private receipt : ReceiptsHttpService, private so : SocketioService, private menu : MenusHttpService) {}
 
   @ViewChild('modalReceipt') modalReceipt !: ElementRef;
@@ -202,11 +205,32 @@ export class CashierPageComponent implements OnInit{
 
   }
 
+  getReceiptsDataYear(receipts : Receipt[], LAST_YEAR : number) {
+    let supp : any = [];
+    const currentYear = new Date().toLocaleDateString().split('/')[2];
+
+    for (let i = 0; i <= LAST_YEAR; i++) {
+      const yearMinus = (parseFloat(currentYear) - i).toString();
+      const receiptYear = receipts.filter( (receipt) => receipt.date.toString().split('/')[2] === yearMinus);
+      let price = 0;
+      receiptYear.forEach(receipt => price += receipt.price);
+      supp.push({name: yearMinus, value: price});
+    }
+    console.log(supp);
+    this.profitStatsYear = supp;
+  }
+
+  set_LAST_YEAR(new_LAST_YEAR: number) {
+    this.LAST_YEAR = new_LAST_YEAR
+    this.getReceipts();
+  }
+
   getReceipts() {
     this.receipt.getReceipts().subscribe({
       next: (data) => {
         this.getDishesStats(data)
         this.getReceiptsDataMonth(data);
+        this.getReceiptsDataYear(data, this.LAST_YEAR);
         this.receipts = data
       },
       error: (err) => console.log(err)
@@ -214,6 +238,7 @@ export class CashierPageComponent implements OnInit{
   }
 
   showReceiptPopup(receipt : Receipt) {
+    console.log("ricetta popup")
     this.popup = {showed:true, receipt:receipt}
   }
   createReceipt(event : any){

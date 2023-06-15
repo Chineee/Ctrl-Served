@@ -11,7 +11,7 @@
     <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter', 'Cashier')" class="card-body" (click)="showOrderPopup(order.key)" data-bs-target="#infoModal" data-bs-toggle="modal">
       <button *ngIf="this.us.hasRole('Waiter')" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
       <h5>Table {{order.value}} </h5>
-      <p>Order number: {{order.key}} </p>
+      <p>Order number: {{order.key}} (Ready) </p>
     </div>
   </div>
   <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">

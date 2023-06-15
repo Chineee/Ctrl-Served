@@ -73,7 +73,7 @@ export default (): Router => {
         try {
             //AV QUERY: occupied free or not free
             const query = req.query.occupied ? {occupied: req.query.occupied} : {};
-            const tables = await Tables.find(query).populate("waiterId", "-password -__v");
+            const tables = await Tables.find(query).populate("waiterId", "-password -__v, -counter");
             return res.status(200).send(tables);
         } catch (err) {
             return res.status(400).send(err);

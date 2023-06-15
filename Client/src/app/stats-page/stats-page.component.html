@@ -96,7 +96,29 @@
     [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
     style="height: 500px;"
   ></ngx-charts-bar-vertical>
+  <div>
+    <div class="float-end" style="margin-right: 10px; margin-top: 50px">
+      <input *ngIf="currentStatsPage == Stats.PROFITS" type="text" class="form-control" placeholder="Different between last years"  (change)="setLastsYear($event)"/>
+    </div>
+    <ngx-charts-bar-vertical
+      [results]="statsProfitYear"
+      [gradient]="verticalBarOptions.gradient"
+      [xAxis]="verticalBarOptions.showXAxis"
+      [yAxis]="verticalBarOptions.showYAxis"
+      [showXAxisLabel]="verticalBarOptions.showXAxisLabel"
+      [showYAxisLabel]="verticalBarOptions.showYAxisLabel"
+      [xAxisLabel]="verticalBarOptions.yearProfit"
+      [yAxisLabel]="verticalBarOptions.yAxisLabel"
+      [barPadding]="verticalBarOptions.barYearPadding"
+      [showGridLines]="verticalBarOptions.showGridLines"
+      [rotateXAxisTicks]="verticalBarOptions.rotateXAxisTicks"
+      style="heigth: 100%; width: 100%"
+    ></ngx-charts-bar-vertical>
+  </div>
 </div>
+<!--      style="height: 500px; width: auto"-->
+
+
 
 
 

@@ -30,7 +30,7 @@ export class WaiterPageComponent implements OnInit{
   protected Page = Page;
   public oneOrderReady : boolean = false;
   constructor(private ts : TablesHttpService, private us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService, private el : ElementRef) {
-    this.el.nativeElement.ownerDocument.body.className = 'Waiter';
+    // this.el.nativeElement.ownerDocument.body.className = 'Waiter';
   }
 
   ngOnInit() {

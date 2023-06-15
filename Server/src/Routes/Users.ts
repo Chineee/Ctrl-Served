@@ -4,6 +4,7 @@ import {isLogged, hasRole} from "./Auth";
 import {Types} from "mongoose";
 import waiters from "./Waiters/Waiter"
 import client from "../redis-config";
+import getIoInstance from "../socketio-config";
 
 // Function to retrieve a user by its ID or email
 export async function getUser(id) {
@@ -70,6 +71,7 @@ export default (): Router => {
         try{
             await user.save();
             if (req.body.new_email !== undefined && req.body.new_email !== oldEmail) await client.set(oldEmail, "false");
+            getIoInstance().emit("user_modified")
             return res.status(200).send({status: 200, error: false, message: "The user was modified correctly"});
         } catch (err) {
             return res.status(400).send(err);

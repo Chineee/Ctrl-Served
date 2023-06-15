@@ -133,13 +133,14 @@ export default (): Router => {
         // Save the changes to the order in the database
         try{
             await order.save();
+            getIoInstance().emit("order_modified")
             return res.status(200).send({error: false, status:200, message:"The order was updated correctly"});
         }catch (err) {
             return res.status(400).send(err);
         }
     });
 
-    // PUT endpoint to modify an order with a specific order number
+    // PUT endpoint to set orderNumber to -1 to say that order has been delivered to the table
     app.put('/', isLogged, hasRole('Waiter'), async (req, res) => {
         try {
             const orders = await Order.find({orderNumber: req.query.orderNumber});
