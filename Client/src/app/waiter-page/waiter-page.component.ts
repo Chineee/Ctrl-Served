@@ -29,7 +29,7 @@ export class WaiterPageComponent implements OnInit{
   public page : Page = Page.TABLES;
   protected Page = Page;
   public oneOrderReady : boolean = false;
-  constructor(private ts : TablesHttpService, private us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService, private el : ElementRef) {
+  constructor(private ts : TablesHttpService, protected us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService, private el : ElementRef) {
     // this.el.nativeElement.ownerDocument.body.className = 'Waiter';
   }
 
@@ -44,6 +44,11 @@ export class WaiterPageComponent implements OnInit{
           this.getOrders();
         })
     }
+  }
+
+  backToAdmin() {
+    this.so.disconnect();
+    this.router.navigate(['/admins'])
   }
 
   getStringOrder() {

@@ -40,7 +40,7 @@ export class CashierPageComponent implements OnInit {
   protected profitStatsYear: { name: string, value: number }[] = [];
   private LAST_YEAR = 15;
 
-  constructor(private us: UserHttpService, private router: Router, private ts: TablesHttpService, private os: OrdersHttpService, private receipt: ReceiptsHttpService, private so: SocketioService, private menu: MenusHttpService) {
+  constructor(protected us: UserHttpService, private router: Router, private ts: TablesHttpService, private os: OrdersHttpService, private receipt: ReceiptsHttpService, private so: SocketioService, private menu: MenusHttpService) {
   }
 
   @ViewChild('modalReceipt') modalReceipt !: ElementRef;
@@ -49,7 +49,6 @@ export class CashierPageComponent implements OnInit {
   @ViewChild('downloadButton') downloadButton !: ElementRef;
 
   ngOnInit(): void {
-    console.log("SIUMM")
     if (this.us.getToken() === '') this.router.navigate(['/login'])
     this.getTables()
     this.getOrders();
@@ -242,7 +241,8 @@ export class CashierPageComponent implements OnInit {
   }
 
   backToAdmin() {
-
+    this.so.disconnect();
+    this.router.navigate(['/admins'])
   }
 
   createReceipt(event: any) {

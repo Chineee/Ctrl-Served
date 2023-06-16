@@ -7,6 +7,7 @@
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
   </button>
 </div>
+<button *ngIf="this.us.hasRole('Admin')" class="btn btn-danger" (click)="backToAdmin()">Back to Admin</button>
 <button (click)="logout()" class="btn btn-danger float-end">Logout</button>
 <button (click)="changePage()" class="btn btn-warning">{{getStringOrder()}}</button>
 <span *ngIf="page === Page.TABLES">

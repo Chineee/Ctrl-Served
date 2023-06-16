@@ -14,7 +14,7 @@ import {Queue} from "../models/Queue";
 export class MakerPageComponent implements OnInit {
 
   protected queueDish : Queue[] = [];
-  constructor(private queue : QueueHttpService, private us : UserHttpService, private router : Router, private so : SocketioService) {}
+  constructor(private queue : QueueHttpService, protected us : UserHttpService, private router : Router, private so : SocketioService) {}
   ngOnInit(): void {
     if(!this.us.hasRole("Cook", "Bartender")){
       this.router.navigate(['/login'])
