@@ -3,6 +3,7 @@ import Menu from "./models/Menus";
 import Tables from "./models/Tables";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import Receipt from "./models/Receipts";
 
 //
 async function getPassword(password) {
@@ -12,8 +13,9 @@ async function getPassword(password) {
 
 async function insertAll() {
     await mongoose.connect("mongodb://host.docker.internal:27018/tawproject");
+    let users, dishes;
     if (await User.countDocuments({}) === 0) {
-        await User.insertMany([
+        users = await User.insertMany([
             new User({
                 "name": "admin",
                 "surname": "admin",
@@ -68,7 +70,7 @@ async function insertAll() {
 
     if (await Menu.countDocuments({}) === 0) {
 
-        await Menu.insertMany([
+        dishes = await Menu.insertMany([
             new Menu({
                 "name": "Bruschetta",
                 "price": 9.99,
@@ -218,6 +220,30 @@ async function insertAll() {
                 "customers": 0,
                 "occupied": false,
                 "waiterId": null
+            })
+        ])
+    }
+
+    if (await Receipt.countDocuments({}) === 0) {
+        const id1 = users[4]._id.toString();
+        const id2 = users[5]._id.toString();
+
+        await Receipt.insertMany([
+            new Receipt({
+                tableNumber: 1,
+                dishes: [dishes[0]._id.toString(), dishes[1]._id.toString(), dishes[2].toString()],
+                date: "01/01/2020",
+                hour: "15:33",
+                price: 88,
+                waiterId: id1
+            }),
+            new Receipt({
+                tableNumber: 2,
+                dishes: [dishes[1]._id.toString(),dishes[3]._id.toString(),dishes[6]._id.toString(),dishes[7]._id.toString(),dishes[12]._id.toString(),dishes[16]._id.toString()],
+                date: "14/02/2020",
+                hour: "20:57",
+                price: 149,
+                waiterId: id2
             })
         ])
     }

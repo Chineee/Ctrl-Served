@@ -40,7 +40,8 @@ declare global {
 
 // Parse the request body as JSON
 app.use(cors({
-    origin: ['http://localhost:4200', 'http://192.168.51.91:4200', "http://localhost:3050", "http://192.168.0.47:4200"]
+    // origin: ['http://localhost:4200', 'http://192.168.51.91:4200', "http://localhost:3050", "http://192.168.0.47:4200", "http://10.0.2.2"]
+    origin: true
 }))
 app.use(express.json());
 

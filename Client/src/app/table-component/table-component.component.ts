@@ -98,6 +98,11 @@ export class TableComponentComponent implements OnInit{
     }
   }
   
+  getTotalBill(tableNumber : number) : number {
+    let total : number = 0;
+    this.orders.filter(order => order.tableNumber === tableNumber).forEach(data => total += data.dish.price as number)
+    return total;
+  }
 
   generateReceiptEvent(tableNumber : number) : void {
     this.receiptEvent.emit(tableNumber);

@@ -137,6 +137,7 @@ export default (): Router  => {
 
     // GET endpoint to login a user
     app.get('/login', alreadyLogged, passport.authenticate('basic', {session:false}), async (req, res) => {
+        console.log("OK")
         //Create a token containing the user data
         const tokenData = {
             _id: req.user._id,

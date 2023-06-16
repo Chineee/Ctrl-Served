@@ -241,7 +241,7 @@ export class CashierPageComponent implements OnInit{
     console.log("ricetta popup")
     this.popup = {showed:true, receipt:receipt}
   }
-  createReceipt(event : any){
+  createReceipt(event : any) {
     this.receipt.createReceipt(event).subscribe({
       next: (data) => {
         this.getTables();
@@ -252,6 +252,7 @@ export class CashierPageComponent implements OnInit{
       error: (err) => console.log(err)
     })
   }
+
   closePopup() {
     this.popup = {showed: false}
   }

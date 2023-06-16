@@ -48,9 +48,9 @@ export class SocketioService {
       this.socket.on('receipt_created', (m:any)=>{
         observer.next(m);
       });
-      
-      this.socket.on('user_modified', (m: any) => observer.next());
-      this.socket.on('order_modified', (m:any) => observer.next());
+
+      this.socket.on('user_modified', (m: any) => observer.next(m));
+      this.socket.on('order_modified', (m:any) => observer.next(m));
 
     });
 

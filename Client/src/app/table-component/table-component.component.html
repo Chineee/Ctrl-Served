@@ -92,6 +92,9 @@
           <h5 class="modal-title">Do you want to generate the table's receipt?</h5>
           <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"> </button>
         </div>
+        <div class="modal-body">
+          Total for table {{getTotalBill(popup.tableNumber)}}
+        </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-success" (click)="generateReceiptEvent(popup.tableNumber); closePopup()" data-bs-dismiss="modal">Confirm</button>
         </div>
