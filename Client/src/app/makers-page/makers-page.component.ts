@@ -24,10 +24,11 @@ export class MakerPageComponent implements OnInit {
       this.getQueue();
       this.so.connect().subscribe({
         next: (data) => {
-          console.log("SOCKETTINO")
           this.getQueue();
         },
-        error: (err) => console.log('NOOOOOO')
+        error: (err) => {
+          this.logout();
+        }
       })
     }
   }

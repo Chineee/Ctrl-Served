@@ -9,7 +9,7 @@ import {URL} from "../Variables";
 export class QueueHttpService{
   private url = URL
 
-  private mapper : any = {Cook:"foodqueue", Bartender:"drinkqueue"};
+  private mapper : any = {Cook:"foodqueue", Bartender:"drinkqueue", Admin: this.us.GetAdminMakersRole()};
 
   constructor(private http: HttpClient, private us : UserHttpService) {
   }
@@ -23,6 +23,8 @@ export class QueueHttpService{
         'Content-Type': 'application/json',
       })
     }
+
+    if (role === 'Admin') this.mapper[role]=this.us.GetAdminMakersRole();
 
     return this.http.get<Queue[]>(this.url+"/" + this.mapper[role], options);
   }

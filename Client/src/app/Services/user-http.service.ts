@@ -19,7 +19,16 @@ export class UserHttpService {
   // public url : string = 'http://192.168.51.91:5000/api/v1'
   public url : string = URL;
   protected token : string = '';
-  private adminRole : string | undefined = 'Admin';
+  private _adminRole : string = '';
+
+  GetAdminMakersRole() {
+    console.log(this._adminRole);
+    return this._adminRole;
+  }
+
+  SetAdminMakersRole(role : string) {
+    this._adminRole = role;
+  }
 
   constructor(private http: HttpClient ) {
     const token = localStorage.getItem('auth-token');
@@ -39,7 +48,6 @@ export class UserHttpService {
     return this.http.get(this.url + '/login', options).pipe(
       tap( (data) => {
         this.token = (data as LoginResponse).access_token;
-        if (this.hasRole('Admin')) this.adminRole = 'Admin'
         if (remember) {
           localStorage.setItem('auth-token', this.token as string);
         }
@@ -127,23 +135,14 @@ export class UserHttpService {
 
   }
 
-  setAdminRole(role : string) {
-    if (this.hasRole('Admin')) {
-      this.adminRole = role;
-    }
-  }
-
   getRole() : string | null {
     if (this.token) {
-      const role =  (jwtdecode(this.token) as User).role;
-      if (role === 'Admin') return this.adminRole as string;
-      else return role;
+      return (jwtdecode(this.token) as User).role;
     }
     return null;
   }
   logout() : void {
     localStorage.setItem('auth-token', '');
-    if (this.hasRole('Admin')) this.adminRole = ''
     this.token = '';
   }
 }

@@ -90,6 +90,9 @@ export class AdminPageComponent implements OnInit {
     // this.us.setAdminRole(role)
     const mapper = {Cook:"/makers", Bartender:"/makers", Waiter:"/waiters", Cashier:"/cashiers", All:"/admins"}
     this.so.disconnect();
+    if (role === 'Cook' && this.us.hasRole('Admin')) this.us.SetAdminMakersRole('foodqueue');
+    else if (role === 'Bartender' && this.us.hasRole('Admin')) this.us.SetAdminMakersRole('drinkqueue')
+    this.so.disconnect();
     this.router.navigate([mapper[role]])
   }
 

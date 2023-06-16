@@ -12,7 +12,7 @@ export class AdminRequiredGuard {
 
   canActivate(): Observable<boolean | UrlTree> | Promise<Boolean | UrlTree> | boolean | UrlTree {
     if (!this.us.hasRole('Admin')) {
-      this.router.navigate(['/test'])
+      this.router.navigate(['/login'])
       return false;
     }
     return true;

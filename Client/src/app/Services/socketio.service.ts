@@ -15,10 +15,6 @@ export class SocketioService {
     this.socket = io(SOCKET_URL);
 
     return new Observable( (observer) => {
-      // this.socket.on('broadcast', (m:any) => {
-      //   console.log('Socket.io message received: ' + JSON.stringify(m) );
-      //   observer.next( m );
-      // });
 
       this.socket.on('error', (err:any) => {
         console.log('Socket.io error: ' + err );

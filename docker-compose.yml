@@ -10,13 +10,13 @@ services:
   client:
     restart: always
     build:
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       context: ./Client
     ports:
-      # - "4200:4200"
-      # - "49513:49513"
-      - "3000:3000"
-      - "443:443"
+       - "4200:4200"
+       - "49513:49513"
+#      - "3000:3000"
+#      - "443:443"
     volumes:
       - /app/node_modules
       - ./Client:/app
