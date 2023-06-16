@@ -1,4 +1,5 @@
 <br>
+<button *ngIf="this.us.hasRole('Admin')" class="btn btn-danger" (click)="backToAdmin()">Back to Admin</button>
 <button (click)="logout()" class="btn btn-danger float-end">Logout</button>
 <br>
 <div class="container">

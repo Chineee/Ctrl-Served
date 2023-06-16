@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { LoginPageComponent } from './login-page/login-page.component';
 import {HttpClientModule} from "@angular/common/http";
 import {UserHttpService} from "./Services/user-http.service";
-import { TestComponent } from './test/test.component';
 import { RegisterPageComponent } from './register-page/register-page.component';
 import { WaiterPageComponent } from './waiter-page/waiter-page.component';
 import {WaiterHttpService} from "./Services/waiters-http.service";
@@ -37,7 +36,6 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
   declarations: [
     AppComponent,
     LoginPageComponent,
-    TestComponent,
     RegisterPageComponent,
     WaiterPageComponent,
     TableComponentComponent,

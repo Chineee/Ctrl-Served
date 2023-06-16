@@ -1,5 +1,5 @@
 <br>
-<button class="btn btn-primary align-left" (click)="router.navigate(['/register']);">Create new user</button>
+<button class="btn btn-primary align-left" (click)="goToRegister()">Create new user</button>
 <button class="btn btn-danger float-end" (click)="logout()">Logout</button>
 <br>
 <div *ngIf="alert.error !== undefined" class="{{alert.error ? 'alert alert-danger' : 'alert alert-success'}}" role="alert">

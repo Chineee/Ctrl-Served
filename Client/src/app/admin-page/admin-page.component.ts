@@ -66,6 +66,11 @@ export class AdminPageComponent implements OnInit {
 
   }
 
+  goToRegister() {
+    this.so.disconnect();
+    this.router.navigate(['/register'])
+  }
+
   modifyUser(userObj : any){
     const input = {
       new_name: userObj.name,

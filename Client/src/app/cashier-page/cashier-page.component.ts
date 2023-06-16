@@ -241,6 +241,10 @@ export class CashierPageComponent implements OnInit {
     this.popup = {showed: true, receipt: receipt}
   }
 
+  backToAdmin() {
+
+  }
+
   createReceipt(event: any) {
     this.receipt.createReceipt(event).subscribe({
       next: (data) => {

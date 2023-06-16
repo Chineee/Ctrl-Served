@@ -33,6 +33,11 @@ export class MakerPageComponent implements OnInit {
     }
   }
 
+  backToAdmin() {
+    this.so.disconnect();
+    this.router.navigate(['/admins'])
+  }
+
   logout() {
     this.so.disconnect()
     this.us.logout()

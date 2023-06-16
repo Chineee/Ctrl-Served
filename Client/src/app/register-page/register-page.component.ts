@@ -35,6 +35,10 @@ export class RegisterPageComponent implements OnInit{
       })
     }
   }
+  
+  backToAdmin() {
+    this.router.navigate(['/admins'])
+  }
 
   
 }
