@@ -3,13 +3,15 @@ import User from "../models/User";
 import {UserHttpService} from "../Services/user-http.service";
 import {Router} from "@angular/router";
 import {SocketioService} from "../Services/socketio.service";
+import {Dish} from "../models/Dish";
+import {Table} from "../models/Table"
+import { TablesHttpService } from '../Services/tables-http.service';
+import { MenusHttpService } from '../Services/menus-http.service';
 
-enum Role {
-  WAITERS = 'Waiter',
-  COOKS = 'Cook',
-  BARTENDERS = 'Bartender',
-  CASHIERS = 'Cashier',
-  ALL = 'All'
+enum Page {
+  USER,
+  TABLE,
+  MENU
 }
 
 @Component({
@@ -20,85 +22,40 @@ enum Role {
 export class AdminPageComponent implements OnInit {
 
   protected users : User[] = [];
-  protected filter : Role = Role.ALL;
-  protected Role = Role;
-  protected popup : {name?: string, surname?: string, role?: string, id?:string, confirm?: boolean} = {}
-  protected alert : {error ?: boolean, message ?: string} = {}
-  protected popupModify : {name ?: string, surname ?: string, email ?: string, role ?: string, password ?: string, id?: string} = {}
+  protected menus : Dish[] = [];
+  protected tables : Table[] = [];
+  protected page : Page = Page.USER;
+  protected Page = Page;
 
-  constructor(protected us : UserHttpService, protected router : Router, protected so : SocketioService) {}
-
+  constructor(protected us : UserHttpService, protected router : Router, protected so : SocketioService, protected ts : TablesHttpService, protected ms : MenusHttpService) {}
 
   ngOnInit() {
-    this.loadUsers();
+    this.loadUsers()
+    this.loadTables();
+    this.loadMenus();
     this.so.connect().subscribe({
-      next: (data) => this.loadUsers()
-    })
-  }
-
-  setModifyPopup(user : User) {
-    this.popupModify = {name: user.name, surname: user.surname, email: user.email, role: user.role, id:user._id}
-  }
-
-  showUsers(){
-    if (this.filter === Role.ALL) return this.users;
-    return this.users.filter( (user) => user.role === this.filter);
-  }
-
-  loadUsers() {
-    this.us.getUsers().subscribe({
-      next: (data) => this.users = data,
-      error: (err) => {
-        this.logout()
+      next: (m:any) => {
+        this.loadUsers();
+        this.loadTables();
+        this.loadMenus();
       }
-    })
+    });
   }
 
-
-  closePopup(){
-    this.popup = {}
-  }
-
-  setConfirm() {
-    const confirm = {...this.popup};
-    confirm.confirm = true;
-    this.popup = confirm;
-
-  }
-
-  goToRegister() {
-    this.so.disconnect();
-    this.router.navigate(['/register'])
-  }
-
-  modifyUser(userObj : any){
-    const input = {
-      new_name: userObj.name,
-      new_surname: userObj.surname,
-      new_email: userObj.email,
-      new_role: userObj.role,
-      new_password: userObj.password
-    }
-    this.us.modifyUser(input, userObj.id).subscribe({
+  loadTables() : void {
+    this.ts.getTables().subscribe({
       next: (data) => {
-        this.alert = {error: false, message:"User modified correctly"}
-        this.loadUsers()
+        console.log(data)
+        this.tables = data
       },
-      error: (err) => {
-        this.alert = {error: true, message: err.message}
-      }
+      error: (err) => console.log(err)
     })
   }
-
-  impersonateUser(role: Role) {
-    // console.log(role as string)
-    // this.us.setAdminRole(role)
-    const mapper = {Cook:"/makers", Bartender:"/makers", Waiter:"/waiters", Cashier:"/cashiers", All:"/admins"}
-    this.so.disconnect();
-    if (role === 'Cook' && this.us.hasRole('Admin')) this.us.SetAdminMakersRole('foodqueue');
-    else if (role === 'Bartender' && this.us.hasRole('Admin')) this.us.SetAdminMakersRole('drinkqueue')
-    this.so.disconnect();
-    this.router.navigate([mapper[role]])
+  
+  loadMenus() : void {
+    this.ms.getMenus().subscribe({
+      next: (data) => this.menus = data
+    })
   }
 
   logout() {
@@ -107,23 +64,13 @@ export class AdminPageComponent implements OnInit {
     this.router.navigate(['/login'])
   }
 
-  deleteUser(id?: string){
-    // this.alert = {error: true, message: "User deleted succesfully"}
-    // console.log(id);
-    this.us.deleteUser(id as string).subscribe({
-      next:(data) => {
-        this.loadUsers();
-        this.alert = {error: false, message: "User deleted succesfully"}
-      },
-      error: (err) => this.alert = {error: true, message: err.message}
+  loadUsers() : void {
+    this.us.getUsers().subscribe({
+      next: (data) => this.users = data
     })
   }
 
-  closeAlert() {
-    this.alert = {}
-  }
-
-  showPopup(user : User) {
-    this.popup = {name: user.name, surname: user.surname, role: user.role, id: user._id, confirm: false}
+  changePage(page : Page) {
+    this.page = page;
   }
 }

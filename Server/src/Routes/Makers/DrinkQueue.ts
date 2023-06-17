@@ -77,6 +77,7 @@ export default (): Router => {
 
         try{
             await drink.deleteOne();
+            getIoInstance().emit('drink_queue_change')
             return res.status(200).send({status: 200, error:false, message:"Drink deleted successfully"});
         } catch (err) {
             return res.status(400).send(err);

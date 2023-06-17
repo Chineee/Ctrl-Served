@@ -1,25 +1,25 @@
 <br>
 <div class="container">
   <div class="d-flex">
-    <span class="left-form-label"> Show free tables </span>
+    <span class="left-form-label" style="font-weight: bold; margin-right: 10px;"> SHOW FREE TABLES </span>
     <div class="form-check form-switch">
       <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" (change)="handleSwitch()" [(ngModel)]="checked">
-      <label class="form-check-label" for="flexSwitchCheckDefault">{{this.us.hasRole('Cashier')?'Show occupied tables':'Show my tables'}}</label>
+      <label class="form-check-label" for="flexSwitchCheckDefault" style="font-weight: bold; margin-left: 10px;">{{this.us.hasRole('Cashier')?'SHOW OCCUPIED TABLES':'SHOW MY TABLES'}}</label>
     </div>
   </div>
   <div class="row">
     <div class="col-2">
-      <input type="text" class="form-control" placeholder="Search table" (input)="filterTableNumber($event)"/>
+      <input type="text" class="form-control" placeholder="Search table" (input)="filterTableNumber($event)" style="width: 300px; height: 40px;"/>
     </div>
   </div>
-  <br>
-  <!-- <div class="container text-center"> -->
+  <br>  
+  <div class="card-container">
     <div class="row justify-content-center">
-      <div *ngFor="let table of showTables(); let i = index;" class="card col-auto" style="margin-top:150px; margin-bottom:120px; margin-left:auto; margin-right: auto">
+      <div *ngFor="let table of showTables(); let i = index;" class="card" style="margin-top:150px; margin-bottom:120px; margin-left: 120px; margin-right:120px">
         <div class="card-image"> 
           <img src="{{!table.occupied ? 'assets/images/greenTable.png' : 'assets/images/redTable.png'}}"/>
         </div>
-        <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId,table.occupied)">
+        <div class="card-body" (click)="showPopup(table.tableNumber,table.seats,table.waiterId,table.occupied, table)">
           <h5>Table {{table.tableNumber}} {{GroupOrderReady(table.tableNumber, orders) && this.us.hasRole('Waiter')?"- An order is ready":""}}</h5>
           <p>Number of Seats: {{table.seats}}</p> 
           <p *ngIf="table.occupied">Number of Customers: {{table.customers}}</p>
@@ -27,11 +27,37 @@
         </div>
       </div>
     </div>
-  <!-- </div> -->
+  </div>
 </div>
 
 <div class="modal-dialog modal-dialog-centered">
-  <div *ngIf="this.us.hasRole('Waiter') && popup.showed && !(popup.occupied && !popup.isWaiter)" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div *ngIf="this.us.hasRole('Admin') && adminPopup.showed" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Table {{adminPopup.table?.tableNumber}} information</h5>
+          <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"> </button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="!adminPopup?.table?.occupied">
+            <label for="seats" class="form-label" style="margin-right: 10px">Number of seats : </label>
+            <input id="seats" type="number" class="form-control" [defaultValue]="adminPopup.table?.seats" />
+          </div>
+          <p *ngIf="adminPopup?.table?.occupied">Number of seats : {{adminPopup.table?.seats}} </p>
+          <p>{{adminPopup.table?.occupied ? 'The table is occupied, you cannot modify it' : 'The table is not occupied'}}</p>
+        </div>
+        <div class="modal-footer" *ngIf="!adminPopup?.table?.occupied">
+          <button class="btn btn-success" data-bs-dismiss="modal" (click)="closePopup()">Confirm changes</button>
+          <button class="btn btn-danger" data-bs-dismiss="modal" (click)="closePopup()">Delete table</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal-dialog modal-dialog-centered">
+  <div *ngIf="this.us.hasRole('Waiter') && popup.showed && !(popup.occupied && !popup.isWaiter) && !this.us.hasRole('Admin')" class="modal show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0, 0, 0, 0.5);">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -102,4 +128,3 @@
     </div>
   </div>
 </div>
-

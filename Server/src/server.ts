@@ -93,6 +93,6 @@ server.listen(PORT, () => {
 app.get('/', (req, res) => {
     console.log(Object.keys(req.query).length === 0)
     const io = getIoInstance();
-    io.emit("Order_sent", "SIUUUUUUUUUUUUUUUUUUUUUUUUM")
+    io.emit("order_finished", "SIUUUUUUUUUUUUUUUUUUUUUUUUM")
     return res.status(200).send("Ok")
 })

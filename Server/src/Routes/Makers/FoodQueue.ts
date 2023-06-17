@@ -83,6 +83,7 @@ export default (): Router => {
 
         try{
             await food.deleteOne();
+            getIoInstance().emit('food_queue');
             return res.status(200).send({status: 200, error: false, message:"Queue item successfully deleted"});
         } catch (err) {
             return res.status(400).send(err);

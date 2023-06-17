@@ -43,7 +43,8 @@ export class OrderListComponent implements OnInit{
   protected selectionQuantity : Array<number> = [];
   protected selectionSize : number = 1;
   protected error : {type: Error | undefined} = {type: undefined};
-  protected alert : any = {showed: false, error:false, message:""}
+  protected alert : any = {showed: false, error:false, message:""};
+  protected filter_table : number = -1;
 
 
   constructor(private os : OrdersHttpService, protected us : UserHttpService, private router: Router, private so : SocketioService,
@@ -54,26 +55,35 @@ export class OrderListComponent implements OnInit{
     // this.showOrdersNumber();
   }
 
-  showOrdersNumber() {
+
+  filterTable(event : any) {
+    const filter = event.target.value;
+    if (filter === '') this.filter_table = -1;
+    else this.filter_table = parseInt(filter)
+  }
+
+  showOrdersNumber(filter: number) {
     const orders : any = {}
     const ready : any = {};
 
-    for (const order of this.orderDishes) {
+    const filteredOrder = this.orderDishes.filter( (order) => order.tableNumber === filter || filter === -1)
+
+    for (const order of filteredOrder) {
       if (orders[order.orderNumber] === undefined) orders[order.orderNumber] = order.tableNumber;
-      if (this.readyOrder[order.orderNumber] === undefined) {
+      if (ready[order.orderNumber] === undefined) {
         //todo understand why this works
-        const readyOrders = this.orderDishes.filter( (order2) => order2.orderNumber === order.orderNumber && order2.ready).length;
-        const ordersTotal = this.orderDishes.filter( (order2) => order2.orderNumber === order.orderNumber).length;
+        const readyOrders = filteredOrder.filter( (order2) => order2.orderNumber === order.orderNumber && order2.ready).length;
+        const ordersTotal = filteredOrder.filter( (order2) => order2.orderNumber === order.orderNumber).length;
         if (readyOrders === ordersTotal) {
-          this.readyOrder[order.orderNumber] = true;
+          ready[order.orderNumber] = true;
         } else {
-          this.readyOrder[order.orderNumber] = false;
+          ready[order.orderNumber] = false;
         }
       }
     }
 
     this.orderGroup = orders;
-    // this.readyOrder = ready;
+    this.readyOrder = ready;
 
     return this.orderGroup;
   }
@@ -101,7 +111,6 @@ export class OrderListComponent implements OnInit{
     const cpy= this.dishesQuantity;
     delete cpy[key as string];
     this.dishesQuantity = cpy;
-
   }
 
   cannotCloseConfirm() {
@@ -113,6 +122,7 @@ export class OrderListComponent implements OnInit{
     }
     return false;
   }
+
   confirmPopup() {
     if (this.cannotCloseConfirm()) this.error = {type: Error.MISS_FIELD_ERROR}
     else {
@@ -201,8 +211,7 @@ export class OrderListComponent implements OnInit{
     event.stopPropagation();
     this.setUpDishesQuantity(dish_key)
     console.log(this.dishesQuantity);
-    this.popup = {showed: true, type:"MODIFY", tableNumber: this.orderGroup[dish_key as string], dishesQuantity: this.dishesQuantity, orderNumber: dish_key as number}
-
+    this.popup = {showed: true, type:"MODIFY", tableNumber: this.orderGroup[dish_key as string], dishesQuantity: this.dishesQuantity, orderNumber: dish_key as number};
   }
 
   getDishQuantity(dishes : any, name : any) {
@@ -310,7 +319,6 @@ export class OrderListComponent implements OnInit{
 
     return 0;
   }
-
 
   protected readonly undefined = undefined;
 }

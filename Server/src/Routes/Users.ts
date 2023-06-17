@@ -49,7 +49,6 @@ export default (): Router => {
     // PUT endpoint to modify user data
     app.put('/:id', isLogged, async (req, res) => {
         const user = await getUser(req.params.id);
-        console.log(req.body)
         if (user === null) return res.status(400).send({status: 400, error: true, errorMessage: "This user doesn't exist"});
         else if (user.email !== req.user.email && req.user.role !== 'Admin') return res.status(400).send({status: 400, error: true, errorMessage: "You don't have the necessary permissions to do this action"});
         

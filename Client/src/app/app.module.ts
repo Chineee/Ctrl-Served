@@ -31,6 +31,9 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {NgOptimizedImage} from "@angular/common";
 import { AdminPageComponent } from './admin-page/admin-page.component';
+import { UserManagementComponent } from './user-management/user-management.component';
+import { TableManagementComponent } from './table-management/table-management.component';
+import { MenuManagementComponent } from './menu-management/menu-management.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +51,9 @@ import { AdminPageComponent } from './admin-page/admin-page.component';
     ReceiptsListComponent,
     StatsPageComponent,
     AdminPageComponent,
+    UserManagementComponent,
+    TableManagementComponent,
+    MenuManagementComponent,
   ],
     imports: [
         BrowserModule,

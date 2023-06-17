@@ -5,18 +5,23 @@
 <div *ngIf="alert.showed" class="{{alert.error ? 'alert alert-danger' : 'alert alert-success'}}" role="alert">
   {{alert.message}}
 </div>
-
+<div class="row">
+  <div class="col-2">
+    <input type="text" class="form-control" placeholder="Search table" (input)="filterTable($event)" style="width: 300px; height: 40px;"/>
+  </div>
+</div>
+<br>  
 <div class="container">
-  <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
+  <div *ngFor="let order of showOrdersNumber(filter_table) | keyvalue" class="card" style="margin-bottom: 5px;">
     <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter', 'Cashier')" class="card-body" (click)="showOrderPopup(order.key)" data-bs-target="#infoModal" data-bs-toggle="modal">
-      <button *ngIf="this.us.hasRole('Waiter')" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
+      <button *ngIf="this.us.hasRole('Waiter')" class="btn btn-info float-end" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} (Ready) </p>
     </div>
   </div>
-  <div *ngFor="let order of showOrdersNumber() | keyvalue" class="card">
+  <div *ngFor="let order of showOrdersNumber(filter_table) | keyvalue" class="card" style="margin-bottom: 5px">
     <div *ngIf="!isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)" data-bs-toggle="modal" data-bs-target="#infoModal">
-      <button *ngIf="this.us.hasRole('Waiter')" (click)="modifyOrder($event, order.key)" type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify order</button>
+      <button *ngIf="this.us.hasRole('Waiter')" (click)="modifyOrder($event, order.key)" type="button" class="btn btn-secondary  float-end" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify order</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} </p>
     </div>

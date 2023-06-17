@@ -1,15 +1,13 @@
 <br>
-<!--<div *ngIf="getStringOrder() == 'Show order (one order ready)'" class="alert alert-success" role="alert">-->
-<!--  An order is ready!-->
-<!--</div>-->
+<button (click)="logout()" class="btn btn-danger float-end">Logout</button>
+<button *ngIf="this.us.hasRole('Admin')" class="btn btn-danger" (click)="backToAdmin()">Back to Admin</button>
+<button (click)="changePage()" class="btn btn-warning">{{page === Page.TABLES ? getStringOrder() : 'Show Tables'}}</button>
+<br><br>
 <div *ngIf="getStringOrder() == 'Show order (one order ready)'" class="alert alert-success alert-dismissible fade show" role="alert">
   <strong>Hey guacamole!</strong> An order is ready!
   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
   </button>
 </div>
-<button *ngIf="this.us.hasRole('Admin')" class="btn btn-danger" (click)="backToAdmin()">Back to Admin</button>
-<button (click)="logout()" class="btn btn-danger float-end">Logout</button>
-<button (click)="changePage()" class="btn btn-warning">{{getStringOrder()}}</button>
 <span *ngIf="page === Page.TABLES">
   <app-table-component (post) = modifyTable($event) [tables]="tables" [orders]="orders"></app-table-component>
 </span>

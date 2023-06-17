@@ -40,6 +40,7 @@ export class WaiterPageComponent implements OnInit{
       this.getTables();
       this.getOrders();
         this.so.connect().subscribe( (m) => {
+          console.log("socket");
           this.getTables();
           this.getOrders();
         })
@@ -52,18 +53,18 @@ export class WaiterPageComponent implements OnInit{
   }
 
   getStringOrder() {
-    if (this.page === Page.TABLES) {
-      for (let i = 0; i < this.tables.length; i++) {
-        if (GroupOrderReady(this.tables[i].tableNumber, this.orders)) return "Show order (one order ready)"
-      }
-      return "Show order"
+   
+    for (let i = 0; i < this.tables.length; i++) {
+      if (GroupOrderReady(this.tables[i].tableNumber, this.orders)) return "Show order (one order ready)"
     }
-    return "Show tables"
+    
+    return "Show order"
   }
 
   getOrders() {
     this.os.getWaiterOrders().subscribe({
       next: (data) => {
+       
         this.orders = data.filter((order)=>order.orderNumber !== -1);
       },
       error: (err) => console.log(err)

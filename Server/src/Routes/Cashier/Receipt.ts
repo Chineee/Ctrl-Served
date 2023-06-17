@@ -70,9 +70,10 @@ export default () : Router => {
             await receipt.save();
             await Orders.deleteMany({tableNumber: req.body.tableNumber});
             const oldTable = await Tables.findOneAndUpdate({tableNumber: table.tableNumber}, {occupied:false, customers:0, waiterId: null})
-            getIoInstance().emit('receipt_created');
-            await Users.findOneAndUpdate({_id:oldTable.waiterId}, {$inc:{"counter.tableServed": 1, "counter.customersServed": oldTable.customers}});
+            await Users.findOneAndUpdate({_id:oldTable.waiterId}, {$inc:{"counter.tablesServed": 1, "counter.customersServed": oldTable.customers}});
             const receiptSent = await (await receipt.populate("dishes")).populate("waiterId", "-password -role -email -__v");
+            getIoInstance().emit('receipt_created');
+            getIoInstance().emit("table_modified");
             return res.status(200).send(receiptSent);
         } catch (err) {
             console.log(err);

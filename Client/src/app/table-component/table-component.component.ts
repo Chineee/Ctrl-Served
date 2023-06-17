@@ -32,12 +32,13 @@ export class TableComponentComponent implements OnInit{
   @Output() protected receiptEvent = new EventEmitter<number>;
   protected checked : boolean = false;
   protected filterNumber : number = -1;
+  protected adminPopup : {showed: boolean, table ?: Table} = {showed: false};
 
   constructor(protected us : UserHttpService) {
   }
   //TODO GESTIRE IL GRUPPO DEGLI ORDINI DIRETTAMENTE SULLA PAGINA DI WAITERS E PASSARLO IN INPUT COSÌ PASSIAMO QUA E SAPPIAMO COSA E LIBERO
   ngOnInit(): void {
-
+   
   }
 
   handleSwitch() {
@@ -87,8 +88,11 @@ export class TableComponentComponent implements OnInit{
     this.post.emit({tableNumber: tableNumber, customers: customers, occupied: occupied});
   }
 
-  showPopup(tableNumber: number, seats: number, waiterId: User, occupied: boolean) {
-    if (this.us.hasRole('Waiter', 'Cashier')) {
+  showPopup(tableNumber: number, seats: number, waiterId: User, occupied: boolean, table : Table) {
+    if (this.us.hasRole('Admin')) {
+      this.adminPopup = {showed: true, table: table}
+    }
+    else if (this.us.hasRole('Waiter', 'Cashier')) {
       const isWaiter : boolean = waiterId?.email === this.us.getEmail();
 
       if (this.dictionary[tableNumber] === undefined)
@@ -110,6 +114,7 @@ export class TableComponentComponent implements OnInit{
 
   closePopup() {
     this.popup = {showed: false, seats: 0, tableNumber: 0, isWaiter: false, occupied: false, customers: 0}
+    this.adminPopup = {showed: false}
   }
 
   modifyCustomers(){
