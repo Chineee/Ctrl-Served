@@ -59,7 +59,7 @@ export default (): Router => {
         if (req.body.new_password !== undefined) user.password = req.body.new_password;
         if (req.body.new_role !== undefined && req.user.role === 'Admin') {
             if (req.body.new_role !== user.role) {
-                if (req.body.new_role === 'Waiter') user.counter = {};
+                if (req.body.new_role === 'Waiter') user.counter = {tablesServed: 0, customersServed: 0, dishesServed: 0};
                 else user.counter = 0;
             }
             user.role = req.body.new_role;

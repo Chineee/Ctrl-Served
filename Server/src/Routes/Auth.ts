@@ -42,13 +42,9 @@ export const alreadyLogged = (req, res, next) => {
 
 // Middleware function to check if the user is logged in
 export const isLogged = async (req, res, next) => {
-    // const token = req.header("Authorization").split(' ')[1];
     const token = req.header('Authorization').split(' ')[1];
 
     try {
-        //todo invece di usare la redis cache,
-        // possibile soluzione è quella di usare un refresh token, ogni 10min access token lo aggiorna e controlla se esiste
-
         // Verify the token and set the user data in the request object
         const decoded : IUser = jwt.verify(token, process.env.SECRET_TOKEN) as IUser;
         //I check in redis cache if user exists
@@ -62,8 +58,9 @@ export const isLogged = async (req, res, next) => {
             // else await client.set(decoded.email, "false");
             await client.set(decoded.email, user ? "true" : "false");
         }
-        // If a key is found in the redis cache its value is visible, if that value is true the corresponding user wasn't deleted, otherwise it was (if one of the admins deletes a user, the value in the redis cache will be set to false)
-        // Since redis returns a string the value cannot be treated as a boolean
+        // If a key is found in the redis cache its value is visible, if that value is true the corresponding user wasn't deleted, otherwise it 
+        //was (if one of the admins deletes a user, the value in the redis cache will be set to false)
+        //Since redis returns a string the value cannot be treated as a boolean
         else if (userExists === 'false') {
             return res.status(401).send({errorMessage: "User doesn't exist anymore", error:true, status:401});
         }

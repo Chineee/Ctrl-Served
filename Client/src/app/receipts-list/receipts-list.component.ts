@@ -151,7 +151,7 @@ export class ReceiptsListComponent implements OnInit {
 
     const formatter = new Intl.DateTimeFormat('it-IT', options);
     const formattedMonth = formatter.format(currentDate);
-    const monthlyReceipt = this.receipts.filter((receipt) =>  parseInt(receipt.date.toString().split('/')[1], 10).toString() === formattedMonth)
+    const monthlyReceipt = this.receipts.filter((receipt) =>  parseInt(receipt.date.toString().split('/')[1], 10).toString() === formattedMonth && receipt.date.toString().split('/')[2].toString() === currentDate.toLocaleDateString().split('/')[2])
     let profit : number = 0;
     for(let i = 0; i < monthlyReceipt.length; i++){
       profit += monthlyReceipt[i].price;

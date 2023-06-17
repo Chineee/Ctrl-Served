@@ -8,7 +8,7 @@ export interface IUser {
     email: string; // Email of the user as a string
     role: 'Cashier' | 'Waiter' | 'Cook'| 'Bartender' | 'Admin'; // Role of the user as a string, limited to specific options
     password: string; // Password of the user as a string
-    counter: any,
+    counter: {tablesServed : number, customersServed: number, dishesServed: number} | number,
     verifyPassword: (plainPassword: string) => Promise<boolean>; // Method to verify the user's password
 };
 
@@ -26,13 +26,13 @@ const UsersSchema =  new mongoose.Schema(
         methods: { // Method to verify the user's password
             async verifyPassword(plainPassword: string) : Promise<boolean> {
                 if (!this.password) return false;
-                return await bcrypt.compare(plainPassword, this.password);
+                return bcrypt.compare(plainPassword, this.password);
             }
         }
     },
 );
 
-// Middleware function to hash the password before saving it in the database
+//Pre save function to hash password before save it
 UsersSchema.pre('save', async function (next) {
     // Check if the password field has been modified
     if(!this.isModified('password')) return next()
