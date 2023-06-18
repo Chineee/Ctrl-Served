@@ -2,6 +2,7 @@ import {Router} from "express";
 import {hasRole, isLogged} from "./Auth";
 import Joi from "joi";
 import Menu from "../models/Menus";
+import getIoInstance from "../socketio-config";
 
 // Define a schema for menu input validation using Joi
 export const MenuSchemaValidation = Joi.object().keys({
@@ -32,6 +33,7 @@ export default (): Router => {
         // Save the new menu dish in the database
         try{
             await menuDish.save();
+            getIoInstance().emit("menu")
             return res.status(200).send({status: 200, error: false, message: "The menu dish was added successfully"});
         } catch (err) {
             return res.status(400).send(err);

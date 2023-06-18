@@ -32,13 +32,25 @@ export class TableComponentComponent implements OnInit{
   @Output() protected receiptEvent = new EventEmitter<number>;
   protected checked : boolean = false;
   protected filterNumber : number = -1;
-  protected adminPopup : {showed: boolean, table ?: Table} = {showed: false};
+  protected adminPopup : {showed: boolean, table ?: Table, new_seats ?: number} = {showed: false};
+  @Output() deleteTable = new EventEmitter<string>;
+  @Output() modifyTable = new EventEmitter<any>;
 
   constructor(protected us : UserHttpService) {
   }
   //TODO GESTIRE IL GRUPPO DEGLI ORDINI DIRETTAMENTE SULLA PAGINA DI WAITERS E PASSARLO IN INPUT COSÌ PASSIAMO QUA E SAPPIAMO COSA E LIBERO
   ngOnInit(): void {
    
+  }
+
+  modifyTableEvent(tableNumber ?: number, newTableSeats ?: number) : void {
+    this.modifyTable.emit({tableNumber: tableNumber, newTableSeats: newTableSeats});
+    this.closePopup();
+  }
+
+  deleteTableEvent(id ?: string) {
+    this.deleteTable.emit(id);
+    this.closePopup();
   }
 
   handleSwitch() {
@@ -90,7 +102,7 @@ export class TableComponentComponent implements OnInit{
 
   showPopup(tableNumber: number, seats: number, waiterId: User, occupied: boolean, table : Table) {
     if (this.us.hasRole('Admin')) {
-      this.adminPopup = {showed: true, table: table}
+      this.adminPopup = {showed: true, table: table, new_seats: table.seats}
     }
     else if (this.us.hasRole('Waiter', 'Cashier')) {
       const isWaiter : boolean = waiterId?.email === this.us.getEmail();

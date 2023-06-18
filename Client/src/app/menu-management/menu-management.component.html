@@ -1,1 +1,59 @@
-<p>menu-management works!</p>
+<div *ngIf="success.success" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{success.message}}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click) = "setErrorFalse()"></button>
+</div>
+
+<button class="btn btn-success"data-bs-toggle="modal" data-bs-target="#createDishModal">Add new dish</button>
+
+<ul class="nav nav-tabs justify-content-center" style="font-weight: bold">
+    <li class="nav-item">
+      <button class="nav-link {{selected === 'Food' ? 'active' : ''}}" aria-current="page" style="color: red" (click)="changeSelect('Food')">FOODS</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link {{selected === 'Drink' ? 'activate' : ''}}" style="color: blue;" (click) = "changeSelect('Drink')">DRINKS</button>
+    </li>
+</ul>
+
+<div *ngFor="let dish of typeSelected()" class="card">
+    <h4>{{dish.name}}</h4>
+    <p>Price : {{dish.price}}</p>
+    <p>Production time : {{dish.productionTime}}</p>
+</div>
+
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="createDishModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="font-weight: bold;"> Create new dish </h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <select class="form-select" [(ngModel)] ="newDish.dishType">
+                            <option value="undefined" selected>--Select type--</option>
+                            <option value="Food">Food</option>
+                            <option value="Drink">Drink</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dishName">Dish name : </label>
+                        <input type="string" class="form-control" id="dishName" [(ngModel)]="newDish.dishName"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="dishPreparationTime">Dish preparation time : </label>
+                        <input type="number" min="1" class="form-control" id="dishPreparationTime" [(ngModel)]="newDish.dishPreparationTime"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="dishPrice">Dish price : </label>
+                        <input type="number" class="form-control" min="0" step="0.01" id="dishPrice" [(ngModel)]="newDish.dishPrice"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary"  data-bs-dismiss="modal" (click)="createDish()" [disabled]="existsDish()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

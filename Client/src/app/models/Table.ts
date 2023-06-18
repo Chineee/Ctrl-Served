@@ -2,6 +2,7 @@ import User from "./User";
 import {Order} from "./Order";
 
 export interface Table {
+  _id : string
   tableNumber: number,
   seats: number,
   customers: number,

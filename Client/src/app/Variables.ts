@@ -5,6 +5,6 @@
 // export const URL : string = "https://localhost:5000/api/v1"
 // export const SOCKET_URL : string = "https://localhost:5000"
 
-export const URL : string = "https://localhost:5000/api/v1"
-export const SOCKET_URL : string = "https://localhost:5000"
+export const URL : string = "http://localhost:5000/api/v1"
+export const SOCKET_URL : string = "http://localhost:5000"
 

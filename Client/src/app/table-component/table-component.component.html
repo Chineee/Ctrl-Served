@@ -41,14 +41,14 @@
         <div class="modal-body">
           <div *ngIf="!adminPopup?.table?.occupied">
             <label for="seats" class="form-label" style="margin-right: 10px">Number of seats : </label>
-            <input id="seats" type="number" class="form-control" [defaultValue]="adminPopup.table?.seats" />
+            <input id="seats" type="number" class="form-control" [defaultValue]="adminPopup.table?.seats" [(ngModel)]="adminPopup.new_seats"/>
           </div>
           <p *ngIf="adminPopup?.table?.occupied">Number of seats : {{adminPopup.table?.seats}} </p>
           <p>{{adminPopup.table?.occupied ? 'The table is occupied, you cannot modify it' : 'The table is not occupied'}}</p>
         </div>
         <div class="modal-footer" *ngIf="!adminPopup?.table?.occupied">
-          <button class="btn btn-success" data-bs-dismiss="modal" (click)="closePopup()">Confirm changes</button>
-          <button class="btn btn-danger" data-bs-dismiss="modal" (click)="closePopup()">Delete table</button>
+          <button class="btn btn-success" data-bs-dismiss="modal" (click)="modifyTableEvent(adminPopup.table?.tableNumber, adminPopup.new_seats)">Confirm changes</button>
+          <button class="btn btn-danger" data-bs-dismiss="modal" (click)="deleteTableEvent(adminPopup.table?._id)">Delete table</button>
         </div>
       </div>
     </div>

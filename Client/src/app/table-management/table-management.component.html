@@ -1,5 +1,34 @@
-<button class="btn btn-success">Create new table</button>
+<div *ngIf="success.success" class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>{{success.message}}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click) = "setErrorFalse()"></button>
+</div>
 
-<app-table-component [tables]="tables"> </app-table-component>
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createTableModal">Create new table</button>
+<app-table-component [tables]="tables" (deleteTable) = "deleteTable($event)" (modifyTable) = "modifyTable($event)"> </app-table-component>
 
-
+<div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="createTableModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="font-weigth: bold;">Create new table</h4>
+                    <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="tableNumber">Table Number : </label>
+                        <input type="number" min="1" class="form-control" id="tableNumber" [(ngModel)]="newTableNumber"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="numberSeats">Number of seats : </label>
+                        <input type="number" min="1" class="form-control" id="numberSeats" [(ngModel)]="newTableSeats" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" data-bs-dismiss="modal" class="btn btn-primary" (click)="createTable(newTableNumber, newTableSeats)" [disabled]="existsTableSelected()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

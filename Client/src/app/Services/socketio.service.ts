@@ -82,6 +82,7 @@ export class SocketioService {
     this.socket.on('receipt_created', (m:any)=> observer.next(m));
     this.socket.on('user_modified', (m: any) => observer.next(m));
     this.socket.on('order_modified', (m:any) => observer.next(m));
+    this.socket.on('menu', (m: any) => observer.next(m));
   }
 
   setCashierSocket(observer: Subscriber<any>) {
@@ -91,6 +92,7 @@ export class SocketioService {
     this.socket.on('order_modified', (m:any) => observer.next(m));
     this.socket.on('user_modified', (m: any) => observer.next(m));
     this.socket.on('receipt_created', (m:any)=> observer.next(m));
+    this.socket.on('menu', (m: any) => observer.next(m));
   }
 
   setWaiterSocket(observer: Subscriber<any>) {
@@ -98,6 +100,7 @@ export class SocketioService {
     this.socket.on('Order_sent', (m: any) => observer.next(m));
     this.socket.on('order_finished', (m:any) => observer.next(m));
     this.socket.on('order_modified', (m:any) => observer.next(m));
+    this.socket.on('menu', (m:any)=>observer.next(m));
   }
 
   setCookSocket(observer: Subscriber<any>) {
@@ -105,6 +108,7 @@ export class SocketioService {
     this.socket.on('order_modified', (m: any) => observer.next());
     this.socket.on('food_queue', (m: any) => observer.next());
     this.socket.on('order_finished', (m:any) => observer.next(m));
+    this.socket.on('menu', (m:any)=>observer.next(m));
   }
 
   setBartenderSocket(observer: Subscriber<any>) {
@@ -112,6 +116,7 @@ export class SocketioService {
     this.socket.on('order_modified', (m: any) => observer.next());
     this.socket.on('drink_queue_change', (m: any) => observer.next());
     this.socket.on('order_finished', (m:any) => observer.next(m));
+    this.socket.on('menu', (m:any)=>observer.next(m));
   }
 
 }

@@ -44,5 +44,41 @@ export class TablesHttpService{
 
     return this.http.put(this.url + "/" + tableNumber.toString(), body, options);
   }
+
+  createTable(obj : any) : Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.user.getToken(),
+        'cache-control':'no-cache',
+        'Content-type': 'application/json'
+      })
+    }
+
+    const body : {tableNumber: number, seats: number} = obj;
+    return this.http.post(this.url, body, options);
+  }
+
+  deleteTable(_id: string) {
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.user.getToken(),
+        'cache-control': 'no-cache',
+        'Content-type': 'application/json'
+      })
+    }
+    
+    return this.http.delete(`${this.url}/${_id}`, options);
+  }
+
+  modifyTableSeats(tableNumber: number, seats: number) : Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.user.getToken(),
+        'cache-control': 'no-cache',
+        'Content-type': 'application/json'
+      })
+    }
+    return this.http.put(`${this.url}/${tableNumber}`, {new_seats: seats}, options);
+  }
 }
 

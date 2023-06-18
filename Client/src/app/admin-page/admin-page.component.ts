@@ -22,7 +22,8 @@ enum Page {
 export class AdminPageComponent implements OnInit {
 
   protected users : User[] = [];
-  protected menus : Dish[] = [];
+  protected foods : Dish[] = [];
+  protected drinks : Dish[] = [];
   protected tables : Table[] = [];
   protected page : Page = Page.USER;
   protected Page = Page;
@@ -45,7 +46,6 @@ export class AdminPageComponent implements OnInit {
   loadTables() : void {
     this.ts.getTables().subscribe({
       next: (data) => {
-        console.log(data)
         this.tables = data
       },
       error: (err) => console.log(err)
@@ -54,7 +54,10 @@ export class AdminPageComponent implements OnInit {
   
   loadMenus() : void {
     this.ms.getMenus().subscribe({
-      next: (data) => this.menus = data
+      next: (data) => {
+        this.foods = data.filter( (dish : Dish) => dish.type === 'Food');
+        this.drinks = data.filter( (drink : Dish) => drink.type === 'Drink');
+      }
     })
   }
 

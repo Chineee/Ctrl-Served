@@ -77,12 +77,12 @@ app.use('/api/v1/receipts', receipt());
 
 // Starting the server and listening on the specific port
 
-const server = https.createServer({
-    key: fs.readFileSync(path.join(__dirname, '../Keys/key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
-},app);
+// const server = https.createServer({
+//     key: fs.readFileSync(path.join(__dirname, '../Keys/key.pem')),
+//     cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
+// },app);
 
-// const server = http.createServer(app);
+const server = http.createServer(app);
 
 setUpSocketio(server);
 

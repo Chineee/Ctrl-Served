@@ -16,4 +16,4 @@
 
 <app-user-management *ngIf="page === Page.USER" [users]="users" (loadUsers)="loadUsers()"></app-user-management>
 <app-table-management *ngIf="page === Page.TABLE" [tables]="tables"></app-table-management>
-<app-menu-management *ngIf="page === Page.MENU"></app-menu-management>
+<app-menu-management *ngIf="page === Page.MENU" [foods] = "foods" [drinks] = "drinks"></app-menu-management>

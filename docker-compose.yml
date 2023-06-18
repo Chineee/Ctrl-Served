@@ -1,12 +1,12 @@
 services:
-  nginx:
-    depends_on:
-      - client
-      - server
-    restart: always
-    build: ./Nginx
-    ports:
-      - "3050:80"
+  # nginx:
+  #   depends_on:
+  #     - client
+  #     - server
+  #   restart: always
+  #   build: ./Nginx
+  #   ports:
+  #     - "3050:80"
   client:
     restart: always
     build:

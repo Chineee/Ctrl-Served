@@ -4,7 +4,8 @@ import { tap, catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import {UserHttpService} from "./user-http.service";
 import {Order} from "../models/Order";
-import {URL} from "../Variables"
+import {URL} from "../Variables";
+import {Dish} from "../models/Dish"
 
 @Injectable()
 export class MenusHttpService{
@@ -21,6 +22,15 @@ export class MenusHttpService{
     }
     //todo options
     return this.http.get(this.url, options);
+  }
+
+  addDish(dish : any) : Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken()
+      })
+    }
+    return this.http.post(this.url, dish, options);
   }
 
 

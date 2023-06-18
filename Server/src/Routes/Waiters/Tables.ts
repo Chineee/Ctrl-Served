@@ -33,6 +33,7 @@ export default (): Router => {
         // Save the new table in the database
         try {
             await table.save();
+            getIoInstance().emit("table_modified")
             return res.status(200).send({status:200, error: false, message:"Table added successfully"});
         } catch (err) {
             return res.status(400).send(err)
@@ -48,15 +49,17 @@ export default (): Router => {
 
         // Update the fields of the table if provided in the request body
         //TODO: make it so waiterId in models\Tables is an ObjectId
-        if(req.body.new_occupied !== null && req.body.new_occupied) table.waiterId = req.user._id.toString();
-        if(req.body.new_customers !== null) table.customers = req.body.new_customers;
-        if(req.body.new_occupied !== null) {
-            if (req.body.new_occupied == false) {
+        if(req.body.new_seats && req.user.role === 'Admin')  table.seats = req.body.new_seats;
+        if(req.body.new_occupied && req.body.new_occupied) table.waiterId = req.user._id.toString();
+        if(req.body.new_customers) table.customers = req.body.new_customers;
+        if(req.body.new_occupied) {
+            if (!req.body.new_occupied) {
                 table.waiterId = null;
                 table.customers = 0;
             }
             table.occupied = req.body.new_occupied;
         }
+
 
         // Save the changes to the table in the database
         try {
@@ -102,13 +105,14 @@ export default (): Router => {
 
     // DELETE endpoint to delete a table by its ID
     app.delete("/:id", isLogged, hasRole('Admin'), async (req, res) => {
-        const table = await Tables.findOne({tableNumber: req.params.id});
+        const table = await Tables.findById(req.params.id);
         if(table === null) return res.status(400).send({status: 400, error: true, errorMessage: "The table doesn't exist"});
 
         if(table.occupied)  return res.status(400).send({status: 400, error: true, errorMessage: "The table is still occupied, it cannot be deleted"});
 
         try{
             await table.deleteOne();
+            getIoInstance().emit("table_modified")
             return res.status(200).send({status: 200, error: true, errorMessage: "The table was deleted successfully"});
         } catch (err) {
             return res.status(400).send(err);
