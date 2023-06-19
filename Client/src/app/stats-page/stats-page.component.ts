@@ -5,7 +5,7 @@ import User from "../models/User";
 
 enum Role {
   WAITER,
-  COOK ,
+  COOK,
   CASHIER,
   BARTENDER,
 }

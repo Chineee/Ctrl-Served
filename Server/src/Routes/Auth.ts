@@ -120,18 +120,6 @@ export default (): Router  => {
         }
     });
 
-    // GET endpoint
-    app.get('/token', async (req, res) => {
-        const token = req.header("refresh-token");
-        let accessToken;
-        try {
-            jwt.verify(token, process.env.SECRET_REFRESH_TOKEN);
-            return res.status(200).send(accessToken);
-        } catch(err) {
-            return res.status(400).send(err);
-        }
-    });
-
     // GET endpoint to login a user
     app.get('/login', alreadyLogged, passport.authenticate('basic', {session:false}), async (req, res) => {
         console.log("OK")
@@ -152,9 +140,8 @@ export default (): Router  => {
         //todo sposta expires in da 8h a 10min e chiedi al prof se va bene farlo così per controllare se è un refresh token
         // Sign the JWT token with a secret key and set it to expire in 8 hours
         const accessToken = jwt.sign(tokenData, process.env.SECRET_TOKEN, { expiresIn: '8h' } );
-        const refreshToken = jwt.sign(refreshTokenData, process.env.SECRET_REFRESH_TOKEN, {expiresIn: '7h'})
 
-        return res.status(200).send({access_token: accessToken, refresh_token: refreshToken});
+        return res.status(200).send({access_token: accessToken});
     });
 
     return app;

@@ -49,10 +49,10 @@ export default (): Router => {
 
         // Update the fields of the table if provided in the request body
         //TODO: make it so waiterId in models\Tables is an ObjectId
-        if(req.body.new_seats && req.user.role === 'Admin')  table.seats = req.body.new_seats;
-        if(req.body.new_occupied && req.body.new_occupied) table.waiterId = req.user._id.toString();
-        if(req.body.new_customers) table.customers = req.body.new_customers;
-        if(req.body.new_occupied) {
+        if(req.body.new_seats !== undefined && req.user.role === 'Admin')  table.seats = req.body.new_seats;
+        if(req.body.new_occupied !== undefined && !req.body.new_occupied) table.waiterId = req.user._id.toString();
+        if(req.body.new_customers !== undefined) table.customers = req.body.new_customers;
+        if(req.body.new_occupied !== undefined) {
             if (!req.body.new_occupied) {
                 table.waiterId = null;
                 table.customers = 0;
@@ -118,18 +118,6 @@ export default (): Router => {
             return res.status(400).send(err);
         }
     });
-
-    // GET endpoint to retrieve all orders with a specific table number
-    // app.get("/:id/orders", isLogged, hasRole('Waiter','Cashier'), async (req, res) => {
-    //     const table = await Tables.findById(req.params.id);
-    //     try {
-    //         const orders = await Orders.find({tableNumber: table?.tableNumber});
-    //         return res.status(200).send(orders);
-    //     } catch(err) {
-    //         return res.status(400).send(err);
-    //     }
-    // })
-
 
     return app;
 }

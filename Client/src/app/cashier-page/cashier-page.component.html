@@ -3,12 +3,22 @@
 <button class="btn btn-danger float-end" (click)="logout()">Logout</button>
 <br>
 <div class="container">
-  <div class="button-container">
-    <button class="btn btn-primary" *ngIf="page !== Page.RECEIPTS" (click)="changeStatus(Page.RECEIPTS)">Show receipts</button>
-    <button class="btn btn-primary" *ngIf="page !== Page.TABLES" (click)="changeStatus(Page.TABLES)">Show tables</button>
-    <button class="btn btn-primary" *ngIf="page !== Page.ORDERS" (click)="changeStatus(Page.ORDERS)">Show orders</button>
-    <button class="btn btn-primary" *ngIf="page !== Page.STATS" (click)="changeStatus(Page.STATS)">Show stats</button>
-  </div>
+  
+  <ul class="nav nav-tabs justify-content-center" style="font-weight: bold">
+    <li class="nav-item">
+      <button class="nav-link{{page === Page.TABLES ? ' active' : ''}}" (click)="changeStatus(Page.TABLES)">Show tables</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{page === Page.ORDERS ? ' active' : ''}}"  (click)="changeStatus(Page.ORDERS)">Show orders</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{page === Page.RECEIPTS ? ' active' : ''}}"  (click)="changeStatus(Page.RECEIPTS)">Show receipts</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{page === Page.STATS ? ' active' : ''}}" (click)="changeStatus(Page.STATS)">Show stats</button>
+    </li>
+  </ul>
+    
   <br>
   <br>
   <h2>{{page}}</h2>
@@ -65,7 +75,8 @@
             <div class="waiter">
               <span>Waiter: {{popup.receipt?.waiterId?.name}} {{popup.receipt?.waiterId?.surname}}</span>
             </div>
-            <button type="button" class="btn btn-success" #downloadButton (click)="downloadReceipt(popup.receipt?.date?.toString()); closePopup()">Download Receipt</button>
+            <br>
+            <button type="button" class="btn btn-success float-end" #downloadButton (click)="downloadReceipt(popup.receipt?.date?.toString()); closePopup()">Download Receipt</button>
           </div>
         </div>
       </div>

@@ -90,12 +90,16 @@ export class TableComponentComponent implements OnInit{
     return tableOrder.length === readyTableOrder.length && tableOrder.length !== 0
   }
 
+  existsOrder(tableNumber: number) : boolean{
+    return this.orders.filter( (order) => order.tableNumber === tableNumber && order.orderNumber !== -1).length !== 0;
+  }
+
 
   filterTable(type : TableStatus) {
     this.filterTables = type;
   }
 
-  changeStatus(tableNumber: number, customers : number, occupied: boolean){
+  changeStatus(tableNumber: number, customers : number, occupied: boolean){ 
     this.dictionary[tableNumber] = customers;
     this.post.emit({tableNumber: tableNumber, customers: customers, occupied: occupied});
   }

@@ -12,14 +12,14 @@
 </div>
 <br>  
 <div class="container">
-  <div *ngFor="let order of showOrdersNumber(filter_table) | keyvalue" class="card" style="margin-bottom: 5px;">
+  <div *ngFor="let order of showOrdersNumber(filter_table, true) | keyvalue" class="card" style="margin-bottom: 5px;">
     <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter', 'Cashier')" class="card-body" (click)="showOrderPopup(order.key)" data-bs-target="#infoModal" data-bs-toggle="modal">
       <button *ngIf="this.us.hasRole('Waiter')" class="btn btn-info float-end" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
       <h5>Table {{order.value}} </h5>
       <p>Order number: {{order.key}} (Ready) </p>
     </div>
   </div>
-  <div *ngFor="let order of showOrdersNumber(filter_table) | keyvalue" class="card" style="margin-bottom: 5px">
+  <div *ngFor="let order of showOrdersNumber(filter_table, false) | keyvalue" class="card" style="margin-bottom: 5px">
     <div *ngIf="!isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)" data-bs-toggle="modal" data-bs-target="#infoModal">
       <button *ngIf="this.us.hasRole('Waiter')" (click)="modifyOrder($event, order.key)" type="button" class="btn btn-secondary  float-end" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify order</button>
       <h5>Table {{order.value}} </h5>

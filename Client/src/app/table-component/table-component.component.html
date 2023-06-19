@@ -102,7 +102,7 @@
           <div class="modal-footer">
             <button class="btn btn-primary" *ngIf="isModifyingCustomers" (click)="changeStatus(popup.tableNumber, customers, true); modifyCustomers(); closePopup()">Confirm</button>
             <button class="btn btn-primary" *ngIf="!isModifyingCustomers" (click)="modifyCustomers()">Modify</button>
-            <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber,0,false); closePopup()">Free table</button>
+            <button class="btn btn-primary" (click)="changeStatus(popup.tableNumber,0,false); closePopup()" [disabled]="existsOrder(popup.tableNumber)">Free table</button>
           </div>
         </div>
       </div>

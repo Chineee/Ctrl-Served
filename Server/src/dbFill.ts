@@ -63,7 +63,23 @@ async function insertAll() {
                 "password":await getPassword("cameriere2"),
                 "role":"Waiter",
                 "counter": {tablesServed: 0, customersServed: 0, dishesServed: 0}
-            })
+            }),
+            new User({
+                "name": "Marco",
+                "surname": "Chinellato",
+                "email": "marco@gmail.com",
+                "password": await getPassword("marco"),
+                "role": "Waiter",
+                "counter": {tablesServed: 5, customersServed: 13, dishesServed: 20}
+            }),
+            new User({
+                "name":"Elisa",
+                "surname":"Rizzo",
+                "email":"elisa@gmail.com",
+                "password":await getPassword("elisa"),
+                "role":"Waiter",
+                "counter": {tablesServed: 3, customersServed: 15, dishesServed: 16}
+            }),
 
         ]);
     }

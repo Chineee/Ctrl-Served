@@ -1,7 +1,16 @@
 <br>
 <button (click)="logout()" class="btn btn-danger float-end">Logout</button>
 <button *ngIf="this.us.hasRole('Admin')" class="btn btn-danger" (click)="backToAdmin()">Back to Admin</button>
-<button (click)="changePage()" class="btn btn-warning">{{page === Page.TABLES ? getStringOrder() : 'Show Tables'}}</button>
+
+<ul class="nav nav-tabs justify-content-center" style="font-weight: bold;">
+  <li class="nav-item">
+    <button class="nav-link{{page === Page.TABLES ? ' active' : ''}}" (click)="changePage(Page.TABLES)">Show tables</button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link{{page === Page.ORDERS ? ' active' : ''}}"  (click)="changePage(Page.ORDERS)">{{getStringOrder()}}</button>
+  </li>
+</ul>
+
 <br><br>
 <div *ngIf="getStringOrder() == 'Show order (one order ready)'" class="alert alert-success alert-dismissible fade show" role="alert">
   <strong>Hey guacamole!</strong> An order is ready!
@@ -14,4 +23,3 @@
 <span *ngIf="page === Page.ORDERS">
   <app-order-list [tables]="filterWaiterTable()" [orderDishes]="orders"></app-order-list>
 </span>
-

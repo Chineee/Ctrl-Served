@@ -12,21 +12,32 @@ export class MenuManagementComponent implements OnInit {
   @Input() foods : Dish[] = [];
   @Input() drinks : Dish[] = [];
   protected selected : 'Food' | 'Drink' = 'Food';
-
+  protected dishSelected !: Dish;
   protected success : {success ?: boolean, message ?: string} = {};
   protected newDish : {dishName ?: string, dishPrice ?: number, dishPreparationTime ?: number, dishType ?: string} = {};
+  protected dishPriceSelected : number = 0;
 
   constructor(private ms : MenusHttpService){}
+
+
+  ngOnInit() : void {} 
+
+  changeSelected(dish: Dish) : void {
+    this.dishSelected = dish;
+    this.dishPriceSelected = dish.price;
+  }
 
   typeSelected() : Dish[] {
     return this.selected === 'Food' ? this.foods : this.drinks;
   }
 
-  ngOnInit() : void {
 
-  }
-
-  modifyDish() : void {
+  modifyDish(id ?: string, new_price ?: number) : void {
+    this.ms.modifyDish(id, new_price).subscribe({
+      next: () => {
+        this.success = {success: true, message: "Dish modified successfully"}
+      }
+    })
 
   }
 
@@ -47,8 +58,12 @@ export class MenuManagementComponent implements OnInit {
     });
   }
 
-  deleteDish() : void {
-
+  deleteDish(id ?: string) : void {
+    this.ms.deleteDish(id).subscribe({
+      next: () => {
+        this.success = {success: true, message: "Dish deleted successfully"}
+      }
+    });
   }
 
   existsDish() : boolean {

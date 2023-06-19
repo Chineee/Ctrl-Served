@@ -46,14 +46,15 @@ export default (): Router => {
         if (menuDish === null) return res.status(400).send({status: 400, error: true, errorMessage: "This menu dish doesn't exist"});
 
         // Update the fields of the menu dish if provided in the request body
-        if(req.body.new_name !== null) menuDish.name = req.body.new_name;
-        if(req.body.new_price !== null && req.body.new_price > 0) menuDish.price = req.body.new_price;
-        if(req.body.new_productionTime !== null && req.body.new_productionTime >= 0) menuDish.productionTime = req.body.new_productionTime;
-        if(req.body.new_type !== null) menuDish.type = req.body.new_type;
+        if(req.body.new_name) menuDish.name = req.body.new_name;
+        if(req.body.new_price && req.body.new_price > 0) menuDish.price = req.body.new_price;
+        if(req.body.new_productionTime && req.body.new_productionTime >= 0) menuDish.productionTime = req.body.new_productionTime;
+        if(req.body.new_type) menuDish.type = req.body.new_type;
 
         // Save the changes to the menu dish in the database
         try{
             await menuDish.save();
+            getIoInstance().emit('menu');
             return res.status(200).send({status: 200, error: false, message: "The menu dish was modified successfully"});
         } catch (err) {
             return res.status(400).send(err);
@@ -88,6 +89,7 @@ export default (): Router => {
 
         try{
             await menuDish.deleteOne();
+            getIoInstance().emit('menu')
             return res.status(200).send({status: 200, error: false, message: "The menu dish was deleted successfully"});
         } catch (err) {
             return res.status(400).send(err);

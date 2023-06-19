@@ -100,9 +100,8 @@ export class WaiterPageComponent implements OnInit{
     this.router.navigate(['/login'])
   }
 
-  changePage() {
-    if (this.page === Page.ORDERS) this.page = Page.TABLES;
-    else this.page = Page.ORDERS;
+  changePage(page : Page) {
+    this.page = page;
   }
 
   filterWaiterTable() {

@@ -62,7 +62,8 @@ export class OrderListComponent implements OnInit{
     else this.filter_table = parseInt(filter)
   }
 
-  showOrdersNumber(filter: number) {
+  //groyp all orders in a dictionary with their order number
+  showOrdersNumber(filter: number, isReady : boolean) {
     const orders : any = {}
     const ready : any = {};
 

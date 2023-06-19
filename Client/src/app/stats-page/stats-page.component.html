@@ -1,14 +1,27 @@
 <br>
 <div class="container">
 
-    <div class="button-container ">
-      <button class="btn btn-secondary" (click)="buildStatsRole(Role.COOK)">Show cooks statistics</button>
-      <button class="btn btn-secondary" (click)="buildStatsRole(Role.BARTENDER)">Show bartenders statistics</button>
-      <button class="btn btn-secondary" (click)="buildStatsRole(Role.WAITER)">Show waiters statistics</button>
-      <button *ngIf="this.us.hasRole('Admin')" class="btn btn-secondary" (click)="buildStatsRole(Role.CASHIER)">Show cashiers statistics</button>
-      <button class="btn btn-secondary" (click)="buildOtherStats(Stats.DISHES)">Show dishes statistics</button>
-      <button class="btn btn-secondary" (click)="buildOtherStats(Stats.PROFITS)">Show profit statistics</button>
-    </div>
+  <ul class="nav nav-tabs justify-content-center" style="font-weight: bold">
+    <li class="nav-item">
+      <button class="nav-link{{currentStatsPage === Stats.ROLE && pageRole === Role.COOK ? ' active' : ''}}" (click)="buildStatsRole(Role.COOK)">Show cooks statistics</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{currentStatsPage === Stats.ROLE && pageRole === Role.BARTENDER ? ' active' : ''}}" (click)="buildStatsRole(Role.BARTENDER)">Show bartenders statistics</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{currentStatsPage === Stats.ROLE && pageRole === Role.WAITER ? ' active' : ''}}" (click)="buildStatsRole(Role.WAITER)">Show waiters statistics</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{currentStatsPage === Stats.ROLE && pageRole === Role.CASHIER ? ' active' : ''}}"  *ngIf="this.us.hasRole('Admin')" (click)="buildStatsRole(Role.CASHIER)">Show cashiers statistics</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{currentStatsPage === Stats.DISHES ? ' active' : ''}}" (click)="buildOtherStats(Stats.DISHES)">Show dishes statistics</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{currentStatsPage === Stats.PROFITS ? ' active' : ''}}" (click)="buildOtherStats(Stats.PROFITS)">Show profit statistics</button>
+    </li>
+  </ul>  
+ 
 </div>
 
 <br><br>

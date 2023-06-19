@@ -17,7 +17,9 @@ export class MenusHttpService{
   getMenus() : Observable<any>{
     const options = {
       headers: new HttpHeaders({
-        Authorization: 'Bearer ' + this.us.getToken()
+        Authorization: 'Bearer ' + this.us.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
       })
     }
     //todo options
@@ -27,10 +29,42 @@ export class MenusHttpService{
   addDish(dish : any) : Observable<any> {
     const options = {
       headers: new HttpHeaders({
-        Authorization: 'Bearer ' + this.us.getToken()
+        Authorization: 'Bearer ' + this.us.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+      })
+    };
+
+    return this.http.post(this.url, dish, options);
+  }
+
+  deleteDish(id ?: string) : Observable<any> {
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
       })
     }
-    return this.http.post(this.url, dish, options);
+
+    return this.http.delete(`${this.url}/${id}`, options);
+  }
+
+  modifyDish(id ?: string, new_price ?: number) : Observable<any> {
+    const body = {
+      new_price: new_price
+    };
+
+    const options = {
+      headers: new HttpHeaders({
+        Authorization: 'Bearer ' + this.us.getToken(),
+        'cache-control':'no-cache',
+        'Content-Type': 'application/json',
+      })
+    }
+
+    return this.http.put(`${this.url}/${id}`, body, options);
+
   }
 
 

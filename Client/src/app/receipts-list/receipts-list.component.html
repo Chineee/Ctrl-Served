@@ -1,11 +1,21 @@
 <br>
 <div class="container">
-  <div class="container-button">
-    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.DAILY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show dayly income</button>
-    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.WEEKLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show weekly income</button>
-    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.MONTHLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show monthly income</button>
-    <button class="btn btn-secondary" (click)="setFunc(RangeProfit.YEARLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show yearly income</button>
-  </div>
+  
+  <ul class="nav nav-tabs justify-content-center" style="font-weight: bold">
+    <li class="nav-item">
+      <button class="nav-link{{rangeProfit === RangeProfit.DAILY ? ' active' : ''}}" (click)="setFunc(RangeProfit.DAILY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show dayly income</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{rangeProfit === RangeProfit.WEEKLY ? ' active' : ''}}" (click)="setFunc(RangeProfit.WEEKLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show weekly income</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{rangeProfit === RangeProfit.MONTHLY ? ' active' : ''}}" (click)="setFunc(RangeProfit.MONTHLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show monthly income</button>
+    </li>
+    <li class="nav-item">
+      <button class="nav-link{{rangeProfit === RangeProfit.YEARLY ? ' active' : ''}}" (click)="setFunc(RangeProfit.YEARLY)" data-bs-toggle="modal" data-bs-target="#datePickerModal">Show yearly income</button>
+    </li>
+  </ul>    
+  
   <br>
   <div class="profit">
     <h3>{{rangeProfit}} profit: €{{profitClicked}}</h3>
