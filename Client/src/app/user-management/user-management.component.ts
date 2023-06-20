@@ -26,6 +26,20 @@ export class UserManagementComponent implements OnInit{
   protected alert : {error ?: boolean, message ?: string} = {}
   protected popupModify : {name ?: string, surname ?: string, email ?: string, role ?: string, password ?: string, id?: string} = {}
   protected mapper : any = {Waiter: "assets/images/waiterProfile.png", Cook: "assets/images/cookProfile.png", Bartender: "assets/images/bartenderProfile.png", Cashier: "assets/images/cashierProfile.png", Admin: "assets/images/adminProfile.png"}
+  protected get getColor() : string {
+    switch(this.filter) {
+      case Role.WAITERS:
+        return '#8ECAE6';
+      case Role.COOKS:
+        return '#FB8500';
+      case Role.BARTENDERS:
+        return '#FFB703'
+      case Role.CASHIERS:
+        return '#219EBC';
+    }
+    return "white";
+  }
+
 
   constructor(protected us : UserHttpService, protected router : Router, protected so : SocketioService) {}
 
@@ -45,7 +59,6 @@ export class UserManagementComponent implements OnInit{
     if (this.filter === Role.ALL) return this.users;
     return this.users.filter( (user) => user.role === this.filter);
   }
-
 
   closePopup(){
     this.popup = {}

@@ -50,7 +50,7 @@ export default (): Router => {
         // Update the fields of the table if provided in the request body
         //TODO: make it so waiterId in models\Tables is an ObjectId
         if(req.body.new_seats !== undefined && req.user.role === 'Admin')  table.seats = req.body.new_seats;
-        if(req.body.new_occupied !== undefined && !req.body.new_occupied) table.waiterId = req.user._id.toString();
+        if(req.body.new_occupied !== undefined && req.body.new_occupied) table.waiterId = req.user._id.toString();
         if(req.body.new_customers !== undefined) table.customers = req.body.new_customers;
         if(req.body.new_occupied !== undefined) {
             if (!req.body.new_occupied) {

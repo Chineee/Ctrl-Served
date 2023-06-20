@@ -26,10 +26,14 @@ export class RegisterPageComponent implements OnInit{
     else {
       this.us.register(name, surname, email, password, role).subscribe({
         next: () => {
-          this.success = true
+          this.success = true;
+          this.error = false;
+          this.errorMessage = undefined;
           this.successMessage = "User ok registrered sium"
         },
         error: (err) => {
+          this.success = false;
+          this.successMessage = undefined;
           this.errorMessage = err.error;
         }
       })

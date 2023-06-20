@@ -111,7 +111,7 @@
   ></ngx-charts-bar-vertical>
   <div>
     <div class="float-end" style="margin-right: 10px; margin-top: 50px">
-      <input *ngIf="currentStatsPage == Stats.PROFITS" type="text" class="form-control" placeholder="Different between last years"  (change)="setLastsYear($event)"/>
+      <input *ngIf="currentStatsPage == Stats.PROFITS" type="text" class="form-control" placeholder="Last n years"  (change)="setLastsYear($event)"/>
     </div>
     <ngx-charts-bar-vertical
       [results]="statsProfitYear"

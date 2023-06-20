@@ -1,5 +1,6 @@
 <br>
 <button class="btn btn-primary align-left" (click)="goToRegister()">Create new user</button>
+<button class="btn btn-primary float-end" *ngIf="filter !== Role.ALL" (click) = "impersonateUser(filter)" style="background-color: {{getColor}}; color: black; border: 2px solid {{getColor}};">Impersonate a {{filter}}</button>
 <br>
 <div *ngIf="alert.error !== undefined" class="{{alert.error ? 'alert alert-danger' : 'alert alert-success'}}" role="alert">
   <strong>{{alert.message}}</strong>
@@ -15,9 +16,7 @@
     <option value="{{Role.ALL}}">No filters</option>
   </select>
   <br>
-  <button class="btn btn-primary" *ngIf="filter !== Role.ALL" (click) = "impersonateUser(filter)">Impersonate a {{filter}}</button>
-  <br>
-  <div *ngFor="let user of showUsers()" class="card" style="margin-bottom: 20px" (click)="showPopup(user)">
+  <div *ngFor="let user of showUsers()" class="card" style="margin-bottom: 20px; background-color: #e4e4e4;" (click)="showPopup(user)">
     <button (click)="setModifyPopup(user)" type="button" class="btn btn-primary float-end" data-bs-target="#modifyUserModal" data-bs-toggle="modal" style="width: 100px;">Modify</button> 
     <div class="card-body" data-bs-target="#userInfoModal" data-bs-toggle="modal">
       <div class="card-img-top d-flex align-items-center">

@@ -22,7 +22,7 @@
   </div>
   <hr>
   <div class="container">
-    <div *ngFor="let receipt of receiptFiltered" class="card" (click)="showReceipt(receipt)" style="margin-bottom: 20px">
+    <div *ngFor="let receipt of receiptFiltered" class="card" (click)="showReceipt(receipt)" style="margin-bottom: 20px; background-color: #e4e4e4">
       <div class="card-body">
         <h5>Table {{receipt.tableNumber}}</h5>
         <p>{{receipt.date}} - {{receipt.hour}}</p>

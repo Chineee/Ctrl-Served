@@ -40,8 +40,8 @@ declare global {
 
 // Parse the request body as JSON
 app.use(cors({
-    // origin: ['http://localhost:4200', 'http://192.168.51.91:4200', "http://localhost:3050", "http://192.168.0.47:4200", "http://10.0.2.2"]
-    origin: true
+    origin: ['http://localhost:4200', 'http://192.168.51.91:4200', "http://localhost:3050", "http://192.168.0.47:4200", "http://10.0.2.2", "https://localhost:443"]
+    // origin: true
 }))
 app.use(express.json());
 
@@ -77,12 +77,12 @@ app.use('/api/v1/receipts', receipt());
 
 // Starting the server and listening on the specific port
 
-// const server = https.createServer({
-//     key: fs.readFileSync(path.join(__dirname, '../Keys/key.pem')),
-//     cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
-// },app);
+const server = https.createServer({
+    key: fs.readFileSync(path.join(__dirname, '../Keys/key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
+},app);
 
-const server = http.createServer(app);
+// const server = http.createServer(app);
 
 setUpSocketio(server);
 

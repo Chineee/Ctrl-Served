@@ -104,7 +104,7 @@ export class SocketioService {
   }
 
   setCookSocket(observer: Subscriber<any>) {
-    this.socket.on('order_sent', (m: any) => observer.next());
+    this.socket.on('Order_sent', (m: any) => observer.next());
     this.socket.on('order_modified', (m: any) => observer.next());
     this.socket.on('food_queue', (m: any) => observer.next());
     this.socket.on('order_finished', (m:any) => observer.next(m));
@@ -112,7 +112,7 @@ export class SocketioService {
   }
 
   setBartenderSocket(observer: Subscriber<any>) {
-    this.socket.on('order_sent', (m: any) => observer.next());
+    this.socket.on('Order_sent', (m: any) => observer.next());
     this.socket.on('order_modified', (m: any) => observer.next());
     this.socket.on('drink_queue_change', (m: any) => observer.next());
     this.socket.on('order_finished', (m:any) => observer.next(m));

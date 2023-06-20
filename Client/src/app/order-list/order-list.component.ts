@@ -261,7 +261,6 @@ export class OrderListComponent implements OnInit{
         let success : boolean = true;
         for(let order of data){
           if(order.ready) {
-            console.log("NON PUOIIIIIIII")
             success = false;
             break;
           }
@@ -304,21 +303,26 @@ export class OrderListComponent implements OnInit{
               this.alert = {showed: true, error: true, message:err.message}
             }
           });
-          this.alert = {showed: true, error: false, message:"Ordine modificato con successo"}
+          this.alert = {showed: true, error: false, message:"Order modified successfully"}
 
         } else {
-          this.alert = {showed: true, error: true, message:"Something went wrong..."}
+          this.alert = {showed: true, error: true, message:"You cannot modify this order!"}
         }
 
         this.closePopup();
 
       },
       error: (err) => {
-        if (err.errorMessage === 'You must be logged') this.us.logout()
+        if (err.errorMessage === 'You must be logged') this.logout()
       }
     });
 
     return 0;
+  }
+
+  logout() {
+    this.so.disconnect();
+    this.us.logout();
   }
 
   protected readonly undefined = undefined;

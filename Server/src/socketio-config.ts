@@ -7,7 +7,7 @@ let io : Server;
 export function setUpSocketio(server : http.Server) : void {
     io = new Server(server, {
         cors: {
-            origin: true
+            origin: ['https://localhost:4200', 'https://localhost:443', 'http://localhost:4200']
         }
     });
 
