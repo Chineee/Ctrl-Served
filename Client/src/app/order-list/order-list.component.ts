@@ -16,7 +16,8 @@ interface Popup {
   orderNumber ?: number,
   dishesQuantity ?: any
   selections ?: Array<object>,
-  tableNumber ?: number
+  tableNumber ?: number,
+  count_dishes_ready ?: any
 }
 
 enum Error {
@@ -45,6 +46,7 @@ export class OrderListComponent implements OnInit{
   protected error : {type: Error | undefined} = {type: undefined};
   protected alert : any = {showed: false, error:false, message:""};
   protected filter_table : number = -1;
+  protected count_dishes_ready : any = {}
 
 
   constructor(private os : OrdersHttpService, protected us : UserHttpService, private router: Router, private so : SocketioService,
@@ -52,7 +54,6 @@ export class OrderListComponent implements OnInit{
   }
   ngOnInit() {
     this.getAllDishOptions();
-    // this.showOrdersNumber();
   }
 
 
@@ -63,16 +64,16 @@ export class OrderListComponent implements OnInit{
   }
 
   //groyp all orders in a dictionary with their order number
-  showOrdersNumber(filter: number, isReady : boolean) {
+  showOrdersNumber(filter: number) {
+
     const orders : any = {}
     const ready : any = {};
 
-    const filteredOrder = this.orderDishes.filter( (order) => order.tableNumber === filter || filter === -1)
+    const filteredOrder = this.orderDishes.filter( (order) => (order.tableNumber === filter || filter === -1) && order.orderNumber !== -1)
 
     for (const order of filteredOrder) {
-      if (orders[order.orderNumber] === undefined) orders[order.orderNumber] = order.tableNumber;
+      if (orders[order.orderNumber] === undefined || (order.tableNumber !== orders[order.orderNumber])) orders[order.orderNumber] = order.tableNumber;
       if (ready[order.orderNumber] === undefined) {
-        //todo understand why this works
         const readyOrders = filteredOrder.filter( (order2) => order2.orderNumber === order.orderNumber && order2.ready).length;
         const ordersTotal = filteredOrder.filter( (order2) => order2.orderNumber === order.orderNumber).length;
         if (readyOrders === ordersTotal) {
@@ -233,23 +234,31 @@ export class OrderListComponent implements OnInit{
 
   showOrderPopup(key : any){
     this.setUpDishesQuantity(key);
-    this.popup = {showed: true, dishesQuantity: this.dishesQuantity, orderNumber: key, type: "INFO"}
+    this.popup = {showed: true, dishesQuantity: this.dishesQuantity, orderNumber: key as number, type: "INFO", count_dishes_ready: this.count_dishes_ready}
   }
+
+  protected getReadyNumber(dish_name: unknown) {
+    return this.popup.count_dishes_ready[dish_name as string] === undefined ? 0 : this.popup.count_dishes_ready[dish_name as string];
+  }
+
 
   private setUpDishesQuantity(key : any) : any {
     const dishesOrderNumber = this.orderDishes.filter( (order) => order.orderNumber == key);
     for(const orderDish of dishesOrderNumber){
       if (this.dishesQuantity[orderDish.dish.name] === undefined) this.dishesQuantity[orderDish.dish.name] = 1;
       else this.dishesQuantity[orderDish.dish.name] += 1;
+
+      if (this.count_dishes_ready[orderDish.dish.name] === undefined && orderDish.ready) this.count_dishes_ready[orderDish.dish.name] = 1;
+      else if (orderDish.ready) this.count_dishes_ready[orderDish.dish.name] += 1;
     }
   }
 
   confirmDelivery(orderNumber: number | undefined) {
     this.os.modifyOrderNumber(orderNumber as number).subscribe({
       next: (data) => {
-        console.log("HELP i'M DYiNG")
+
       },
-      error: (err) => console.log(err)
+      error: (err) => this.logout()
     })
   }
 

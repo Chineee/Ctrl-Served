@@ -114,6 +114,7 @@ export class TableComponentComponent implements OnInit{
       if (this.dictionary[tableNumber] === undefined)
         this.dictionary[tableNumber] = this.tables.filter((table) => table.tableNumber === tableNumber)[0].customers;
 
+  
       this.popup = {showed: true, seats: seats, tableNumber: tableNumber, isWaiter: isWaiter, occupied: occupied, customers: isWaiter ? this.dictionary[tableNumber] : 0};
     }
   }
@@ -121,7 +122,7 @@ export class TableComponentComponent implements OnInit{
   getTotalBill(tableNumber : number) : number {
     let total : number = 0;
     this.orders.filter(order => order.tableNumber === tableNumber).forEach(data => total += data.dish.price as number)
-    return total;
+    return parseFloat(total.toFixed(2));
   }
 
   generateReceiptEvent(tableNumber : number) : void {

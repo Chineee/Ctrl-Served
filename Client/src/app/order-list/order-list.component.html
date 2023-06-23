@@ -10,16 +10,16 @@
     <input type="text" class="form-control" placeholder="Search table" (input)="filterTable($event)" style="width: 300px; height: 40px;"/>
   </div>
 </div>
-<br>  
+<br>
 <div class="container">
-  <div *ngFor="let order of showOrdersNumber(filter_table, true) | keyvalue" class="card" style="margin-bottom: 5px; background-color: #e4e4e4;">
+  <div *ngFor="let order of showOrdersNumber(filter_table) | keyvalue" class="card" style="margin-bottom: 5px; background-color: #e4e4e4;">
     <div *ngIf="isReady(order.key) && this.us.hasRole('Waiter', 'Cashier')" class="card-body" (click)="showOrderPopup(order.key)" data-bs-target="#infoModal" data-bs-toggle="modal">
       <button *ngIf="this.us.hasRole('Waiter')" class="btn btn-info float-end" data-bs-toggle="modal" data-bs-target="#readyModal">Ready</button>
       <h5>Table {{order.value}} </h5>
-      <p>Order number: {{order.key}} (Ready) </p>
+      <p>Order number: {{order.key}} (Ready)</p>
     </div>
   </div>
-  <div *ngFor="let order of showOrdersNumber(filter_table, false) | keyvalue" class="card"  style="margin-bottom: 5px; background-color: #e4e4e4;">
+  <div *ngFor="let order of showOrdersNumber(filter_table) | keyvalue" class="card"  style="margin-bottom: 5px; background-color: #e4e4e4;">
     <div *ngIf="!isReady(order.key)" class="card-body" (click)="showOrderPopup(order.key)" data-bs-toggle="modal" data-bs-target="#infoModal" >
       <button *ngIf="this.us.hasRole('Waiter')" (click)="modifyOrder($event, order.key)" type="button" class="btn btn-secondary  float-end" data-bs-toggle="modal" data-bs-target="#modifyModal">Modify order</button>
       <h5>Table {{order.value}} </h5>
@@ -53,12 +53,13 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title">Order {{popup.orderNumber}}</h4>
+          <h4 class="modal-title">Order: {{popup.orderNumber}}</h4>
           <button type="button" class="btn-close" (click)="closePopup()" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div *ngFor="let dish of popup.dishesQuantity | keyvalue">
-            {{dish.key}} - Quantity: {{dish.value}}
+          <div *ngFor="let dish of popup.dishesQuantity | keyvalue" style="display: flex;">
+            <span style="flex-grow: 1;">{{dish.key}} - Quantity: {{dish.value}}</span>
+            <div style="text-align: right;">Ready: ({{getReadyNumber(dish.key)}} / {{dish.value}})</div>
           </div>
         </div>
       </div>

@@ -13,7 +13,6 @@ import foodQueue from "./Routes/Makers/FoodQueue"
 import drinkQueue from "./Routes/Makers/DrinkQueue"
 import receipt from "./Routes/Cashier/Receipt"
 import cors from "cors";
-import * as http from "http";
 import * as https from "https"
 import {setUpSocketio} from "./socketio-config";
 import getIoInstance from "./socketio-config"
@@ -40,7 +39,7 @@ declare global {
 
 // Parse the request body as JSON
 app.use(cors({
-    origin: ['http://localhost:4200', 'http://192.168.51.91:4200', "http://localhost:3050", "http://192.168.0.47:4200", "http://10.0.2.2", "https://localhost:443"]
+    origin: true
     // origin: true
 }))
 app.use(express.json());

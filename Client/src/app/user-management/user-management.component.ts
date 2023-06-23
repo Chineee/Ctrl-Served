@@ -109,7 +109,6 @@ export class UserManagementComponent implements OnInit{
     this.so.disconnect();
     if (role === 'Cook' && this.us.hasRole('Admin')) this.us.SetAdminMakersRole('foodqueue');
     else if (role === 'Bartender' && this.us.hasRole('Admin')) this.us.SetAdminMakersRole('drinkqueue')
-    this.so.disconnect();
     this.router.navigate([mapper[role]])
   }
 

@@ -5,11 +5,11 @@ const config: CapacitorConfig = {
   appName: 'CtrlServed',
   webDir: 'dist/client',
   server: {
-    androidScheme: 'http',
+    androidScheme: 'https',
     cleartext: true,
     allowNavigation: [
-      "http://10.0.2.2:5000/*",
-      "http://localhost:5000/*"
+      "https://10.0.2.2:5000/*",
+      "https://localhost:5000/*"
     ],
   },
   android: {

@@ -30,7 +30,7 @@ async function insertAll() {
                 "email": "cassiere@gmail.com",
                 "password": await getPassword("cassiere"),
                 "role": "Cashier",
-                "counter":0
+                "counter":4
             }),
             new User({
                 "name": "cuoco",
@@ -38,7 +38,7 @@ async function insertAll() {
                 "email": "cuoco@gmail.com",
                 "password": await getPassword("cuoco"),
                 "role": "Cook",
-                "counter":0
+                "counter":10
             }),
             new User({
                 "name": "barista",
@@ -46,7 +46,7 @@ async function insertAll() {
                 "email": "barista@gmail.com",
                 "password": await getPassword("barista"),
                 "role": "Bartender",
-                "counter":0
+                "counter":7
             }),
             new User({
                 "name": "cameriere",
@@ -54,7 +54,7 @@ async function insertAll() {
                 "email": "cameriere@gmail.com",
                 "password": await getPassword("cameriere"),
                 "role": "Waiter",
-                "counter": {tablesServed: 0, customersServed: 0, dishesServed: 0}
+                "counter": {tablesServed: 8, customersServed: 20, dishesServed: 32}
             }),
             new User({
                 "name":"cameriere2",
@@ -62,7 +62,7 @@ async function insertAll() {
                 "email":"cameriere2@gmail.com",
                 "password":await getPassword("cameriere2"),
                 "role":"Waiter",
-                "counter": {tablesServed: 0, customersServed: 0, dishesServed: 0}
+                "counter": {tablesServed: 5, customersServed: 9, dishesServed: 10}
             }),
             new User({
                 "name": "Marco",
@@ -77,8 +77,8 @@ async function insertAll() {
                 "surname":"Rizzo",
                 "email":"elisa@gmail.com",
                 "password":await getPassword("elisa"),
-                "role":"Waiter",
-                "counter": {tablesServed: 3, customersServed: 15, dishesServed: 16}
+                "role":"Bartender",
+                "counter": 18
             }),
 
         ]);

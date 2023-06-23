@@ -167,8 +167,8 @@ export class CashierPageComponent implements OnInit {
   getOrders() {
     this.os.getOrders().subscribe({
       next: (data) => {
-        this.orders = data
-        console.log(data);
+        //TODO fai controllo se ordine è -1 allora togliamo orderNumber e lo contiamo come delivered e basta
+        this.orders = data;
       },
       error: (err) => console.log(err)
     })

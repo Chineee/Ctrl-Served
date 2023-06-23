@@ -64,7 +64,7 @@ export default (): Router => {
             await drink.save();
             if (drink.end) await Users.findOneAndUpdate({email: req.user.email}, {$inc: {counter: 1}});
             getIoInstance().emit('drink_queue_change')
-            return res.status(200).send({message:"Drink modified successfully", error:false, status:200});
+            return res.status(200).send({message:"Drink modified successfully", error:false, status:200, data:drink});
         } catch (err) {
             return res.status(400).send(err);
         }

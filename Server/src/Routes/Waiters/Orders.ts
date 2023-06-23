@@ -172,10 +172,10 @@ export default (): Router => {
     });
 
     // DELETE endpoint to delete all orders with a specific order number
-    app.delete('/', isLogged, hasRole("Cashier"), async (req, res) => {
+    app.delete('/', isLogged, hasRole("Admin"), async (req, res) => {
         //WARNING USE IT WITH REQ.QUERY TO DELETE ORDER NUMBER SPECIFICO
         try {
-            if (req.user.role !== 'Admin' && Object.keys(req.query).length !== 0 && req.query.orderNumber !== undefined) {
+            if (Object.keys(req.query).length !== 0 && req.query.orderNumber !== undefined) {
                 await Order.deleteMany(req.query);
                 await FoodQueue.deleteMany(req.query)
             } else return res.status(403).send({status:403, error: true, errorMessage:"Insufficient permission"})

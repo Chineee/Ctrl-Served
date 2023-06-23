@@ -7,16 +7,16 @@
     <button class="nav-link{{page === Page.TABLES ? ' active' : ''}}" (click)="changePage(Page.TABLES)">Show tables</button>
   </li>
   <li class="nav-item">
-    <button class="nav-link{{page === Page.ORDERS ? ' active' : ''}}"  (click)="changePage(Page.ORDERS)">{{getStringOrder()}}</button>
+    <button class="nav-link{{page === Page.ORDERS ? ' active' : ''}}"  (click)="changePage(Page.ORDERS)">Show orders</button>
   </li>
 </ul>
 
 <br><br>
-<div *ngIf="getStringOrder() == 'Show order (one order ready)'" class="alert alert-success alert-dismissible fade show" role="alert">
+
+<div *ngIf="getNotification()" class="alert alert-success alert-dismissible fade show" >
   <strong>Hey guacamole!</strong> An order is ready!
-  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-  </button>
 </div>
+
 <span *ngIf="page === Page.TABLES">
   <app-table-component (post) = modifyTable($event) [tables]="tables" [orders]="orders"></app-table-component>
 </span>

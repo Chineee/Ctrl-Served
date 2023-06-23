@@ -10,7 +10,7 @@ export class SocketioService {
   private socket:any;
   constructor( private us: UserHttpService ) { }
 
-  connect(): Observable< any > {
+  connect(): Observable<any> {
 
     this.socket = io(SOCKET_URL);
 
@@ -64,7 +64,6 @@ export class SocketioService {
 
       // this.socket.on('user_modified', (m: any) => observer.next(m));
       // this.socket.on('order_modified', (m:any) => observer.next(m));
-
     });
 
   }

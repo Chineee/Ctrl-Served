@@ -28,6 +28,7 @@ export class WaiterPageComponent implements OnInit{
   public orders: Order[] = [];
   public page : Page = Page.TABLES;
   protected Page = Page;
+  protected notification : boolean = false;
   public oneOrderReady : boolean = false;
   constructor(private ts : TablesHttpService, protected us : UserHttpService, private router: Router, private so : SocketioService, private os : OrdersHttpService, private el : ElementRef) {
     // this.el.nativeElement.ownerDocument.body.className = 'Waiter';
@@ -52,13 +53,24 @@ export class WaiterPageComponent implements OnInit{
     this.router.navigate(['/admins'])
   }
 
-  getStringOrder() {
-   
+  getStringOrder() : boolean {
     for (let i = 0; i < this.tables.length; i++) {
-      if (GroupOrderReady(this.tables[i].tableNumber, this.orders)) return "Show order (one order ready)"
+      if (GroupOrderReady(this.tables[i].tableNumber, this.orders)) {
+        return true
+      }
     }
     
-    return "Show order"
+    return false;
+  }
+  
+  getNotification() : boolean {
+    const a = this.getStringOrder();
+    console.log(a);
+    return a;
+  }
+
+  test() {
+    console.log(this.notification);
   }
 
   getOrders() {

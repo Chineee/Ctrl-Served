@@ -1,13 +1,13 @@
 import {Server} from "socket.io";
-import * as http from "http";
+import * as https from "https";
 
 
 let io : Server;
 
-export function setUpSocketio(server : http.Server) : void {
+export function setUpSocketio(server : https.Server) : void {
     io = new Server(server, {
         cors: {
-            origin: ['https://localhost:4200', 'https://localhost:443', 'http://localhost:4200']
+            origin: true
         }
     });
 
@@ -15,7 +15,7 @@ export function setUpSocketio(server : http.Server) : void {
         console.log('Socket.io connected (Pippo)')
     });
     
-    console.log("Socke.io created")
+    console.log("Socket.io created")
 }
 
 export default function getIoInstance() {

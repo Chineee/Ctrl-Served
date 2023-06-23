@@ -48,7 +48,9 @@ export class AdminPageComponent implements OnInit {
       next: (data) => {
         this.tables = data
       },
-      error: (err) => console.log(err)
+      error: (err) => {
+        this.logout()
+      }
     })
   }
   
@@ -57,7 +59,8 @@ export class AdminPageComponent implements OnInit {
       next: (data) => {
         this.foods = data.filter( (dish : Dish) => dish.type === 'Food');
         this.drinks = data.filter( (drink : Dish) => drink.type === 'Drink');
-      }
+      },
+      error: (err) => this.logout()
     })
   }
 
@@ -69,7 +72,8 @@ export class AdminPageComponent implements OnInit {
 
   loadUsers() : void {
     this.us.getUsers().subscribe({
-      next: (data) => this.users = data
+      next: (data) => this.users = data,
+      error: (err) => this.logout()
     })
   }
 
