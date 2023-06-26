@@ -12,19 +12,18 @@
 .pie-chart-container {
   width: 1600px;
   height: 1600px;
-  position: relative;
-  top: -550px;
   display: flex;
-  z-index: -1;
+  z-index: -10;
+  display: inline-block;
+  margin-top: -65px;
+  margin-bottom: -400px;
+  overflow: hidden;
 }
 
-.pie-chart-wrapper {
-  flex: 1;
-  margin-right: -10px;
-}
-
-.pie-chart-wrapper:last-child {
-  margin-right: -10px;
+.pie-chart-wrapper.overlap {
+  position: absolute;
+  margin-top: -200px;
+  z-index: -11;
 }
 
 .chart-container {
@@ -35,4 +34,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+
+.advanced-pie-legend-wrapper {
+  z-index: -10;
 }

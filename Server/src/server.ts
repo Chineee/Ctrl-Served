@@ -14,6 +14,7 @@ import drinkQueue from "./Routes/Makers/DrinkQueue"
 import receipt from "./Routes/Cashier/Receipt"
 import cors from "cors";
 import * as https from "https"
+import * as http from "http";
 import {setUpSocketio} from "./socketio-config";
 import getIoInstance from "./socketio-config"
 import fs from "fs";
@@ -76,12 +77,12 @@ app.use('/api/v1/receipts', receipt());
 
 // Starting the server and listening on the specific port
 
-const server = https.createServer({
-    key: fs.readFileSync(path.join(__dirname, '../Keys/key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
-},app);
+// const server = https.createServer({
+//     key: fs.readFileSync(path.join(__dirname, '../Keys/key.pem')),
+//     cert: fs.readFileSync(path.join(__dirname, '../Keys/cert.pem'))
+// },app);
 
-// const server = http.createServer(app);
+const server = http.createServer(app);
 
 setUpSocketio(server);
 

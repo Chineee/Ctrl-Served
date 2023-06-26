@@ -88,10 +88,10 @@
 
 <div class="pie-chart-container" *ngIf="currentStatsPage == Stats.DISHES">
   <div class="pie-chart-wrapper">
-    <ngx-charts-advanced-pie-chart [results]="statsFoods"></ngx-charts-advanced-pie-chart>
+    <ngx-charts-advanced-pie-chart [results]="statsFoods" [view]="[1000,500]"></ngx-charts-advanced-pie-chart>
   </div>
-  <div class="pie-chart-wrapper">
-    <ngx-charts-advanced-pie-chart [results]="statsDrinks"></ngx-charts-advanced-pie-chart>
+  <div class="pie-chart-wrapper overlap">
+    <ngx-charts-advanced-pie-chart [results]="statsDrinks" [view]="[1000, 500]"></ngx-charts-advanced-pie-chart>
   </div>
 </div>
 <div class="chart-container" *ngIf="currentStatsPage == Stats.PROFITS">

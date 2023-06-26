@@ -1,10 +1,11 @@
 import {Server} from "socket.io";
 import * as https from "https";
+import * as http from "http";
 
 
 let io : Server;
 
-export function setUpSocketio(server : https.Server) : void {
+export function setUpSocketio(server : https.Server | http.Server) : void {
     io = new Server(server, {
         cors: {
             origin: true

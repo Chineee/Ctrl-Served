@@ -28,7 +28,7 @@ export class ReceiptsListComponent implements OnInit {
   get receipts() {
     return this._receipts;
   }
-  
+
   @Output() openReceiptPopup : EventEmitter<Receipt> = new EventEmitter<Receipt>();
 
   protected funcSelected : Function = this.dailyProfit;
@@ -79,16 +79,16 @@ export class ReceiptsListComponent implements OnInit {
       if(this.rangeProfit === RangeProfit.DAILY) {
         return receipt.date.toString() === `${today[0]}/${today[1].padStart(2, '0')}/${today[2]}`;
       } else if (this.rangeProfit === RangeProfit.WEEKLY) {
-        const firstDayOfWeek = new Date(dateInput);
-        firstDayOfWeek.setDate(dateInput.getDate() - dateInput.getDay() + 1);
+        const currDate = new Date(dateInput);
+        const firstDayOfWeek = this.getFirstDayOfWeek(currDate)
+        const lastDayOfWeek = new Date(firstDayOfWeek);
         firstDayOfWeek.setHours(0, 0, 0, 0);
-        const lastDayOfWeek = new Date(dateInput);
-        lastDayOfWeek.setDate(dateInput.getDate() + 6);
-        lastDayOfWeek.setHours(23, 59, 59, 999);
+        lastDayOfWeek.setHours(23, 59, 59, 59);
+        lastDayOfWeek.setDate(lastDayOfWeek.getDate() + 6);
         const date = new Date(`${receiptDate[1]}/${receiptDate[0]}/${receiptDate[2]}`).getTime()
         return date >= firstDayOfWeek.getTime() && date <= lastDayOfWeek.getTime();
       } else if (this.rangeProfit === RangeProfit.MONTHLY) {
-        return receiptDate[1] == today[1].padStart(2, '0');
+        return receiptDate[1] == today[1].padStart(2, '0') && receiptDate[2] === today[2];
       } else {
         return receiptDate[2] === today[2];
       }
@@ -101,19 +101,29 @@ export class ReceiptsListComponent implements OnInit {
     this.showReceipts(new Date(date));
   }
 
+  private getFirstDayOfWeek(d : Date) {
+    //  clone date object, so we don't mutate it
+    const date = new Date(d);
+    const day = date.getDay(); // get day of week
+
+    //  day of month - day of week (-6 if Sunday), otherwise +1
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+
+    return new Date(date.setDate(diff));
+  }
+
   weeklyProfit(currentDate : Date) {
-    const firstDayOfWeek = new Date(currentDate);
-    firstDayOfWeek.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+    const firstDayOfWeek = this.getFirstDayOfWeek(new Date(currentDate));
+    const lastDayOfWeek = new Date(firstDayOfWeek);
+    lastDayOfWeek.setDate(lastDayOfWeek.getDate()+6);
     firstDayOfWeek.setHours(0, 0, 0, 0);
-    const lastDayOfWeek = new Date(currentDate);
-    lastDayOfWeek.setDate(currentDate.getDate() + 6);
-    lastDayOfWeek.setHours(23, 59, 59, 999);
+    lastDayOfWeek.setHours(23, 59, 59, 59);
+
     const weeklyReceipts = this.receipts.filter((receipt) => {
       const dateString = receipt.date.toString().split('/');
 
-      const date = new Date(`${dateString[1]}/${dateString[0]}/${dateString[2]}`).getTime()
-      return date >= new Date(firstDayOfWeek).getTime() && date <= new Date(lastDayOfWeek).getTime();
-
+      const date = new Date(`${dateString[1]}/${dateString[0]}/${dateString[2]}`).getTime();
+      return date >= firstDayOfWeek.getTime() && date <= lastDayOfWeek.getTime();
     });
 
     let profit: number = 0;
@@ -183,7 +193,7 @@ export class ReceiptsListComponent implements OnInit {
     this.profitClicked = parseFloat(profit.toFixed(2));
     return this.profitClicked;
   }
-  
+
   showReceipt(receipt : Receipt) {
     this.openReceiptPopup.emit(receipt);
   }
