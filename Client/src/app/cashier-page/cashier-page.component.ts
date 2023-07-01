@@ -178,6 +178,7 @@ export class CashierPageComponent implements OnInit {
 
     let supp: any = [];
     const getMonthName = (monthNumber: number) => {
+      if (monthNumber === 2) return 'February'
       const date = new Date();
       date.setMonth(monthNumber - 1);
 

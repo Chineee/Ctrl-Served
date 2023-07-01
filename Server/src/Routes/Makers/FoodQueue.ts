@@ -59,7 +59,7 @@ export default (): Router => {
                 // const completeOrder = await FoodQueue.find({orderNumber: food.orderNumber, end:false});
                 if (completeOrder.length === 0) {
                     getIoInstance().emit('order_finished')
-                }
+                } 
             } catch (err) {
                 return res.status(400).send(err);
             }

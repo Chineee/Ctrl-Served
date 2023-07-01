@@ -42,7 +42,6 @@ export default (): Router => {
     });
 
     // POST endpoint to create a new order
-    //TODO controllare che il tavolo sia occupato oppure sti grandissimi cazzi(?)
     app.post('/', isLogged, hasRole('Waiter'), async (req, res) => {
         // Validate the input data using the defined schema
         const {error} = OrderSchemaValidation.validate(req.body);

@@ -99,6 +99,7 @@ export class OrderListComponent implements OnInit{
     this.selectionQuantity = [];
     this.selectionSize = 1;
     this.selectionDish = [];
+    this.count_dishes_ready = {};
     this.popup = {showed: false, dishesQuantity: {}, orderNumber: 0}
   }
 
@@ -238,6 +239,7 @@ export class OrderListComponent implements OnInit{
   }
 
   protected getReadyNumber(dish_name: unknown) {
+    if (this.popup.type !== 'INFO') return;
     return this.popup.count_dishes_ready[dish_name as string] === undefined ? 0 : this.popup.count_dishes_ready[dish_name as string];
   }
 

@@ -20,12 +20,12 @@
     <li class="nav-item">
       <button class="nav-link{{currentStatsPage === Stats.PROFITS ? ' active' : ''}}" (click)="buildOtherStats(Stats.PROFITS)">Show profit statistics</button>
     </li>
-  </ul>  
- 
+  </ul>
+
 </div>
 
 <br><br>
-<div class="chart-container" *ngIf="currentStatsPage === Stats.ROLE && pageRole !== Role.WAITER">
+<div class="chart-container" *ngIf="currentStatsPage === Stats.ROLE && pageRole !== Role.WAITER" style="margin-left:175px">
   <ngx-charts-bar-vertical
     [results]="statsUserRole[pageRole]"
     [gradient]="verticalBarOptions.gradient"
@@ -41,7 +41,7 @@
     style="height: 500px;"
   ></ngx-charts-bar-vertical>
 </div>
-<div class="chart-container" *ngIf="pageRole === Role.WAITER && currentStatsPage === Stats.ROLE">
+<div class="chart-container" *ngIf="pageRole === Role.WAITER && currentStatsPage === Stats.ROLE" style="margin-left:175px">
   <ngx-charts-bar-vertical
     [results]="statsUserRole[pageRole]['tablesServed']"
     [gradient]="verticalBarOptions.gradient"
@@ -94,7 +94,7 @@
     <ngx-charts-advanced-pie-chart [results]="statsDrinks" [view]="[1000, 500]"></ngx-charts-advanced-pie-chart>
   </div>
 </div>
-<div class="chart-container" *ngIf="currentStatsPage == Stats.PROFITS">
+<div class="chart-container" *ngIf="currentStatsPage == Stats.PROFITS" style="margin-left:175px">
   <ngx-charts-bar-vertical
     [results]="statsProfitMonth"
     [gradient]="verticalBarOptions.gradient"

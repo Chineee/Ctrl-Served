@@ -62,7 +62,9 @@ export class MakerPageComponent implements OnInit {
         });
         console.log(this.queueDish);
       },
-      error: (err) => console.log(err)
+      error: (err) => {
+        this.logout()
+      }
     })
   }
 
@@ -71,7 +73,9 @@ export class MakerPageComponent implements OnInit {
       next: (data) => {
         if (data.data.end) this.queue.deleteFromQueue(data.data._id, this.us.getRole() as string).subscribe({})
       },
-      error: (err) => console.log(err)
+      error: (err) => {
+        this.logout();
+      }
     });
   }
 }
