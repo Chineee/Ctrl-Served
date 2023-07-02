@@ -46,4 +46,3 @@ build/
 android/
 Keys/
 CtrlServed-win32-x64/
-.dockerignore
