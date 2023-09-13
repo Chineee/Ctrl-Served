@@ -46,7 +46,7 @@ services:
     image: redis:latest
     ports:
       - "6379:6379"
-networks:
-  default:
-    name: tawproject
-    external: true
+# networks:
+#   default:
+#     name: tawproject
+#     external: true
